@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090909">
+  <meta name="description" content="90Minute Studio — oyunlar, projeler, etkinlikler ve stüdyo haberleri.">
+  <title>90Minute Studio — We Create. We Play. We Inspire.</title>
+  <style>
+    :root{--bg:#08090c;--panel:#111319;--panel2:#171a22;--white:#f6f6f8;--muted:#a4a6b0;--red:#ff242d;--red2:#c81020;--line:rgba(255,255,255,.11);--max:1180px}
+    *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:88px}body{margin:0;background:var(--bg);color:var(--white);font:16px/1.6 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+    a{color:inherit;text-decoration:none}button{font:inherit}.container{width:min(var(--max),calc(100% - 44px));margin:auto}
+    .top-glow{position:absolute;inset:0 0 auto;height:700px;pointer-events:none;background:radial-gradient(ellipse at 50% 8%,rgba(255,25,40,.17),transparent 58%);z-index:-1}
+    header{position:sticky;top:0;z-index:20;background:rgba(8,9,12,.84);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)}
+    .nav{height:78px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+    .brand{display:flex;align-items:center;gap:12px;min-width:190px}.brand img{width:52px;height:52px;object-fit:cover;border-radius:12px}.brand-name{font-weight:850;letter-spacing:.06em;font-size:14px}.brand-name span{color:var(--red)}
+    .links{display:flex;align-items:center;gap:27px;color:#c5c6cc;font-size:13px;font-weight:650}.links a{transition:color .2s}.links a:hover{color:var(--red)}
+    .nav-actions{display:flex;align-items:center;gap:10px}.lang{border:1px solid var(--line);background:#111319;color:#fff;border-radius:9px;padding:9px 11px;cursor:pointer;font-size:12px;font-weight:800}.menu-btn{display:none;border:1px solid var(--line);background:#111319;color:white;border-radius:9px;padding:9px 12px}
+    .hero{min-height:690px;display:grid;grid-template-columns:1.03fr .97fr;align-items:center;gap:42px;padding:75px 0 90px;position:relative}
+    .kicker{display:inline-flex;align-items:center;gap:9px;color:#ff7379;font-size:11px;letter-spacing:.19em;font-weight:850;text-transform:uppercase}.kicker:before{content:"";width:25px;height:2px;background:var(--red)}
+    h1{font-size:clamp(48px,7vw,88px);line-height:.98;letter-spacing:-.065em;margin:22px 0 23px;font-weight:900}h1 .red{color:var(--red);text-shadow:0 0 38px rgba(255,36,45,.2)}
+    .hero-copy{max-width:580px;color:var(--muted);font-size:17px}.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:13px 19px;border-radius:10px;font-size:13px;font-weight:850;transition:transform .2s,background .2s;border:1px solid transparent;cursor:pointer}.btn:hover{transform:translateY(-2px)}.btn-red{background:var(--red);color:white;box-shadow:0 10px 30px rgba(255,36,45,.19)}.btn-outline{border-color:rgba(255,255,255,.22);background:rgba(255,255,255,.035);color:#fff}
+    .hero-art{min-height:440px;display:grid;place-items:center;position:relative}.hero-art:before{content:"";position:absolute;width:min(440px,90%);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(255,30,43,.22),rgba(255,30,43,.035) 52%,transparent 70%);filter:blur(7px)}
+    .hero-logo{width:min(100%,490px);aspect-ratio:1;object-fit:contain;border-radius:24px;position:relative;filter:drop-shadow(0 24px 65px rgba(0,0,0,.55))}
+    .orbit{position:absolute;width:95%;height:74%;border:1px solid rgba(255,255,255,.09);border-radius:50%;transform:rotate(-22deg)}.orbit:after{content:"";position:absolute;width:9px;height:9px;border-radius:50%;background:var(--red);top:15%;left:14%;box-shadow:0 0 22px var(--red)}
+    .scroll-note{position:absolute;bottom:24px;left:0;color:#737680;font-size:10px;letter-spacing:.18em;text-transform:uppercase}
+    .ticker{overflow:hidden;border-block:1px solid var(--line);background:#0e1015}.ticker-track{display:flex;gap:38px;white-space:nowrap;padding:15px 0;color:#c7c8ce;font-size:11px;font-weight:850;letter-spacing:.18em;text-transform:uppercase}.ticker b{color:var(--red)}
+    section{padding:100px 0;border-bottom:1px solid var(--line)}.section-head{display:flex;justify-content:space-between;align-items:end;gap:25px;margin-bottom:34px}.section-label{color:var(--red);font-size:11px;font-weight:900;letter-spacing:.2em;text-transform:uppercase}.section-title{font-size:clamp(34px,5vw,55px);line-height:1.05;letter-spacing:-.055em;margin:10px 0 0;font-weight:900}.section-desc{max-width:440px;color:var(--muted);font-size:14px;margin:0}
+    .games-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.game-card{min-height:410px;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--panel);position:relative;display:flex;flex-direction:column;transition:transform .25s,border-color .25s}.game-card:hover{transform:translateY(-5px);border-color:rgba(255,36,45,.55)}
+    .game-visual{height:235px;position:relative;overflow:hidden;display:grid;place-items:center;background:radial-gradient(circle at 50% 50%,rgba(255,36,45,.23),transparent 62%),linear-gradient(135deg,#1c2029,#0b0d12)}
+    .game-visual.kebab{background:radial-gradient(circle at 65% 45%,rgba(255,119,31,.2),transparent 55%),linear-gradient(135deg,#241610,#0b0d12)}
+    .game-symbol{font-size:84px;filter:drop-shadow(0 15px 24px #0009)}.game-watermark{position:absolute;bottom:-30px;right:15px;font-size:100px;font-weight:1000;letter-spacing:-.1em;color:rgba(255,255,255,.045)}
+    .game-info{padding:24px;display:flex;flex-direction:column;flex:1}.game-top{display:flex;align-items:center;justify-content:space-between;gap:10px}.status{font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:900;color:#b8f38c;background:rgba(130,220,70,.1);border:1px solid rgba(130,220,70,.25);padding:6px 9px;border-radius:99px}.status.dev{color:#ffc17e;background:rgba(255,153,51,.1);border-color:rgba(255,153,51,.25)}
+    .game-info h3{font-size:26px;letter-spacing:-.04em;margin:13px 0 7px}.game-info p{color:var(--muted);font-size:13px;margin:0 0 20px}.game-foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;color:#fff;font-size:12px;font-weight:800}.text-link{color:#ff666d}.text-link:hover{text-decoration:underline}
+    .feature-row{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.feature{padding:25px;border:1px solid var(--line);background:linear-gradient(145deg,#141720,#0d0f14);border-radius:15px}.feature .icon{font-size:25px}.feature h3{font-size:17px;margin:14px 0 6px}.feature p{color:var(--muted);font-size:13px;margin:0}
+    .news-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}.news-card{border:1px solid var(--line);border-radius:16px;padding:25px;background:var(--panel)}.news-card.featured{min-height:260px;background:radial-gradient(ellipse at 90% 10%,rgba(255,36,45,.18),transparent 45%),var(--panel)}.news-date{color:var(--red);font-size:10px;letter-spacing:.16em;font-weight:900;text-transform:uppercase}.news-card h3{font-size:24px;line-height:1.15;margin:14px 0 9px}.news-card p{color:var(--muted);font-size:13px;margin:0}
+    .about{display:grid;grid-template-columns:.8fr 1.2fr;gap:55px;align-items:center}.about-mark{border:1px solid var(--line);border-radius:18px;background:#050506;overflow:hidden}.about-mark img{display:block;width:100%;height:auto}.about-copy p{color:var(--muted);font-size:15px}
+    .contact-panel{border:1px solid rgba(255,36,45,.3);border-radius:20px;padding:clamp(28px,5vw,55px);background:radial-gradient(ellipse at 90% 10%,rgba(255,36,45,.15),transparent 48%),#111319;display:flex;justify-content:space-between;align-items:center;gap:30px}.contact-panel h2{font-size:clamp(30px,4vw,46px);letter-spacing:-.05em;margin:8px 0}.contact-panel p{color:var(--muted);margin:0}
+    footer{padding:32px 0 42px}.footer-top{display:flex;justify-content:space-between;align-items:center;gap:25px;padding-bottom:25px;border-bottom:1px solid var(--line)}.footer-brand{font-weight:900;letter-spacing:.08em}.footer-brand span{color:var(--red)}.footer-links{display:flex;gap:20px;color:var(--muted);font-size:12px}.copyright{display:flex;justify-content:space-between;gap:20px;color:#777b86;font-size:11px;padding-top:20px}
+    .reveal{opacity:0;transform:translateY(18px);transition:opacity .65s,transform .65s}.reveal.visible{opacity:1;transform:none}
+    @media(max-width:850px){.links{gap:15px}.hero{grid-template-columns:1fr;min-height:auto;padding:65px 0 75px}.hero-art{min-height:340px;grid-row:1}.hero-logo{width:min(75%,360px)}.orbit{width:75%;height:65%}.section-head{align-items:flex-start;flex-direction:column}.about{grid-template-columns:1fr;gap:28px}.about-mark{max-width:420px}.contact-panel{align-items:flex-start;flex-direction:column}}
+    @media(max-width:650px){.container{width:min(var(--max),calc(100% - 30px))}.nav{height:68px}.brand img{width:43px;height:43px}.menu-btn{display:inline-flex}.links{display:none;position:absolute;top:68px;left:0;right:0;padding:18px 22px 22px;background:#0c0e13;border-bottom:1px solid var(--line);flex-direction:column;align-items:flex-start}.links.open{display:flex}.hero{padding-top:38px;gap:8px}.hero-art{min-height:270px}.hero-logo{width:min(72%,270px)}h1{font-size:clamp(45px,13vw,67px)}.hero-copy{font-size:15px}.scroll-note{display:none}section{padding:72px 0}.games-grid,.feature-row,.news-grid{grid-template-columns:1fr}.game-card{min-height:380px}.game-visual{height:205px}.footer-top,.copyright{align-items:flex-start;flex-direction:column}.footer-links{flex-wrap:wrap}.ticker-track{font-size:10px}}
+  </style>
+</head>
+<body>
+<div class="top-glow"></div>
+<header>
+  <div class="container nav">
+    <a class="brand" href="#home" aria-label="90Minute Studio ana sayfa">
+      <img src="assets/90minute-studio-logo.png" alt="90Minute Studio logosu">
+      <span class="brand-name">90<span>MINUTE</span> STUDIO</span>
+    </a>
+    <nav class="links" id="navLinks">
+      <a href="#games" data-i18n="navGames">OYUNLAR</a>
+      <a href="#events" data-i18n="navEvents">ETKİNLİKLER</a>
+      <a href="#news" data-i18n="navNews">HABERLER</a>
+      <a href="#about" data-i18n="navAbout">HAKKIMIZDA</a>
+      <a href="#contact" data-i18n="navContact">İLETİŞİM</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="lang" id="langToggle" type="button" aria-label="Change language">EN</button>
+      <button class="menu-btn" id="menuBtn" type="button" aria-label="Menüyü aç">☰</button>
+    </div>
+  </div>
+</header>
+
+<main id="home">
+  <div class="container hero">
+    <div class="hero-copy-wrap">
+      <div class="kicker" data-i18n="heroKicker">BAĞIMSIZ OYUN STÜDYOSU</div>
+      <h1><span data-i18n="heroLine1">WE CREATE.</span><br><span class="red" data-i18n="heroLine2">WE PLAY.</span><br><span data-i18n="heroLine3">WE INSPIRE.</span></h1>
+      <p class="hero-copy" data-i18n="heroText">Fikirleri oyunlara, hayalleri deneyimlere dönüştürüyoruz. 90Minute Studio'da yeni dünyalar tasarlıyor, geliştiriyor ve oyuncularla buluşturuyoruz.</p>
+      <div class="hero-actions">
+        <a class="btn btn-red" href="#games"><span data-i18n="exploreGames">OYUNLARI KEŞFET</span> <span aria-hidden="true">↗</span></a>
+        <a class="btn btn-outline" href="#about" data-i18n="aboutStudio">STÜDYOMUZU TANI</a>
+      </div>
+    </div>
+    <div class="hero-art" aria-label="90Minute Studio logo">
+      <div class="orbit"></div>
+      <img class="hero-logo" src="assets/90minute-studio-logo.png" alt="90Minute Studio">
+    </div>
+    <div class="scroll-note" data-i18n="scroll">AŞAĞI KAYDIR · STÜDYOMUZU KEŞFET</div>
+  </div>
+
+  <div class="ticker" aria-hidden="true"><div class="container ticker-track">
+    <span>90MINUTE STUDIO <b>✦</b></span><span>GAMES & EXPERIENCES <b>✦</b></span><span>BUILT WITH PASSION <b>✦</b></span><span>90MINUTE STUDIO <b>✦</b></span><span>GAMES & EXPERIENCES <b>✦</b></span>
+  </div></div>
+
+  <section id="games"><div class="container">
+    <div class="section-head reveal">
+      <div><div class="section-label" data-i18n="gamesLabel">PORTFÖYÜMÜZ</div><h2 class="section-title" data-i18n="gamesTitle">Oyunlarımız<span style="color:var(--red)">.</span></h2></div>
+      <p class="section-desc" data-i18n="gamesDesc">Her proje yeni bir fikir, her oyun yeni bir deneyim. 90Minute Studio tarafından geliştirilen oyunları keşfet.</p>
+    </div>
+    <div class="games-grid">
+      <article class="game-card reveal">
+        <div class="game-visual"><div class="game-symbol">⚽</div><div class="game-watermark">90</div></div>
+        <div class="game-info">
+          <div class="game-top"><span class="status" data-i18n="statusLive">YAYINDA</span><span style="color:#888;font-size:11px">ANDROID</span></div>
+          <h3>By Mincup Halısaha</h3>
+          <p data-i18n="mincupDesc">Halı saha ve futbol yönetimi dünyasına adım at. Takımını oluştur, kulübünü yönet ve kendi futbol hikâyeni yaz.</p>
+          <div class="game-foot"><span data-i18n="mobileGame">MOBİL OYUN</span><a class="text-link" href="mailto:90minstudio@gmail.com?subject=By%20Mincup%20Hal%C4%B1saha" data-i18n="gameInfo">OYUN HAKKINDA ↗</a></div>
+        </div>
+      </article>
+      <article class="game-card reveal">
+        <div class="game-visual kebab"><div class="game-symbol">🌙</div><div class="game-watermark">NIGHT</div></div>
+        <div class="game-info">
+          <div class="game-top"><span class="status dev" data-i18n="statusDev">GELİŞTİRİLİYOR</span><span style="color:#888;font-size:11px">PC / MOBILE</span></div>
+          <h3>Gece Dönercisi</h3>
+          <p data-i18n="kebabDesc">Gece başlayan bir çalışma hikâyesi. Kendi dönerci işletmeni yönetmeye uzanan simülasyon projesi.</p>
+          <div class="game-foot"><span data-i18n="upcomingProject">YENİ PROJE</span><a class="text-link" href="#contact" data-i18n="followProject">PROJEYİ TAKİP ET ↗</a></div>
+        </div>
+      </article>
+    </div>
+  </div></section>
+
+  <section id="events"><div class="container">
+    <div class="section-head reveal">
+      <div><div class="section-label" data-i18n="eventsLabel">STÜDYODAN</div><h2 class="section-title" data-i18n="eventsTitle">Etkinlikler<span style="color:var(--red)">.</span></h2></div>
+      <p class="section-desc" data-i18n="eventsDesc">Topluluk buluşmaları, oyun etkinlikleri ve özel organizasyonlar için bu alanı takip et.</p>
+    </div>
+    <div class="feature-row">
+      <article class="feature reveal"><div class="icon">🏆</div><h3 data-i18n="event1Title">Topluluk Etkinlikleri</h3><p data-i18n="event1Text">Oyuncularımızı bir araya getiren etkinlik ve organizasyon duyuruları burada paylaşılacak.</p></article>
+      <article class="feature reveal"><div class="icon">🎮</div><h3 data-i18n="event2Title">Oyun Buluşmaları</h3><p data-i18n="event2Text">Yeni oyunlarımızı ve projelerimizi toplulukla buluşturacağımız etkinlikler.</p></article>
+      <article class="feature reveal"><div class="icon">📣</div><h3 data-i18n="event3Title">Özel Duyurular</h3><p data-i18n="event3Text">Turnuvalar, lansmanlar ve stüdyo organizasyonları için duyurular.</p></article>
+    </div>
+  </div></section>
+
+  <section id="news"><div class="container">
+    <div class="section-head reveal">
+      <div><div class="section-label" data-i18n="newsLabel">GÜNCEL</div><h2 class="section-title" data-i18n="newsTitle">Stüdyo haberleri<span style="color:var(--red)">.</span></h2></div>
+      <p class="section-desc" data-i18n="newsDesc">Projelerimizdeki gelişmelerden ve yeni duyurulardan haberdar ol.</p>
+    </div>
+    <div class="news-grid">
+      <article class="news-card featured reveal"><div class="news-date" data-i18n="newsType">STÜDYO GÜNCELLEMESİ</div><h3 data-i18n="newsMainTitle">Yeni projeler üzerinde çalışıyoruz.</h3><p data-i18n="newsMainText">90Minute Studio'da geliştirdiğimiz oyunlar ve yeni fikirler hakkında duyurular yakında burada yer alacak.</p></article>
+      <article class="news-card reveal"><div class="news-date" data-i18n="newsComing">YAKINDA</div><h3 data-i18n="newsSideTitle">Yeni haberler yolda.</h3><p data-i18n="newsSideText">Güncellemeler, geliştirme notları ve stüdyo haberleri için tekrar ziyaret et.</p></article>
+    </div>
+  </div></section>
+
+  <section id="about"><div class="container about">
+    <div class="about-mark reveal"><img src="assets/90minute-studio-logo.png" alt="90Minute Studio orijinal logo"></div>
+    <div class="about-copy reveal"><div class="section-label" data-i18n="aboutLabel">BİZ KİMİZ?</div><h2 class="section-title" data-i18n="aboutTitle">Fikirden deneyime<span style="color:var(--red)">.</span></h2>
+      <p data-i18n="aboutText">90Minute Studio; oyunlar, dijital projeler ve yaratıcı deneyimler geliştirmeye odaklanan bağımsız bir stüdyo markasıdır. Amacımız özgün fikirleri hayata geçirmek ve oyuncularla güçlü bağlar kuran projeler üretmektir.</p>
+      <p data-i18n="aboutText2">Her yeni proje, keşfedilecek yeni bir dünyanın başlangıcıdır.</p>
+    </div>
+  </div></section>
+
+  <section id="contact"><div class="container">
+    <div class="contact-panel reveal">
+      <div><div class="section-label" data-i18n="contactLabel">İLETİŞİM</div><h2 data-i18n="contactTitle">Bir fikrin mi var?</h2><p data-i18n="contactText">Destek, geri bildirim veya iş birliği için bize ulaş.</p></div>
+      <a class="btn btn-red" href="mailto:90minstudio@gmail.com">90MINSTUDIO@GMAIL.COM ↗</a>
+    </div>
+  </div></section>
+</main>
+
+<footer><div class="container">
+  <div class="footer-top"><a class="footer-brand" href="#home">90<span>MINUTE</span> STUDIO</a><div class="footer-links"><a href="#games" data-i18n="navGames">Oyunlar</a><a href="#events" data-i18n="navEvents">Etkinlikler</a><a href="#news" data-i18n="navNews">Haberler</a><a href="#contact" data-i18n="navContact">İletişim</a></div></div>
+  <div class="copyright"><span>© <span id="year"></span> 90Minute Studio. <span data-i18n="rights">Tüm hakları saklıdır.</span></span><span>WE CREATE. WE PLAY. WE INSPIRE.</span></div>
+</div></footer>
+
+<script>
+const translations = {
+  tr: {
+    navGames:"OYUNLAR",navEvents:"ETKİNLİKLER",navNews:"HABERLER",navAbout:"HAKKIMIZDA",navContact:"İLETİŞİM",
+    heroKicker:"BAĞIMSIZ OYUN STÜDYOSU",heroLine1:"WE CREATE.",heroLine2:"WE PLAY.",heroLine3:"WE INSPIRE.",
+    heroText:"Fikirleri oyunlara, hayalleri deneyimlere dönüştürüyoruz. 90Minute Studio'da yeni dünyalar tasarlıyor, geliştiriyor ve oyuncularla buluşturuyoruz.",
+    exploreGames:"OYUNLARI KEŞFET",aboutStudio:"STÜDYOMUZU TANI",scroll:"AŞAĞI KAYDIR · STÜDYOMUZU KEŞFET",
+    gamesLabel:"PORTFÖYÜMÜZ",gamesTitle:"Oyunlarımız.",gamesDesc:"Her proje yeni bir fikir, her oyun yeni bir deneyim. 90Minute Studio tarafından geliştirilen oyunları keşfet.",
+    statusLive:"YAYINDA",mincupDesc:"Halı saha ve futbol yönetimi dünyasına adım at. Takımını oluştur, kulübünü yönet ve kendi futbol hikâyeni yaz.",mobileGame:"MOBİL OYUN",gameInfo:"OYUN HAKKINDA",
+    statusDev:"GELİŞTİRİLİYOR",kebabDesc:"Gece başlayan bir çalışma hikâyesi. Kendi dönerci işletmeni yönetmeye uzanan simülasyon projesi.",upcomingProject:"YENİ PROJE",followProject:"PROJEYİ TAKİP ET",
+    eventsLabel:"STÜDYODAN",eventsTitle:"Etkinlikler.",eventsDesc:"Topluluk buluşmaları, oyun etkinlikleri ve özel organizasyonlar için bu alanı takip et.",
+    event1Title:"Topluluk Etkinlikleri",event1Text:"Oyuncularımızı bir araya getiren etkinlik ve organizasyon duyuruları burada paylaşılacak.",event2Title:"Oyun Buluşmaları",event2Text:"Yeni oyunlarımızı ve projelerimizi toplulukla buluşturacağımız etkinlikler.",event3Title:"Özel Duyurular",event3Text:"Turnuvalar, lansmanlar ve stüdyo organizasyonları için duyurular.",
+    newsLabel:"GÜNCEL",newsTitle:"Stüdyo haberleri.",newsDesc:"Projelerimizdeki gelişmelerden ve yeni duyurulardan haberdar ol.",newsType:"STÜDYO GÜNCELLEMESİ",newsMainTitle:"Yeni projeler üzerinde çalışıyoruz.",newsMainText:"90Minute Studio'da geliştirdiğimiz oyunlar ve yeni fikirler hakkında duyurular yakında burada yer alacak.",newsComing:"YAKINDA",newsSideTitle:"Yeni haberler yolda.",newsSideText:"Güncellemeler, geliştirme notları ve stüdyo haberleri için tekrar ziyaret et.",
+    aboutLabel:"BİZ KİMİZ?",aboutTitle:"Fikirden deneyime.",aboutText:"90Minute Studio; oyunlar, dijital projeler ve yaratıcı deneyimler geliştirmeye odaklanan bağımsız bir stüdyo markasıdır. Amacımız özgün fikirleri hayata geçirmek ve oyuncularla güçlü bağlar kuran projeler üretmektir.",aboutText2:"Her yeni proje, keşfedilecek yeni bir dünyanın başlangıcıdır.",
+    contactLabel:"İLETİŞİM",contactTitle:"Bir fikrin mi var?",contactText:"Destek, geri bildirim veya iş birliği için bize ulaş.",rights:"Tüm hakları saklıdır."
+  },
+  en: {
+    navGames:"GAMES",navEvents:"EVENTS",navNews:"NEWS",navAbout:"ABOUT",navContact:"CONTACT",
+    heroKicker:"INDEPENDENT GAME STUDIO",heroLine1:"WE CREATE.",heroLine2:"WE PLAY.",heroLine3:"WE INSPIRE.",
+    heroText:"We turn ideas into games and imagination into experiences. At 90Minute Studio, we design new worlds, bring them to life, and share them with players.",
+    exploreGames:"EXPLORE GAMES",aboutStudio:"MEET THE STUDIO",scroll:"SCROLL DOWN · DISCOVER OUR STUDIO",
+    gamesLabel:"OUR PORTFOLIO",gamesTitle:"Our Games.",gamesDesc:"Every project starts with an idea. Every game creates a new experience. Discover games developed by 90Minute Studio.",
+    statusLive:"AVAILABLE",mincupDesc:"Step into the world of five-a-side football management. Build your team, manage your club, and write your own football story.",mobileGame:"MOBILE GAME",gameInfo:"ABOUT THE GAME",
+    statusDev:"IN DEVELOPMENT",kebabDesc:"A story that begins at night. A simulation project about running your own late-night döner shop.",upcomingProject:"UPCOMING PROJECT",followProject:"FOLLOW PROJECT",
+    eventsLabel:"FROM THE STUDIO",eventsTitle:"Events.",eventsDesc:"Follow this space for community gatherings, gaming events, and special studio activities.",
+    event1Title:"Community Events",event1Text:"Announcements for events and activities that bring our players together will appear here.",event2Title:"Game Meetups",event2Text:"Events where we share our new games and projects with the community.",event3Title:"Special Announcements",event3Text:"News about tournaments, launches, and studio activities.",
+    newsLabel:"LATEST",newsTitle:"Studio News.",newsDesc:"Stay informed about project progress and upcoming announcements.",newsType:"STUDIO UPDATE",newsMainTitle:"We are working on new projects.",newsMainText:"Announcements about games and new ideas in development at 90Minute Studio will be shared here.",newsComing:"COMING SOON",newsSideTitle:"More news is on the way.",newsSideText:"Visit again for updates, development notes, and studio news.",
+    aboutLabel:"WHO WE ARE",aboutTitle:"From ideas to experiences.",aboutText:"90Minute Studio is an independent studio brand focused on creating games, digital projects, and creative experiences. Our goal is to bring original ideas to life and create projects that connect with players.",aboutText2:"Every new project is the beginning of a world waiting to be discovered.",
+    contactLabel:"CONTACT",contactTitle:"Have an idea?",contactText:"Get in touch for support, feedback, or collaboration.",rights:"All rights reserved."
+  }
+};
+let currentLang = "tr";
+const langButton = document.getElementById("langToggle");
+langButton.addEventListener("click", () => {
+  currentLang = currentLang === "tr" ? "en" : "tr";
+  document.documentElement.lang = currentLang;
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const key = el.dataset.i18n;
+    if (translations[currentLang][key]) el.textContent = translations[currentLang][key];
+  });
+  langButton.textContent = currentLang === "tr" ? "EN" : "TR";
+});
+document.getElementById("year").textContent = new Date().getFullYear();
+const menuButton = document.getElementById("menuBtn");
+const navLinks = document.getElementById("navLinks");
+menuButton.addEventListener("click", () => navLinks.classList.toggle("open"));
+navLinks.querySelectorAll("a").forEach(a => a.addEventListener("click", () => navLinks.classList.remove("open")));
+const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+  if(entry.isIntersecting){entry.target.classList.add("visible");observer.unobserve(entry.target)}
+}), {threshold:.12});
+document.querySelectorAll(".reveal").forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
