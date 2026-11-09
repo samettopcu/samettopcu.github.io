@@ -94,6 +94,23 @@ footer{padding:32px 0 42px}.footer-top{display:flex;justify-content:space-betwee
 .reveal:nth-child(2){transition-delay:.12s}.reveal:nth-child(3){transition-delay:.24s}
 @media(max-width:850px){.hero{grid-template-columns:1fr;min-height:auto;padding:50px 0 75px}.hero-art{min-height:340px;grid-row:1}.hero-logo-wrap{width:min(70%,340px)}.section-head{flex-direction:column;align-items:flex-start}.about{grid-template-columns:1fr;gap:28px}.about-mark{max-width:420px}.contact-panel{flex-direction:column;align-items:flex-start}}
 @media(max-width:650px){.container{width:calc(100% - 30px)}.nav{height:66px}.menu-btn{display:inline-flex}.links{display:none;position:absolute;top:66px;left:0;right:0;padding:16px 20px 22px;background:#0c0e13;border-bottom:1px solid var(--line);flex-direction:column}.links.open{display:flex}section{padding:72px 0}.games-grid,.feature-row,.news-grid{grid-template-columns:1fr}.footer-top,.copyright{flex-direction:column;align-items:flex-start}.footer-links{flex-wrap:wrap}.cursor-glow{display:none}}
+
+html[lang=ja] body{font-family:Inter,"Hiragino Sans","Yu Gothic","Noto Sans JP",ui-sans-serif,system-ui,sans-serif}
+html[lang=ja] h1,html[lang=ja] .section-title,html[lang=ja] h2,html[lang=ja] h3{letter-spacing:0}
+select.lang{appearance:none;-webkit-appearance:none;padding-right:30px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23fff' fill='none' stroke-width='1.6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center}
+select.lang option{background:#101218;color:#fff}
+.game-card{cursor:pointer}.game-card:focus-visible{outline:2px solid var(--red);outline-offset:3px}
+.game-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2;transition:transform .6s}.game-card:hover .game-img{transform:scale(1.07)}
+.game-visual.has-img:after{content:"";position:absolute;inset:0;z-index:3;background:linear-gradient(to top,rgba(16,18,24,.85),transparent 55%)}
+.game-foot .text-link{display:inline-flex;gap:6px}
+.modal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px;background:rgba(3,4,6,.78);backdrop-filter:blur(8px);opacity:0;visibility:hidden;transition:.3s}
+.modal.open{opacity:1;visibility:visible}
+.modal-box{width:min(560px,100%);max-height:92vh;overflow:auto;background:var(--panel);border:1px solid rgba(255,36,45,.35);border-radius:24px;position:relative;transform:translateY(24px) scale(.96);transition:transform .35s cubic-bezier(.2,.8,.2,1);box-shadow:0 30px 90px rgba(0,0,0,.6)}
+.modal.open .modal-box{transform:none}
+.modal-x{position:absolute;top:14px;right:14px;z-index:5;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:rgba(0,0,0,.5);color:#fff;cursor:pointer;font-size:15px}.modal-x:hover{border-color:var(--red)}
+.modal-box .game-visual{height:280px}.modal-box .game-card-anim{animation:none}
+.modal-body{padding:26px}.modal-body h3{font-size:30px;letter-spacing:-.04em;margin:14px 0 8px}.modal-body p{color:var(--muted);font-size:14px;margin:0 0 24px}
+.modal-actions{display:flex;flex-wrap:wrap;gap:10px}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}h1 .ln>span,.hero-copy,.hero-actions,.reveal{opacity:1;transform:none}}
 </style>
 </head>
@@ -107,7 +124,7 @@ footer{padding:32px 0 42px}.footer-top{display:flex;justify-content:space-betwee
   <nav class="links" id="navLinks">
     <a href="#games" data-i18n="navGames">OYUNLAR</a><a href="#events" data-i18n="navEvents">ETKİNLİKLER</a><a href="#news" data-i18n="navNews">HABERLER</a><a href="#about" data-i18n="navAbout">HAKKIMIZDA</a><a href="#contact" data-i18n="navContact">İLETİŞİM</a>
   </nav>
-  <div class="nav-actions"><button class="lang" id="langToggle" type="button" aria-label="Change language">EN</button><button class="menu-btn" id="menuBtn" type="button" aria-label="Menü">☰</button></div>
+  <div class="nav-actions"><select class="lang" id="langSelect" aria-label="Language"><option value="tr">🇹🇷 TR</option><option value="en">🇬🇧 EN</option><option value="fr">🇫🇷 FR</option><option value="ja">🇯🇵 日本語</option></select><button class="menu-btn" id="menuBtn" type="button" aria-label="Menü">☰</button></div>
 </div></header>
 
 <main id="home">
@@ -134,17 +151,17 @@ footer{padding:32px 0 42px}.footer-top{display:flex;justify-content:space-betwee
     <div class="section-head reveal"><div><div class="section-label" data-i18n="gamesLabel">PORTFÖYÜMÜZ</div><h2 class="section-title"><span data-i18n="gamesTitle">Oyunlarımız.</span></h2></div>
       <p class="section-desc" data-i18n="gamesDesc">Her proje yeni bir fikir, her oyun yeni bir deneyim. 90Minute Studio tarafından geliştirilen oyunları keşfet.</p></div>
     <div class="games-grid">
-      <article class="card game-card reveal">
-        <div class="game-visual"><div class="game-symbol">⚽</div><div class="game-watermark">90</div></div>
+      <article class="card game-card reveal" data-game="mincup" tabindex="0" role="button">
+        <div class="game-visual has-img"><div class="game-symbol">⚽</div><div class="game-watermark">90</div><img class="game-img" src="resm1.png" alt="By Mincup Halısaha" onerror="this.remove()"></div>
         <div class="game-info"><div class="game-top"><span class="status" data-i18n="statusLive">YAYINDA</span><span style="color:#888;font-size:11px">ANDROID</span></div>
           <h3>By Mincup Halısaha</h3><p data-i18n="mincupDesc">Halı saha ve futbol yönetimi dünyasına adım at. Takımını oluştur, kulübünü yönet ve kendi futbol hikâyeni yaz.</p>
-          <div class="game-foot"><span data-i18n="mobileGame">MOBİL OYUN</span><a class="text-link" href="mailto:90minstudio@gmail.com?subject=By%20Mincup%20Hal%C4%B1saha"><span data-i18n="gameInfo">OYUN HAKKINDA</span> ↗</a></div></div>
+          <div class="game-foot"><span data-i18n="mobileGame">MOBİL OYUN</span><span class="text-link"><span data-i18n="gameInfo">OYUN HAKKINDA</span> ↗</span></div></div>
       </article>
-      <article class="card game-card reveal">
+      <article class="card game-card reveal" data-game="gece" tabindex="0" role="button">
         <div class="game-visual kebab"><div class="game-symbol">🌙</div><div class="game-watermark">NIGHT</div></div>
         <div class="game-info"><div class="game-top"><span class="status dev" data-i18n="statusDev">GELİŞTİRİLİYOR</span><span style="color:#888;font-size:11px">PC / MOBILE</span></div>
           <h3>Gece Dönercisi</h3><p data-i18n="kebabDesc">Gece başlayan bir çalışma hikâyesi. Kendi dönerci işletmeni yönetmeye uzanan simülasyon projesi.</p>
-          <div class="game-foot"><span data-i18n="upcomingProject">YENİ PROJE</span><a class="text-link" href="#contact"><span data-i18n="followProject">PROJEYİ TAKİP ET</span> ↗</a></div></div>
+          <div class="game-foot"><span data-i18n="upcomingProject">YENİ PROJE</span><span class="text-link"><span data-i18n="followProject">PROJEYİ TAKİP ET</span> ↗</span></div></div>
       </article>
     </div>
   </div></section>
@@ -188,6 +205,12 @@ footer{padding:32px 0 42px}.footer-top{display:flex;justify-content:space-betwee
   <div class="copyright"><span>© <span id="year"></span> 90Minute Studio. <span data-i18n="rights">Tüm hakları saklıdır.</span></span><span>WE CREATE. WE PLAY. WE INSPIRE.</span></div>
 </div></footer>
 
+<div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true"><div class="modal-box">
+  <button class="modal-x" id="modalX" type="button" aria-label="Close">✕</button>
+  <div class="game-visual" id="mVisual"></div>
+  <div class="modal-body"><span class="status" id="mStatus"></span><h3 id="mTitle"></h3><p id="mDesc"></p>
+  <div class="modal-actions"><a class="btn btn-red" id="mCta" href="#"></a><button class="btn btn-outline" id="mClose" type="button"></button></div></div>
+</div></div>
 <script>
 const translations = {
   tr: {
@@ -219,13 +242,67 @@ const translations = {
     contactLabel:"CONTACT",contactTitle:"Have an idea?",contactText:"Get in touch for support, feedback, or collaboration.",rights:"All rights reserved."
   }
 };
+
+Object.assign(translations.tr,{contactBtn:"BİZE ULAŞ",playBtn:"OYNA ↗",closeBtn:"KAPAT"});
+Object.assign(translations.en,{contactBtn:"GET IN TOUCH",playBtn:"PLAY ↗",closeBtn:"CLOSE"});
+translations.fr={
+ navGames:"JEUX",navEvents:"ÉVÉNEMENTS",navNews:"ACTUALITÉS",navAbout:"À PROPOS",navContact:"CONTACT",
+ heroKicker:"STUDIO DE JEUX INDÉPENDANT",heroLine1:"WE CREATE.",heroLine2:"WE PLAY.",heroLine3:"WE INSPIRE.",
+ heroText:"Nous transformons les idées en jeux et l'imagination en expériences. Chez 90Minute Studio, nous concevons de nouveaux mondes et les partageons avec les joueurs.",
+ exploreGames:"DÉCOUVRIR LES JEUX",aboutStudio:"DÉCOUVRIR LE STUDIO",scroll:"FAITES DÉFILER",
+ gamesLabel:"NOTRE PORTFOLIO",gamesTitle:"Nos jeux.",gamesDesc:"Chaque projet commence par une idée, chaque jeu crée une nouvelle expérience. Découvrez les jeux développés par 90Minute Studio.",
+ statusLive:"DISPONIBLE",mincupDesc:"Plongez dans l'univers du football à cinq. Construisez votre équipe, gérez votre club et écrivez votre propre histoire.",mobileGame:"JEU MOBILE",gameInfo:"EN SAVOIR PLUS",
+ statusDev:"EN DÉVELOPPEMENT",kebabDesc:"Une histoire qui commence la nuit. Un jeu de simulation où vous gérez votre propre kebab de nuit.",upcomingProject:"NOUVEAU PROJET",followProject:"SUIVRE LE PROJET",
+ eventsLabel:"DU STUDIO",eventsTitle:"Événements.",eventsDesc:"Suivez cet espace pour les rencontres de la communauté, les événements de jeu et les activités du studio.",
+ event1Title:"Événements communautaires",event1Text:"Les annonces d'événements qui réunissent nos joueurs seront publiées ici.",event2Title:"Rencontres de joueurs",event2Text:"Des événements pour présenter nos nouveaux jeux et projets à la communauté.",event3Title:"Annonces spéciales",event3Text:"Actualités sur les tournois, les lancements et les activités du studio.",
+ newsLabel:"À LA UNE",newsTitle:"Actualités du studio.",newsDesc:"Restez informé de l'avancement de nos projets et de nos prochaines annonces.",newsType:"MISE À JOUR DU STUDIO",newsMainTitle:"Nous travaillons sur de nouveaux projets.",newsMainText:"Les annonces sur nos jeux et nos nouvelles idées seront bientôt publiées ici.",newsComing:"BIENTÔT",newsSideTitle:"D'autres nouvelles arrivent.",newsSideText:"Revenez pour les mises à jour, les notes de développement et les actualités du studio.",
+ aboutLabel:"QUI SOMMES-NOUS ?",aboutTitle:"De l'idée à l'expérience.",aboutText:"90Minute Studio est un studio indépendant qui crée des jeux, des projets numériques et des expériences créatives. Notre but : donner vie à des idées originales et créer des projets qui touchent les joueurs.",aboutText2:"Chaque nouveau projet est le début d'un monde à découvrir.",
+ contactLabel:"CONTACT",contactTitle:"Une idée en tête ?",contactText:"Contactez-nous pour toute question, retour ou collaboration.",rights:"Tous droits réservés.",
+ contactBtn:"NOUS CONTACTER",playBtn:"JOUER ↗",closeBtn:"FERMER"};
+translations.ja={
+ navGames:"ゲーム",navEvents:"イベント",navNews:"ニュース",navAbout:"私たちについて",navContact:"お問い合わせ",
+ heroKicker:"インディーゲームスタジオ",heroLine1:"WE CREATE.",heroLine2:"WE PLAY.",heroLine3:"WE INSPIRE.",
+ heroText:"アイデアをゲームに、想像を体験に。90Minute Studioは新しい世界を設計し、形にして、プレイヤーに届けます。",
+ exploreGames:"ゲームを見る",aboutStudio:"スタジオについて",scroll:"スクロール",
+ gamesLabel:"ポートフォリオ",gamesTitle:"ゲーム",gamesDesc:"すべてのプロジェクトは一つのアイデアから。90Minute Studioが開発したゲームをご覧ください。",
+ statusLive:"配信中",mincupDesc:"フットサルの世界へ。チームを作り、クラブを運営し、あなただけのサッカーストーリーを描こう。",mobileGame:"モバイルゲーム",gameInfo:"ゲーム詳細",
+ statusDev:"開発中",kebabDesc:"夜に始まる物語。深夜のケバブ店を経営するシミュレーションゲーム。",upcomingProject:"新プロジェクト",followProject:"プロジェクトを追う",
+ eventsLabel:"スタジオより",eventsTitle:"イベント",eventsDesc:"コミュニティの集まりやゲームイベント、スタジオの活動情報はこちらで。",
+ event1Title:"コミュニティイベント",event1Text:"プレイヤーが集まるイベントのお知らせをここで公開します。",event2Title:"ゲームミートアップ",event2Text:"新作ゲームやプロジェクトをコミュニティと共有するイベントです。",event3Title:"特別なお知らせ",event3Text:"大会やリリース、スタジオ活動に関するお知らせ。",
+ newsLabel:"最新情報",newsTitle:"スタジオニュース",newsDesc:"プロジェクトの進捗や最新のお知らせをチェックしてください。",newsType:"スタジオ更新",newsMainTitle:"新しいプロジェクトに取り組んでいます。",newsMainText:"開発中のゲームや新しいアイデアに関するお知らせを、近日中にここで公開します。",newsComing:"近日公開",newsSideTitle:"続報をお待ちください。",newsSideText:"アップデートや開発ノート、スタジオニュースはまたご確認ください。",
+ aboutLabel:"私たちについて",aboutTitle:"アイデアから体験へ",aboutText:"90Minute Studioは、ゲームやデジタルプロジェクト、クリエイティブな体験づくりに取り組むインディースタジオです。独創的なアイデアを形にし、プレイヤーと強くつながる作品を目指しています。",aboutText2:"新しいプロジェクトは、まだ見ぬ世界の始まりです。",
+ contactLabel:"お問い合わせ",contactTitle:"アイデアはありますか？",contactText:"サポート、フィードバック、コラボレーションはお気軽にご連絡ください。",rights:"無断転載を禁じます。",
+ contactBtn:"連絡する",playBtn:"プレイ ↗",closeBtn:"閉じる"};
 let currentLang="tr";
-const langButton=document.getElementById("langToggle");
-langButton.addEventListener("click",()=>{
-  currentLang=currentLang==="tr"?"en":"tr";document.documentElement.lang=currentLang;
-  document.querySelectorAll("[data-i18n]").forEach(el=>{const k=el.dataset.i18n;if(translations[currentLang][k])el.textContent=translations[currentLang][k]});
-  langButton.textContent=currentLang==="tr"?"EN":"TR";
-});
+const GAME_LINKS={mincup:"",gece:""}; /* Play Store linkini buraya yaz: mincup:"https://play.google.com/..." */
+const langSel=document.getElementById("langSelect");
+function setLang(l){
+  if(!translations[l])l="tr";currentLang=l;document.documentElement.lang=l;langSel.value=l;
+  document.querySelectorAll("[data-i18n]").forEach(el=>{const k=el.dataset.i18n;const v=translations[l][k]??translations.en[k];if(v)el.textContent=v});
+  try{localStorage.setItem("lang",l)}catch(e){}
+}
+langSel.addEventListener("change",()=>setLang(langSel.value));
+let saved=null;try{saved=localStorage.getItem("lang")}catch(e){}
+setLang(saved||((navigator.language||"tr").slice(0,2)));
+/* oyun kartı penceresi */
+const modal=document.getElementById("modal");
+function openGame(card){
+  const id=card.dataset.game,t=translations[currentLang],title=card.querySelector("h3").textContent;
+  document.getElementById("mVisual").className="game-visual "+(card.querySelector(".game-visual").classList.contains("kebab")?"kebab":"has-img");
+  document.getElementById("mVisual").innerHTML=card.querySelector(".game-visual").innerHTML;
+  const st=document.getElementById("mStatus"),cs=card.querySelector(".status");st.textContent=cs.textContent;st.className=cs.className;
+  document.getElementById("mTitle").textContent=title;
+  document.getElementById("mDesc").textContent=card.querySelector(".game-info p").textContent;
+  const cta=document.getElementById("mCta"),link=GAME_LINKS[id];
+  cta.href=link||("mailto:90minstudio@gmail.com?subject="+encodeURIComponent(title));
+  cta.textContent=link?t.playBtn:t.contactBtn;if(link){cta.target="_blank";cta.rel="noopener"}else cta.removeAttribute("target");
+  document.getElementById("mClose").textContent=t.closeBtn;
+  modal.classList.add("open");modal.setAttribute("aria-hidden","false");document.body.style.overflow="hidden";
+}
+function closeGame(){modal.classList.remove("open");modal.setAttribute("aria-hidden","true");document.body.style.overflow=""}
+document.querySelectorAll(".game-card").forEach(c=>{c.addEventListener("click",()=>openGame(c));c.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openGame(c)}})});
+document.getElementById("modalX").addEventListener("click",closeGame);document.getElementById("mClose").addEventListener("click",closeGame);
+modal.addEventListener("click",e=>{if(e.target===modal)closeGame()});addEventListener("keydown",e=>{if(e.key==="Escape")closeGame()});
 document.getElementById("year").textContent=new Date().getFullYear();
 const navLinks=document.getElementById("navLinks");
 document.getElementById("menuBtn").addEventListener("click",()=>navLinks.classList.toggle("open"));
