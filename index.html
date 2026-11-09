@@ -110,7 +110,29 @@ select.lang option{background:#101218;color:#fff}
 .modal-x{position:absolute;top:14px;right:14px;z-index:5;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:rgba(0,0,0,.5);color:#fff;cursor:pointer;font-size:15px}.modal-x:hover{border-color:var(--red)}
 .modal-box .game-visual{height:280px}.modal-box .game-card-anim{animation:none}
 .modal-body{padding:26px}.modal-body h3{font-size:30px;letter-spacing:-.04em;margin:14px 0 8px}.modal-body p{color:var(--muted);font-size:14px;margin:0 0 24px}
+.btn-play{background:linear-gradient(135deg,#2bd96b,#13a64a);color:#04140a;box-shadow:0 12px 34px rgba(43,217,107,.25)}.btn-play:hover{box-shadow:0 16px 44px rgba(43,217,107,.45)}
 .modal-actions{display:flex;flex-wrap:wrap;gap:10px}
+
+html{-webkit-text-size-adjust:100%}main{overflow-x:clip}
+.ig-btn{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.04);color:#fff;transition:.2s}.ig-btn:hover{border-color:var(--red);color:var(--red);transform:translateY(-2px)}
+.contact-btns{display:flex;flex-wrap:wrap;gap:10px}.btn svg{flex:none}
+.modal-box{max-height:92vh;max-height:92dvh}
+@media(max-width:650px){
+ .nav{gap:10px}.brand-name{font-size:12px}.brand img,.brand .logo-fb{width:40px;height:40px}.nav-actions{gap:8px}
+ select.lang{padding:8px 26px 8px 11px}
+ h1{font-size:clamp(40px,13vw,60px);margin:18px 0}.hero{padding:34px 0 60px;gap:0}.hero-art{min-height:280px}.hero-logo-wrap{width:min(66%,260px)}
+ .hero-copy{font-size:15px}.hero-actions .btn,.contact-btns .btn{width:100%;justify-content:center}.contact-btns{width:100%}
+ .kicker{font-size:10px;letter-spacing:.12em}
+ .section-title{font-size:clamp(30px,10vw,42px)}.section-head{margin-bottom:28px}
+ .game-card{min-height:0}.game-visual{height:210px}.game-info{padding:20px}.game-info h3{font-size:23px}
+ .feature{padding:22px}.news-card{padding:22px}.news-card h3{font-size:21px}
+ .contact-panel{padding:26px 22px}.ticker-track span{padding:13px 16px;font-size:10px}
+ .modal{padding:12px;align-items:end}.modal-box{border-radius:22px}.modal-box .game-visual{height:210px}.modal-body{padding:20px}.modal-body h3{font-size:25px}
+ .modal-actions{flex-direction:column}.modal-actions .btn{width:100%;justify-content:center;text-align:center}
+ .copyright{font-size:10px}.footer-links{gap:14px}
+}
+@media(max-width:380px){.brand-name{display:none}.ig-btn{width:34px;height:34px}}
+@media(hover:none){.card:hover,.game-card:hover,.feature:hover{transform:none}.cursor-glow{display:none}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}h1 .ln>span,.hero-copy,.hero-actions,.reveal{opacity:1;transform:none}}
 </style>
 </head>
@@ -124,7 +146,7 @@ select.lang option{background:#101218;color:#fff}
   <nav class="links" id="navLinks">
     <a href="#games" data-i18n="navGames">OYUNLAR</a><a href="#events" data-i18n="navEvents">ETKİNLİKLER</a><a href="#news" data-i18n="navNews">HABERLER</a><a href="#about" data-i18n="navAbout">HAKKIMIZDA</a><a href="#contact" data-i18n="navContact">İLETİŞİM</a>
   </nav>
-  <div class="nav-actions"><select class="lang" id="langSelect" aria-label="Language"><option value="tr">🇹🇷 TR</option><option value="en">🇬🇧 EN</option><option value="fr">🇫🇷 FR</option><option value="ja">🇯🇵 日本語</option></select><button class="menu-btn" id="menuBtn" type="button" aria-label="Menü">☰</button></div>
+  <div class="nav-actions"><a class="ig-btn" href="https://www.instagram.com/90minuteestudio" target="_blank" rel="noopener" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a><select class="lang" id="langSelect" aria-label="Language"><option value="tr">🇹🇷 TR</option><option value="en">🇬🇧 EN</option><option value="fr">🇫🇷 FR</option><option value="ja">🇯🇵 日本語</option></select><button class="menu-btn" id="menuBtn" type="button" aria-label="Menü">☰</button></div>
 </div></header>
 
 <main id="home">
@@ -195,13 +217,13 @@ select.lang option{background:#101218;color:#fff}
   <section id="contact"><div class="container">
     <div class="contact-panel reveal">
       <div><div class="section-label" data-i18n="contactLabel">İLETİŞİM</div><h2 data-i18n="contactTitle">Bir fikrin mi var?</h2><p data-i18n="contactText">Destek, geri bildirim veya iş birliği için bize ulaş.</p></div>
-      <a class="btn btn-red" href="mailto:90minstudio@gmail.com">90MINSTUDIO@GMAIL.COM ↗</a>
+      <div class="contact-btns"><a class="btn btn-red" href="mailto:90minstudio@gmail.com">90MINSTUDIO@GMAIL.COM ↗</a><a class="btn btn-outline" href="https://www.instagram.com/90minuteestudio" target="_blank" rel="noopener"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg> INSTAGRAM ↗</a></div>
     </div>
   </div></section>
 </main>
 
 <footer><div class="container">
-  <div class="footer-top"><a class="footer-brand" href="#home">90<span>MINUTE</span> STUDIO</a><div class="footer-links"><a href="#games" data-i18n="navGames">Oyunlar</a><a href="#events" data-i18n="navEvents">Etkinlikler</a><a href="#news" data-i18n="navNews">Haberler</a><a href="#contact" data-i18n="navContact">İletişim</a></div></div>
+  <div class="footer-top"><a class="footer-brand" href="#home">90<span>MINUTE</span> STUDIO</a><div class="footer-links"><a href="#games" data-i18n="navGames">Oyunlar</a><a href="#events" data-i18n="navEvents">Etkinlikler</a><a href="#news" data-i18n="navNews">Haberler</a><a href="#contact" data-i18n="navContact">İletişim</a><a href="https://www.instagram.com/90minuteestudio" target="_blank" rel="noopener">Instagram</a><a href="mailto:90minstudio@gmail.com">90minstudio@gmail.com</a></div></div>
   <div class="copyright"><span>© <span id="year"></span> 90Minute Studio. <span data-i18n="rights">Tüm hakları saklıdır.</span></span><span>WE CREATE. WE PLAY. WE INSPIRE.</span></div>
 </div></footer>
 
@@ -209,7 +231,7 @@ select.lang option{background:#101218;color:#fff}
   <button class="modal-x" id="modalX" type="button" aria-label="Close">✕</button>
   <div class="game-visual" id="mVisual"></div>
   <div class="modal-body"><span class="status" id="mStatus"></span><h3 id="mTitle"></h3><p id="mDesc"></p>
-  <div class="modal-actions"><a class="btn btn-red" id="mCta" href="#"></a><button class="btn btn-outline" id="mClose" type="button"></button></div></div>
+  <div class="modal-actions" id="mActions"><button class="btn btn-outline" id="mClose" type="button"></button></div></div>
 </div></div>
 <script>
 const translations = {
@@ -243,8 +265,8 @@ const translations = {
   }
 };
 
-Object.assign(translations.tr,{contactBtn:"BİZE ULAŞ",playBtn:"OYNA ↗",closeBtn:"KAPAT"});
-Object.assign(translations.en,{contactBtn:"GET IN TOUCH",playBtn:"PLAY ↗",closeBtn:"CLOSE"});
+Object.assign(translations.tr,{contactBtn:"BİZE ULAŞ",playBtn:"OYNA ↗",closeBtn:"KAPAT",storeBtn:"GOOGLE PLAY'DEN İNDİR",playNow:"OYUNU OYNA"});
+Object.assign(translations.en,{contactBtn:"GET IN TOUCH",playBtn:"PLAY ↗",closeBtn:"CLOSE",storeBtn:"DOWNLOAD ON GOOGLE PLAY",playNow:"PLAY NOW"});
 translations.fr={
  navGames:"JEUX",navEvents:"ÉVÉNEMENTS",navNews:"ACTUALITÉS",navAbout:"À PROPOS",navContact:"CONTACT",
  heroKicker:"STUDIO DE JEUX INDÉPENDANT",heroLine1:"WE CREATE.",heroLine2:"WE PLAY.",heroLine3:"WE INSPIRE.",
@@ -258,7 +280,7 @@ translations.fr={
  newsLabel:"À LA UNE",newsTitle:"Actualités du studio.",newsDesc:"Restez informé de l'avancement de nos projets et de nos prochaines annonces.",newsType:"MISE À JOUR DU STUDIO",newsMainTitle:"Nous travaillons sur de nouveaux projets.",newsMainText:"Les annonces sur nos jeux et nos nouvelles idées seront bientôt publiées ici.",newsComing:"BIENTÔT",newsSideTitle:"D'autres nouvelles arrivent.",newsSideText:"Revenez pour les mises à jour, les notes de développement et les actualités du studio.",
  aboutLabel:"QUI SOMMES-NOUS ?",aboutTitle:"De l'idée à l'expérience.",aboutText:"90Minute Studio est un studio indépendant qui crée des jeux, des projets numériques et des expériences créatives. Notre but : donner vie à des idées originales et créer des projets qui touchent les joueurs.",aboutText2:"Chaque nouveau projet est le début d'un monde à découvrir.",
  contactLabel:"CONTACT",contactTitle:"Une idée en tête ?",contactText:"Contactez-nous pour toute question, retour ou collaboration.",rights:"Tous droits réservés.",
- contactBtn:"NOUS CONTACTER",playBtn:"JOUER ↗",closeBtn:"FERMER"};
+ contactBtn:"NOUS CONTACTER",playBtn:"JOUER ↗",closeBtn:"FERMER",storeBtn:"TÉLÉCHARGER SUR GOOGLE PLAY",playNow:"JOUER MAINTENANT"};
 translations.ja={
  navGames:"ゲーム",navEvents:"イベント",navNews:"ニュース",navAbout:"私たちについて",navContact:"お問い合わせ",
  heroKicker:"インディーゲームスタジオ",heroLine1:"WE CREATE.",heroLine2:"WE PLAY.",heroLine3:"WE INSPIRE.",
@@ -272,9 +294,9 @@ translations.ja={
  newsLabel:"最新情報",newsTitle:"スタジオニュース",newsDesc:"プロジェクトの進捗や最新のお知らせをチェックしてください。",newsType:"スタジオ更新",newsMainTitle:"新しいプロジェクトに取り組んでいます。",newsMainText:"開発中のゲームや新しいアイデアに関するお知らせを、近日中にここで公開します。",newsComing:"近日公開",newsSideTitle:"続報をお待ちください。",newsSideText:"アップデートや開発ノート、スタジオニュースはまたご確認ください。",
  aboutLabel:"私たちについて",aboutTitle:"アイデアから体験へ",aboutText:"90Minute Studioは、ゲームやデジタルプロジェクト、クリエイティブな体験づくりに取り組むインディースタジオです。独創的なアイデアを形にし、プレイヤーと強くつながる作品を目指しています。",aboutText2:"新しいプロジェクトは、まだ見ぬ世界の始まりです。",
  contactLabel:"お問い合わせ",contactTitle:"アイデアはありますか？",contactText:"サポート、フィードバック、コラボレーションはお気軽にご連絡ください。",rights:"無断転載を禁じます。",
- contactBtn:"連絡する",playBtn:"プレイ ↗",closeBtn:"閉じる"};
+ contactBtn:"連絡する",playBtn:"プレイ ↗",closeBtn:"閉じる",storeBtn:"Google Playでダウンロード",playNow:"今すぐプレイ"};
 let currentLang="tr";
-const GAME_LINKS={mincup:"",gece:""}; /* Play Store linkini buraya yaz: mincup:"https://play.google.com/..." */
+const GAME_LINKS={mincup:{store:"https://play.google.com/store/apps/details?id=com.minute.halisaha",play:"m.html"},gece:{}};
 const langSel=document.getElementById("langSelect");
 function setLang(l){
   if(!translations[l])l="tr";currentLang=l;document.documentElement.lang=l;langSel.value=l;
@@ -293,9 +315,12 @@ function openGame(card){
   const st=document.getElementById("mStatus"),cs=card.querySelector(".status");st.textContent=cs.textContent;st.className=cs.className;
   document.getElementById("mTitle").textContent=title;
   document.getElementById("mDesc").textContent=card.querySelector(".game-info p").textContent;
-  const cta=document.getElementById("mCta"),link=GAME_LINKS[id];
-  cta.href=link||("mailto:90minstudio@gmail.com?subject="+encodeURIComponent(title));
-  cta.textContent=link?t.playBtn:t.contactBtn;if(link){cta.target="_blank";cta.rel="noopener"}else cta.removeAttribute("target");
+  const box=document.getElementById("mActions"),closeBtn=document.getElementById("mClose"),L=GAME_LINKS[id]||{};
+  box.querySelectorAll(".dyn").forEach(n=>n.remove());
+  const add=(cls,label,href,ext)=>{const a=document.createElement("a");a.className="btn "+cls+" dyn";a.textContent=label;a.href=href;if(ext){a.target="_blank";a.rel="noopener"}box.insertBefore(a,closeBtn)};
+  if(L.store)add("btn-red","▶ "+t.storeBtn,L.store,true);
+  if(L.play)add("btn-play","🎮 "+t.playNow,L.play,false);
+  if(!L.store&&!L.play)add("btn-red",t.contactBtn,"mailto:90minstudio@gmail.com?subject="+encodeURIComponent(title),false);
   document.getElementById("mClose").textContent=t.closeBtn;
   modal.classList.add("open");modal.setAttribute("aria-hidden","false");document.body.style.overflow="hidden";
 }
