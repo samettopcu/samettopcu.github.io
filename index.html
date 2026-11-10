@@ -188,6 +188,37 @@ html[lang=ja] .ev-title,html[lang=ja] .ev-info h3{letter-spacing:0}
 @media(max-width:850px){.events-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:650px){.events-grid{grid-template-columns:1fr}.ev-img{height:180px}.ev-hero{height:230px;border-radius:20px}.ev-hero .em{font-size:80px}#evText p{font-size:16px}#evCta{width:100%;justify-content:center}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}h1 .ln>span,.hero-copy,.hero-actions,.reveal{opacity:1;transform:none}}
+
+/* ===== MOBİL DÜZELTME: yatay taşma / sola kayma / büyük açılan paneller ===== */
+/* blob'lar main'e göre konumlansın ki overflow kırpması onları da kapsasın */
+main{position:relative;overflow-x:hidden;overflow-x:clip}
+html{overscroll-behavior-x:none;max-width:100%}
+body{max-width:100%;touch-action:pan-y pinch-zoom}
+.modal,.evpage{overscroll-behavior:contain;max-width:100%}
+.modal-box,.evpage-in{max-width:100%}
+.modal-box{-webkit-overflow-scrolling:touch}
+@media(max-width:650px){
+ .blob{filter:blur(60px)}
+ .b1{width:280px;height:280px;right:-40px}.b2{width:220px;height:220px;left:-50px}
+ .modal{padding:10px}
+ .modal-box{max-height:calc(100vh - 20px);max-height:calc(100dvh - 20px)}
+ .modal-box .game-symbol{font-size:64px}
+ .modal-box .game-watermark{font-size:72px}
+}
+
+/* ===== Etkinlik paneli ===== */
+.events-panel{padding:0}
+.ep-cover{position:relative;min-height:270px;display:flex;align-items:flex-end;background:radial-gradient(ellipse at 80% 0,rgba(255,36,45,.3),transparent 60%),linear-gradient(135deg,#3a0f14,#0b0d12);overflow:hidden}
+.ep-cover>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;transition:transform .8s}
+.events-panel:hover .ep-cover>img{transform:scale(1.04)}
+.ep-cover:after{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--panel) 2%,rgba(16,18,24,.6) 42%,rgba(16,18,24,.12))}
+.ep-cover-in{position:relative;z-index:2;padding:30px;max-width:660px}
+.ep-cover-in h3{font-size:clamp(26px,4vw,40px);letter-spacing:-.045em;line-height:1.08;margin:0 0 8px}
+.ep-cover-in p{margin:0;color:#c9cbd3;font-size:14px}
+.events-panel .events-grid{padding:22px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));position:relative;z-index:2}
+.events-panel .ev-card{background:#0c0e13}
+.ev-empty{color:var(--muted);margin:0;padding:6px;font-size:14px}
+@media(max-width:650px){.ep-cover{min-height:210px}.ep-cover-in{padding:20px}.events-panel .events-grid{padding:14px;gap:14px;grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -226,26 +257,16 @@ html[lang=ja] .ev-title,html[lang=ja] .ev-info h3{letter-spacing:0}
   <section id="games"><div class="container">
     <div class="section-head reveal"><div><div class="section-label" data-i18n="gamesLabel">PORTFÖYÜMÜZ</div><h2 class="section-title"><span data-i18n="gamesTitle">Oyunlarımız.</span></h2></div>
       <p class="section-desc" data-i18n="gamesDesc">Her proje yeni bir fikir, her oyun yeni bir deneyim. 90Minute Studio tarafından geliştirilen oyunları keşfet.</p></div>
-    <div class="games-grid">
-      <article class="card game-card reveal" data-game="mincup" tabindex="0" role="button">
-        <div class="game-visual has-img"><div class="game-symbol">⚽</div><div class="game-watermark">90</div><img class="game-img" src="resm1.png" alt="By Mincup Halısaha" onerror="this.remove()"></div>
-        <div class="game-info"><div class="game-top"><span class="status" data-i18n="statusLive">YAYINDA</span><span style="color:#888;font-size:11px">ANDROID</span></div>
-          <h3>By Mincup Halısaha</h3><p data-i18n="mincupDesc">Halı saha ve futbol yönetimi dünyasına adım at. Takımını oluştur, kulübünü yönet ve kendi futbol hikâyeni yaz.</p>
-          <div class="game-foot"><span data-i18n="mobileGame">MOBİL OYUN</span><span class="text-link"><span data-i18n="gameInfo">OYUN HAKKINDA</span> ↗</span></div></div>
-      </article>
-      <article class="card game-card reveal" data-game="gece" tabindex="0" role="button">
-        <div class="game-visual kebab"><div class="game-symbol">🌙</div><div class="game-watermark">NIGHT</div></div>
-        <div class="game-info"><div class="game-top"><span class="status dev" data-i18n="statusDev">GELİŞTİRİLİYOR</span><span style="color:#888;font-size:11px">PC / MOBILE</span></div>
-          <h3>Gece Dönercisi</h3><p data-i18n="kebabDesc">Gece başlayan bir çalışma hikâyesi. Kendi dönerci işletmeni yönetmeye uzanan simülasyon projesi.</p>
-          <div class="game-foot"><span data-i18n="upcomingProject">YENİ PROJE</span><span class="text-link"><span data-i18n="followProject">PROJEYİ TAKİP ET</span> ↗</span></div></div>
-      </article>
-    </div>
+    <div class="games-grid" id="gamesGrid"></div>
   </div></section>
 
   <section id="events"><div class="container">
     <div class="section-head reveal"><div><div class="section-label" data-i18n="eventsLabel">STÜDYODAN</div><h2 class="section-title"><span data-i18n="eventsTitle">Etkinlikler.</span></h2></div>
       <p class="section-desc" data-i18n="eventsDesc">Topluluk buluşmaları, oyun etkinlikleri ve özel organizasyonlar için bu alanı takip et.</p></div>
-    <div class="events-grid" id="eventsGrid"></div>
+    <div class="card events-panel reveal" id="eventsPanel">
+      <div class="ep-cover"><img src="etkinlik.png" alt="" onerror="this.remove()"><div class="ep-cover-in"><h3 data-i18n="epTitle">Topluluk Etkinlikleri</h3><p data-i18n="epText"></p></div></div>
+      <div class="events-grid" id="eventsGrid"></div>
+    </div>
   </div></section>
 
   <section id="news"><div class="container">
@@ -293,6 +314,8 @@ html[lang=ja] .ev-title,html[lang=ja] .ev-info h3{letter-spacing:0}
   <div class="modal-actions" id="mActions"><button class="btn btn-outline" id="mClose" type="button"></button></div></div>
 </div></div>
 <script>
+const DEF={"events":[{"id":"event1","title":{"tr":"Topluluk Etkinlikleri","en":"Community Events","fr":"Événements communautaires","ja":"コミュニティイベント"},"summary":{"tr":"Oyuncularımızı bir araya getiren etkinlik ve organizasyon duyuruları burada paylaşılacak.","en":"Announcements for events and activities that bring our players together will appear here.","fr":"Les annonces d'événements qui réunissent nos joueurs seront publiées ici.","ja":"プレイヤーが集まるイベントのお知らせをここで公開します。"},"body":{"tr":"Topluluk etkinlikleri, 90Minute Studio'nun oyuncularla bir araya geldiği buluşmalardır. Amacımız oyuncuların fikirlerini dinlemek, geri bildirimlerini almak ve birlikte eğlenmektir.\n\nEtkinlik tarihleri, yerleri ve katılım bilgileri belli olduğunda bu sayfada paylaşılacak. Gelişmelerden haberdar olmak için Instagram hesabımızı takip edebilirsin.","en":"Community events are gatherings where 90Minute Studio meets its players. We want to hear your ideas, collect feedback, and have fun together.\n\nDates, locations, and participation details will be shared on this page once confirmed. Follow our Instagram account to stay updated.","fr":"Les événements communautaires sont des rencontres où 90Minute Studio retrouve ses joueurs. Nous voulons écouter vos idées, recueillir vos retours et nous amuser ensemble.\n\nLes dates, lieux et modalités de participation seront publiés sur cette page dès qu'ils seront confirmés. Suivez notre compte Instagram pour rester informé.","ja":"コミュニティイベントは、90Minute Studioがプレイヤーと直接会える場です。皆さんのアイデアを聞き、フィードバックを受け取り、一緒に楽しみたいと考えています。\n\n日程・場所・参加方法が決まり次第、このページでお知らせします。最新情報はInstagramをご覧ください。"},"date":"","img":"","em":"🏆","g":"linear-gradient(135deg,#3a0f14,#0b0d12)"},{"id":"event2","title":{"tr":"Özel Duyurular","en":"Special Announcements","fr":"Annonces spéciales","ja":"特別なお知らせ"},"summary":{"tr":"Turnuvalar, lansmanlar ve stüdyo organizasyonları için duyurular.","en":"News about tournaments, launches, and studio activities.","fr":"Actualités sur les tournois, les lancements et les activités du studio.","ja":"大会やリリース、スタジオ活動に関するお知らせ。"},"body":{"tr":"Turnuvalar, lansmanlar ve stüdyo organizasyonlarıyla ilgili tüm özel duyurular bu başlık altında yer alacak.\n\nYeni oyun çıkışları ve önemli gelişmeler için bu sayfayı takip et.","en":"All special announcements about tournaments, launches, and studio activities will appear under this section.\n\nKeep an eye on this page for new game releases and important updates.","fr":"Toutes les annonces spéciales concernant les tournois, les lancements et les activités du studio apparaîtront ici.\n\nSuivez cette page pour les sorties de jeux et les actualités importantes.","ja":"大会、リリース、スタジオ活動に関する特別なお知らせは、すべてここに掲載します。\n\n新作リリースや重要なお知らせは、このページをご確認ください。"},"date":"","img":"","em":"📣","g":"linear-gradient(135deg,#3a1d0a,#0b0d12)"}],"games":[{"id":"mincup","status":"live","platform":"ANDROID","symbol":"⚽","watermark":"90","theme":"red","img":"resm1.png","title":"By Mincup Halısaha","desc":{"tr":"Halı saha ve futbol yönetimi dünyasına adım at. Takımını oluştur, kulübünü yönet ve kendi futbol hikâyeni yaz.","en":"Step into the world of five-a-side football management. Build your team, manage your club, and write your own football story.","fr":"Plongez dans l'univers du football à cinq. Construisez votre équipe, gérez votre club et écrivez votre propre histoire.","ja":"フットサルの世界へ。チームを作り、クラブを運営し、あなただけのサッカーストーリーを描こう。"},"store":"https://play.google.com/store/apps/details?id=com.minute.halisaha","play":"m.html"},{"id":"gece","status":"dev","platform":"PC / MOBILE","symbol":"🌙","watermark":"NIGHT","theme":"warm","img":"","title":"Gece Dönercisi","desc":{"tr":"Gece başlayan bir çalışma hikâyesi. Kendi dönerci işletmeni yönetmeye uzanan simülasyon projesi.","en":"A story that begins at night. A simulation project about running your own late-night döner shop.","fr":"Une histoire qui commence la nuit. Un jeu de simulation où vous gérez votre propre kebab de nuit.","ja":"夜に始まる物語。深夜のケバブ店を経営するシミュレーションゲーム。"},"store":"","play":""}],"team":[{"id":"team1","name":"Asım Topcu","photo":"asim.jpg","link":"https://www.linkedin.com/in/asimtopcu","role":{"tr":"Kurucu & Geliştirici","en":"Founder & Developer","fr":"Fondateur & développeur","ja":"創設者・開発者"},"bio":{"tr":"","en":"","fr":"","ja":""}}]};
+let C=JSON.parse(JSON.stringify(DEF));
 const translations = {
   tr: {
     navGames:"OYUNLAR",navEvents:"ETKİNLİKLER",navNews:"HABERLER",navAbout:"HAKKIMIZDA",navContact:"İLETİŞİM",
@@ -362,70 +385,68 @@ Object.assign(translations.tr,{teamLabel:"EKİP",teamTitle:"Ekibimiz."});
 Object.assign(translations.en,{teamLabel:"TEAM",teamTitle:"Our Team."});
 Object.assign(translations.fr,{teamLabel:"ÉQUIPE",teamTitle:"Notre équipe."});
 Object.assign(translations.ja,{teamLabel:"チーム",teamTitle:"チーム紹介"});
-/* EKİP — yeni kişi eklemek için bir satır kopyala. photo: "foto.jpg" (boşsa baş harfler görünür), link: instagram vb. */
-const TEAM=[
- {name:"Asım Topcu",photo:"asim.jpg",link:"https://www.linkedin.com/in/asimtopcu",role:{tr:"Kurucu & Geliştirici",en:"Founder & Developer",fr:"Fondateur & développeur",ja:"創設者・開発者"},bio:{tr:"",en:"",fr:"",ja:""}}
- /* ,{name:"İsim Soyisim",photo:"uye2.jpg",link:"https://www.instagram.com/...",role:{tr:"Oyun Tasarımcısı",en:"Game Designer",fr:"Game designer",ja:"ゲームデザイナー"},bio:{tr:"Kısa tanıtım yazısı",en:"Short bio",fr:"Courte bio",ja:"短い紹介"}} */
-];
+
 
 Object.assign(translations.tr,{readMore:"DEVAMINI OKU →",backBtn:"← ETKİNLİKLERE DÖN"});
 Object.assign(translations.en,{readMore:"READ MORE →",backBtn:"← BACK TO EVENTS"});
 Object.assign(translations.fr,{readMore:"LIRE LA SUITE →",backBtn:"← RETOUR AUX ÉVÉNEMENTS"});
 Object.assign(translations.ja,{readMore:"続きを読む →",backBtn:"← イベント一覧へ"});
-/* ETKİNLİKLER — yeni etkinlik eklemek için bir blok kopyala. img: "event4.jpg" (yoksa emoji görünür). Başlık/özet translations içindeki tk anahtarından gelir; yeni etkinlikte title/summary alanlarını doğrudan yaz. */
+Object.assign(translations.tr,{epTitle:"Topluluk Etkinlikleri",epText:"Oyuncularla buluştuğumuz etkinlikler, turnuvalar ve özel duyurular.",epEmpty:"Yakında yeni etkinlikler paylaşılacak."});
+Object.assign(translations.en,{epTitle:"Community Events",epText:"Meetups with our players, tournaments and special announcements.",epEmpty:"New events will be announced soon."});
+Object.assign(translations.fr,{epTitle:"Événements communautaires",epText:"Rencontres avec nos joueurs, tournois et annonces spéciales.",epEmpty:"De nouveaux événements seront annoncés bientôt."});
+Object.assign(translations.ja,{epTitle:"コミュニティイベント",epText:"プレイヤーとの交流会、大会、特別なお知らせ。",epEmpty:"新しいイベントは近日公開します。"});
+/* İÇERİK: etkinlik / oyun / ekip verisi content.json'dan gelir (admin.html ile düzenlenir). Dosya yoksa yukarıdaki DEF kullanılır. */
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const tx=(o,L)=>o&&typeof o==="object"?(o[L]||o.en||o.tr||""):(o||"");
 const D={tr:"YAKINDA",en:"COMING SOON",fr:"BIENTÔT",ja:"近日公開"};
-const EVENTS=[
- {tk:"event1",img:"event1.jpg",em:"🏆",g:"linear-gradient(135deg,#3a0f14,#0b0d12)",date:D,body:{
-  tr:["Topluluk etkinlikleri, 90Minute Studio'nun oyuncularla bir araya geldiği buluşmalardır. Amacımız oyuncuların fikirlerini dinlemek, geri bildirimlerini almak ve birlikte eğlenmektir.","Etkinlik tarihleri, yerleri ve katılım bilgileri belli olduğunda bu sayfada paylaşılacak. Gelişmelerden haberdar olmak için Instagram hesabımızı takip edebilirsin."],
-  en:["Community events are gatherings where 90Minute Studio meets its players. We want to hear your ideas, collect feedback, and have fun together.","Dates, locations, and participation details will be shared on this page once confirmed. Follow our Instagram account to stay updated."],
-  fr:["Les événements communautaires sont des rencontres où 90Minute Studio retrouve ses joueurs. Nous voulons écouter vos idées, recueillir vos retours et nous amuser ensemble.","Les dates, lieux et modalités de participation seront publiés sur cette page dès qu'ils seront confirmés. Suivez notre compte Instagram pour rester informé."],
-  ja:["コミュニティイベントは、90Minute Studioがプレイヤーと直接会える場です。皆さんのアイデアを聞き、フィードバックを受け取り、一緒に楽しみたいと考えています。","日程・場所・参加方法が決まり次第、このページでお知らせします。最新情報はInstagramをご覧ください。"]}},
- {tk:"event3",img:"event3.jpg",em:"📣",g:"linear-gradient(135deg,#3a1d0a,#0b0d12)",date:D,body:{
-  tr:["Turnuvalar, lansmanlar ve stüdyo organizasyonlarıyla ilgili tüm özel duyurular bu başlık altında yer alacak.","Yeni oyun çıkışları ve önemli gelişmeler için bu sayfayı takip et."],
-  en:["All special announcements about tournaments, launches, and studio activities will appear under this section.","Keep an eye on this page for new game releases and important updates."],
-  fr:["Toutes les annonces spéciales concernant les tournois, les lancements et les activités du studio apparaîtront ici.","Suivez cette page pour les sorties de jeux et les actualités importantes."],
-  ja:["大会、リリース、スタジオ活動に関する特別なお知らせは、すべてここに掲載します。","新作リリースや重要なお知らせは、このページをご確認ください。"]}}
-];
-const evT=(e,L,f)=>translations[L][e.tk+f]??translations.en[e.tk+f]??"";
-const evVis=(e,big)=>`<span class="em">${e.em}</span><img src="${e.img}" alt="" onerror="this.remove()">`;
+const DEF_G=["linear-gradient(135deg,#3a0f14,#0b0d12)","linear-gradient(135deg,#3a1d0a,#0b0d12)","linear-gradient(135deg,#1a1d3a,#0b0d12)"];
+const evG=(e,i)=>e.g||DEF_G[i%DEF_G.length];
+const evVis=e=>`<span class="em">${esc(e.em||"🏆")}</span><img src="${esc(e.img||"etkinlik.png")}" alt="" onerror="if(this.dataset.f){this.remove()}else{this.dataset.f=1;this.src='etkinlik.png'}">`;
+const bindGlow=c=>c.addEventListener("pointermove",ev=>{const r=c.getBoundingClientRect();c.style.setProperty("--mx",(ev.clientX-r.left)+"px");c.style.setProperty("--my",(ev.clientY-r.top)+"px")});
 function renderEvents(){
-  const L=currentLang;
-  document.getElementById("eventsGrid").innerHTML=EVENTS.map((e,i)=>`<a class="card ev-card" href="#event-${i+1}" style="animation-delay:${i*.12}s"><div class="ev-img" style="--g:${e.g}">${evVis(e)}</div><div class="ev-info"><span class="ev-date">${e.date[L]}</span><h3>${evT(e,L,"Title")}</h3><p>${evT(e,L,"Text")}</p><span class="ev-more">${translations[L].readMore}</span></div></a>`).join("");
-  document.querySelectorAll("#eventsGrid .card").forEach(c=>c.addEventListener("pointermove",ev=>{const r=c.getBoundingClientRect();c.style.setProperty("--mx",(ev.clientX-r.left)+"px");c.style.setProperty("--my",(ev.clientY-r.top)+"px")}));
+  const L=currentLang,list=C.events||[],grid=document.getElementById("eventsGrid");
+  grid.innerHTML=list.length?list.map((e,i)=>`<a class="card ev-card" href="#event-${i+1}" style="animation-delay:${i*.1}s"><div class="ev-img" style="--g:${evG(e,i)}">${evVis(e)}</div><div class="ev-info"><span class="ev-date">${esc(e.date||D[L]||D.tr)}</span><h3>${esc(tx(e.title,L))}</h3><p>${esc(tx(e.summary,L))}</p><span class="ev-more">${translations[L].readMore}</span></div></a>`).join(""):`<p class="ev-empty">${translations[L].epEmpty}</p>`;
+  grid.querySelectorAll(".card").forEach(bindGlow);
+}
+function renderGames(){
+  const L=currentLang,t=translations[L],box=document.getElementById("gamesGrid");
+  box.innerHTML=(C.games||[]).map((g,i)=>{const live=g.status!=="dev";
+    return `<article class="card game-card" data-game="${esc(g.id)}" tabindex="0" role="button" style="animation:up2 .8s cubic-bezier(.2,.8,.2,1) ${i*.1}s backwards"><div class="game-visual${g.img?" has-img":""}${g.theme==="warm"?" kebab":""}"><div class="game-symbol">${esc(g.symbol||"🎮")}</div><div class="game-watermark">${esc(g.watermark||"")}</div>${g.img?`<img class="game-img" src="${esc(g.img)}" alt="${esc(g.title)}" onerror="this.remove()">`:""}</div><div class="game-info"><div class="game-top"><span class="status${live?"":" dev"}">${live?t.statusLive:t.statusDev}</span><span style="color:#888;font-size:11px">${esc(g.platform||"")}</span></div><h3>${esc(g.title)}</h3><p>${esc(tx(g.desc,L))}</p><div class="game-foot"><span>${live?t.mobileGame:t.upcomingProject}</span><span class="text-link"><span>${live?t.gameInfo:t.followProject}</span> ↗</span></div></div></article>`}).join("");
+  box.querySelectorAll(".game-card").forEach(c=>{bindGlow(c);c.addEventListener("click",()=>openGame(c));c.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openGame(c)}})});
 }
 const evPage=document.getElementById("evPage");
 function route(){
-  const m=location.hash.match(/^#event-(\d+)$/),e=m&&EVENTS[+m[1]-1],L=currentLang;
+  const m=location.hash.match(/^#event-(\d+)$/),idx=m?+m[1]-1:-1,e=m&&(C.events||[])[idx],L=currentLang;
   if(!e){evPage.classList.remove("open");evPage.setAttribute("aria-hidden","true");document.body.style.overflow="";return}
-  document.getElementById("evHero").style.setProperty("--g",e.g);document.getElementById("evHero").innerHTML=evVis(e);
-  document.getElementById("evDate").textContent=e.date[L];document.getElementById("evTitle").textContent=evT(e,L,"Title");
-  document.getElementById("evText").innerHTML=(e.body[L]||e.body.en).map(p=>`<p>${p}</p>`).join("");
+  document.getElementById("evHero").style.setProperty("--g",evG(e,idx));document.getElementById("evHero").innerHTML=evVis(e);
+  document.getElementById("evDate").textContent=e.date||D[L]||D.tr;document.getElementById("evTitle").textContent=tx(e.title,L);
+  document.getElementById("evText").innerHTML=String(tx(e.body,L)||tx(e.summary,L)).split(/\n\s*\n/).filter(Boolean).map(p=>`<p>${esc(p).replace(/\n/g,"<br>")}</p>`).join("");
   document.getElementById("evBack").textContent=translations[L].backBtn;document.getElementById("evCta").textContent=translations[L].contactBtn;
-  document.title=evT(e,L,"Title")+" — 90Minute Studio";
+  document.title=tx(e.title,L)+" — 90Minute Studio";
   if(!evPage.classList.contains("open"))evPage.scrollTop=0;
   evPage.classList.add("open");evPage.setAttribute("aria-hidden","false");document.body.style.overflow="hidden";
 }
 function renderTeam(){
   const box=document.getElementById("team"),L=currentLang;
-  box.innerHTML=TEAM.map((m,i)=>{
+  box.innerHTML=C.team.map((m,i)=>{
     const ini=m.name.split(" ").map(w=>w[0]).slice(0,2).join("").toUpperCase();
     const av=m.photo?`<img src="${m.photo}" alt="${m.name}" onerror="this.outerHTML='<span>${ini}</span>'">`:`<span>${ini}</span>`;
-    const bio=(m.bio&&m.bio[L])||"";
+    const bio=(m.bio&&(m.bio[L]||m.bio.en||m.bio.tr))||"";
     const tag=m.link?`a href="${m.link}" target="_blank" rel="noopener"`:"article",end=m.link?"a":"article";
-    return `<${tag} class="card member" style="animation-delay:${i*.12}s"><div class="avatar">${av}</div><h3>${m.name}</h3><span class="role">${(m.role[L]||m.role.en).toUpperCase()}</span>${bio?`<p>${bio}</p>`:""}${m.link?`<div class="msoc"><span><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.75h4V21H3zM9.75 9.75h3.83v1.54h.06c.53-1.01 1.84-2.08 3.79-2.08 4.05 0 4.8 2.67 4.8 6.13V21h-4v-4.9c0-1.17-.02-2.67-1.63-2.67-1.63 0-1.88 1.27-1.88 2.59V21h-4z"/></svg> LINKEDIN ↗</span></div>`:""}</${end}>`}).join("");
+    return `<${tag} class="card member" style="animation-delay:${i*.12}s"><div class="avatar">${av}</div><h3>${m.name}</h3><span class="role">${(m.role[L]||m.role.en||m.role.tr||"").toUpperCase()}</span>${bio?`<p>${bio}</p>`:""}${m.link?`<div class="msoc"><span><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.75h4V21H3zM9.75 9.75h3.83v1.54h.06c.53-1.01 1.84-2.08 3.79-2.08 4.05 0 4.8 2.67 4.8 6.13V21h-4v-4.9c0-1.17-.02-2.67-1.63-2.67-1.63 0-1.88 1.27-1.88 2.59V21h-4z"/></svg> LINKEDIN ↗</span></div>`:""}</${end}>`}).join("");
   box.querySelectorAll(".card").forEach(c=>c.addEventListener("pointermove",e=>{const r=c.getBoundingClientRect();c.style.setProperty("--mx",(e.clientX-r.left)+"px");c.style.setProperty("--my",(e.clientY-r.top)+"px")}));
 }
 /* TikTok linkini buraya yaz, örn: "https://www.tiktok.com/@kullaniciadi" */
 const TIKTOK_URL="";
 document.querySelectorAll("[data-tiktok]").forEach(a=>{if(TIKTOK_URL)a.href=TIKTOK_URL;else a.addEventListener("click",e=>e.preventDefault())});
 let currentLang="tr";
-const GAME_LINKS={mincup:{store:"https://play.google.com/store/apps/details?id=com.minute.halisaha",play:"m.html"},gece:{}};
+const GAME_LINKS=new Proxy({},{get:(_,id)=>{const g=(C.games||[]).find(x=>x.id===id);return g?{store:g.store,play:g.play}:{}}});
 const langSel=document.getElementById("langSelect");
 function setLang(l){
   if(!translations[l])l="tr";currentLang=l;document.documentElement.lang=l;langSel.value=l;
   document.querySelectorAll("[data-i18n]").forEach(el=>{const k=el.dataset.i18n;const v=translations[l][k]??translations.en[k];if(v)el.textContent=v});
   try{localStorage.setItem("lang",l)}catch(e){}
-  renderTeam();renderEvents();if(evPage.classList.contains("open"))route();
+  renderTeam();renderEvents();renderGames();if(evPage.classList.contains("open"))route();
 }
 langSel.addEventListener("change",()=>setLang(langSel.value));
 let saved=null;try{saved=localStorage.getItem("lang")}catch(e){}
@@ -450,7 +471,7 @@ function openGame(card){
   modal.classList.add("open");modal.setAttribute("aria-hidden","false");document.body.style.overflow="hidden";
 }
 function closeGame(){modal.classList.remove("open");modal.setAttribute("aria-hidden","true");document.body.style.overflow=""}
-document.querySelectorAll(".game-card").forEach(c=>{c.addEventListener("click",()=>openGame(c));c.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openGame(c)}})});
+
 document.getElementById("modalX").addEventListener("click",closeGame);document.getElementById("mClose").addEventListener("click",closeGame);
 modal.addEventListener("click",e=>{if(e.target===modal)closeGame()});addEventListener("keydown",e=>{if(e.key==="Escape"){if(modal.classList.contains("open"))closeGame();else if(evPage.classList.contains("open"))location.hash="#events"}});
 document.getElementById("year").textContent=new Date().getFullYear();
@@ -478,6 +499,15 @@ art.addEventListener("pointerleave",()=>tilt.style.transform="");
 /* sayaçlar */
 const cio=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;cio.unobserve(e.target);const el=e.target,n=+el.dataset.count;let i=0;const t=setInterval(()=>{el.textContent=++i;if(i>=n)clearInterval(t)},450/n+250/n)}),{threshold:.6});
 document.querySelectorAll(".num").forEach(el=>cio.observe(el));
+/* içerik yükleme: content.json (yayın) veya ?preview=1 (admin taslağı) */
+(function(){
+  const apply=j=>{if(!j||typeof j!=="object")return;["events","games","team"].forEach(k=>{if(Array.isArray(j[k]))C[k]=j[k]});setLang(currentLang);route()};
+  if(/[?&]preview=1/.test(location.search)){
+    try{apply(JSON.parse(localStorage.getItem("mm_admin_draft")))}catch(e){}
+    const b=document.createElement("div");b.textContent="ÖNİZLEME — henüz yayınlanmadı";b.style.cssText="position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:200;background:#ff242d;color:#fff;font:800 11px/1 sans-serif;letter-spacing:.12em;padding:9px 14px;border-radius:99px;box-shadow:0 8px 24px rgba(0,0,0,.5)";document.body.appendChild(b);return;
+  }
+  fetch("content.json?v="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():null).then(apply).catch(()=>{});
+})();
 </script>
 </body>
 </html>
