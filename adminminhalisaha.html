@@ -1,0 +1,984 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Halısaha Patronu · Yönetim</title>
+<style>
+:root{color-scheme:dark;--bg:#071b20;--panel:#10323a;--tx:#e9f7f0;--mut:#9bb9b7;--green:#21c978;--line:#28535b}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#123943,#071b20 55%);color:var(--tx);font:15px/1.45 system-ui,Segoe UI,sans-serif;min-height:100vh}
+.wrap{max-width:1160px;margin:auto;padding:22px}.head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:18px}.head h1{font-size:25px;margin:0}.head small{color:var(--mut)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:16px}
+h2{font-size:19px;margin:0 0 12px}.muted{color:var(--mut)}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:5px}.field.full{grid-column:1/-1}
+label{font-size:12px;color:var(--mut);font-weight:700}input,select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:11px;background:#08242b;color:var(--tx);font:inherit;min-width:0}
+button{border:0;border-radius:12px;padding:10px 14px;font:inherit;font-weight:800;cursor:pointer;background:#224650;color:var(--tx)}button.primary{background:linear-gradient(135deg,#16a85b,#24cf7c);color:#06291a}button.warn{background:#5d4720;color:#ffe6a0}button.danger{background:#592f35;color:#ffd4d4}button:disabled{opacity:.45;cursor:not-allowed}
+#loginPanel{max-width:420px;margin:8vh auto}.status{padding:10px;border-radius:10px;background:#08242b;color:var(--mut);margin-top:10px;white-space:pre-wrap}.status.bad{color:#ffaaaa}.status.ok{color:#8af0b4}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.tabs button.active{background:var(--green);color:#06291a}
+.hidden{display:none!important}
+.preview{width:132px;height:132px;display:grid;place-items:center}
+.avatar-studio{grid-column:1/-1;padding:14px;border:1px solid var(--line);border-radius:15px;background:#0b2930}
+.avatar-layout{display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:14px;align-items:center}
+.avatar-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.avatar-preview-wrap{display:grid;justify-items:center;gap:8px}
+.hs20-face{position:relative;width:var(--s,46px);height:var(--s,46px);border-radius:28%;padding:2px;background:var(--r1,#94a3b8);box-shadow:0 4px 10px rgba(0,0,0,.22);display:inline-block}
+.hs20-face svg{width:100%;height:100%;border-radius:26%;display:block}
+.hs20-face b{position:absolute;right:-5px;bottom:-5px;min-width:calc(var(--s,46px)*.46);height:calc(var(--s,46px)*.38);padding:0 4px;border-radius:999px;background:#0b1f14;color:#fff;font-size:calc(var(--s,46px)*.27);font-weight:900;display:flex;align-items:center;justify-content:center;border:2px solid #fff;line-height:1}
+.hs20-face i{position:absolute;left:-3px;top:-3px;padding:1px 4px;border-radius:7px;background:#fff;color:#0b1f14;font:900 calc(var(--s,46px)*.2)/1.3 system-ui;font-style:normal}
+.hs20-face[data-t="1"]{--r1:linear-gradient(135deg,#cbd5e1,#64748b)}.hs20-face[data-t="2"]{--r1:linear-gradient(135deg,#d6a56b,#8a5a2b)}.hs20-face[data-t="3"]{--r1:linear-gradient(135deg,#e5e7eb,#9ca3af)}.hs20-face[data-t="4"]{--r1:linear-gradient(135deg,#fde68a,#d9a400)}.hs20-face[data-t="5"]{--r1:linear-gradient(135deg,#67e8f9,#8b5cf6,#f472b6)}
+.avatar-note{font-size:12px;color:var(--mut);margin:5px 0 0}
+.traitbox{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.traitbox label{display:flex;gap:8px;align-items:flex-start;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:#08242b;color:var(--tx);font-size:13px;cursor:pointer;font-weight:600}
+.traitbox label small{display:block;color:var(--mut);font-weight:400;font-size:11px}
+.traitbox input{width:auto;margin-top:3px}
+.trait-badges{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}.trait-badges .auction-pill{background:#633f14;color:#ffe4a3;border-color:#b77b21}
+.pill{background:#4a3a6b;color:#e6dcff}
+@media(max-width:640px){.avatar-layout{grid-template-columns:1fr}.avatar-controls{grid-template-columns:repeat(2,minmax(0,1fr))}.avatar-preview-wrap{grid-row:1}}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.player{background:#0b2930;border:1px solid var(--line);border-radius:15px;padding:12px;display:grid;grid-template-columns:104px minmax(0,1fr);gap:10px}
+.player .info{min-width:0}.player b{display:block;overflow-wrap:anywhere}.player small{display:block;color:var(--mut);margin-top:2px}.player .price{color:#8af0b4;font-weight:900;margin-top:5px}
+.actions{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap}.actions button{flex:1 1 82px;padding:8px;font-size:12px}
+.pill{display:inline-block;padding:3px 7px;border-radius:20px;background:#244d56;color:#cce8e1;font-size:11px;font-weight:800}.pill.sold{background:#563d22;color:#ffe1a2}.pill.free{background:#174c3a;color:#95f5c2}
+.empty{padding:18px;border:1px dashed var(--line);border-radius:12px;color:var(--mut);text-align:center}
+@media(max-width:640px){.wrap{padding:12px}.head{align-items:flex-start;flex-direction:column}.grid{grid-template-columns:1fr}.field.full{grid-column:auto}}
+@keyframes hsfShift{0%{background-position:0% 50%}100%{background-position:300% 50%}}
+@keyframes hsfGlow{0%,100%{box-shadow:0 0 4px var(--g,#fff8),0 4px 10px rgba(0,0,0,.22)}50%{box-shadow:0 0 15px var(--g,#fff8),0 4px 12px rgba(0,0,0,.3)}}
+@keyframes hsfGlint{0%,35%{background-position:170% 0}75%,100%{background-position:-70% 0}}
+@keyframes hsfFlick{0%,100%{filter:brightness(1)}8%{filter:brightness(1.7)}12%{filter:brightness(.9)}46%{filter:brightness(1.1)}50%{filter:brightness(1.9)}54%{filter:brightness(1)}}
+.hs20-face[data-f]{background:var(--r1)!important;background-size:300% 300%!important;animation:hsfShift 3.2s linear infinite,hsfGlow 2.2s ease-in-out infinite}
+.hs20-face[data-f]::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(115deg,transparent 38%,rgba(255,255,255,.6) 50%,transparent 62%);background-size:260% 100%;animation:hsfGlint 3.4s ease-in-out infinite}
+.hs20-face[data-f]>i,.hs20-face[data-f]>b{z-index:2}
+.hs20-face[data-f="gold"]{--r1:linear-gradient(120deg,#7a5200,#ffd84a,#fff3a8,#ffd84a,#7a5200);--g:rgba(255,200,40,.75)}
+.hs20-face[data-f="neon"]{--r1:linear-gradient(120deg,#00ff9d,#00b3ff,#7cffd1,#00b3ff,#00ff9d);--g:rgba(0,255,170,.75)}
+.hs20-face[data-f="flame"]{--r1:linear-gradient(120deg,#ff2d00,#ff9a00,#ffe600,#ff9a00,#ff2d00);--g:rgba(255,110,0,.85);animation-duration:1.4s,.9s}
+.hs20-face[data-f="ice"]{--r1:linear-gradient(120deg,#bff0ff,#4cc9ff,#fff,#4cc9ff,#bff0ff);--g:rgba(100,210,255,.8)}
+.hs20-face[data-f="royal"]{--r1:linear-gradient(120deg,#3b0a7a,#a855f7,#f0abfc,#a855f7,#3b0a7a);--g:rgba(190,100,255,.8)}
+.hs20-face[data-f="rainbow"]{--r1:linear-gradient(120deg,#ff3b3b,#ffb300,#ffe600,#2ee66b,#2eb8ff,#8b5cf6,#ff3bd4,#ff3b3b);--g:rgba(255,255,255,.65);animation-duration:2.4s,2s}
+.hs20-face[data-f="lightning"]{--r1:linear-gradient(120deg,#1e3a8a,#60a5fa,#fff,#60a5fa,#1e3a8a);--g:rgba(120,170,255,.9);animation:hsfShift 1.6s linear infinite,hsfGlow 1.1s ease-in-out infinite,hsfFlick 2.8s steps(1,end) infinite}
+.hs20-face[data-f="galaxy"]{--r1:linear-gradient(120deg,#0f0c29,#302b63,#8b5cf6,#ec4899,#302b63,#0f0c29);--g:rgba(150,90,255,.8)}
+.hs20-face[data-f="ruby"]{--r1:linear-gradient(120deg,#5f0014,#ff2d55,#ffb3c1,#ff2d55,#5f0014);--g:rgba(255,45,85,.8)}
+.hs20-face[data-f="diamond"]{--r1:linear-gradient(120deg,#e0f7ff,#b9c6ff,#fff,#a5f3fc,#e0f7ff);--g:rgba(190,240,255,.95)}
+.hs20-face[data-f="diamond"]::after{animation-duration:2s;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.95) 50%,transparent 70%);background-size:260% 100%}
+@media(prefers-reduced-motion:reduce){.hs20-face[data-f],.hs20-face[data-f]::after{animation:none!important}}
+
+/* yeni çerçeveler */
+@keyframes hsfSparkle{0%{background-position:0 0,9px 7px,4px 3px}100%{background-position:0 -22px,9px -15px,4px -19px}}
+@keyframes hsfPulse{0%,100%{filter:brightness(1) saturate(1)}50%{filter:brightness(1.35) saturate(1.3)}}
+@keyframes hsfEmber{0%,100%{filter:brightness(1)}20%{filter:brightness(1.4)}35%{filter:brightness(.92)}60%{filter:brightness(1.25)}}
+.hs20-face[data-f="emerald"]{--r1:linear-gradient(120deg,#033b2b,#10b981,#a7f3d0,#10b981,#033b2b);--g:rgba(16,185,129,.8)}
+.hs20-face[data-f="obsidian"]{--r1:linear-gradient(120deg,#05050a,#2a2146,#7c3aed,#2a2146,#05050a);--g:rgba(124,58,237,.75);animation-duration:5.2s,2.6s}
+.hs20-face[data-f="sunset"]{--r1:linear-gradient(120deg,#ff5e62,#ff9966,#ffd166,#c471ed,#12c2e9,#ff5e62);--g:rgba(255,140,100,.8);animation-duration:4.4s,2.4s}
+.hs20-face[data-f="aurora"]{--r1:linear-gradient(120deg,#00ffa3,#03e1ff,#a855f7,#00ffa3,#03e1ff);--g:rgba(0,255,200,.7);animation-duration:6s,3.4s}
+.hs20-face[data-f="holo"]{--r1:linear-gradient(120deg,#ffb3ff,#b3fff0,#fff9b3,#b3c8ff,#ffb3ff,#b3fff0);--g:rgba(220,200,255,.9);animation-duration:1.8s,2s}
+.hs20-face[data-f="holo"]::after{background:linear-gradient(115deg,transparent 25%,rgba(255,255,255,.85) 50%,transparent 75%);background-size:240% 100%;animation-duration:1.9s}
+.hs20-face[data-f="chrome"]{--r1:linear-gradient(120deg,#5b6472,#f9fafb,#9ca3af,#ffffff,#5b6472);--g:rgba(220,230,245,.8);animation-duration:2.6s,2.4s}
+.hs20-face[data-f="plasma"]{--r1:linear-gradient(120deg,#4c1d95,#ec4899,#f43f5e,#a855f7,#4c1d95);--g:rgba(236,72,200,.9);animation:hsfShift 1.2s linear infinite,hsfGlow 1s ease-in-out infinite,hsfPulse 1.7s ease-in-out infinite}
+.hs20-face[data-f="lava"]{--r1:linear-gradient(120deg,#450a0a,#ef4444,#f97316,#fde047,#ef4444,#450a0a);--g:rgba(245,97,26,.9);animation:hsfShift 2.2s linear infinite,hsfGlow .8s ease-in-out infinite,hsfEmber 2.4s steps(1,end) infinite}
+.hs20-face[data-f="toxic"]{--r1:linear-gradient(120deg,#052e16,#84cc16,#d9f99d,#22c55e,#052e16);--g:rgba(132,204,22,.85);animation:hsfShift 2.6s linear infinite,hsfGlow 1.1s ease-in-out infinite,hsfPulse 2.2s ease-in-out infinite}
+.hs20-face[data-f="bronze"]{--r1:linear-gradient(120deg,#4a2511,#cd7f32,#f0b27a,#cd7f32,#4a2511);--g:rgba(205,127,50,.7)}
+.hs20-face[data-f="silver"]{--r1:linear-gradient(120deg,#475569,#e2e8f0,#ffffff,#94a3b8,#475569);--g:rgba(210,220,235,.8)}
+.hs20-face[data-f="sakura"]{--r1:linear-gradient(120deg,#f9a8d4,#fff1f2,#f472b6,#fbcfe8,#f9a8d4);--g:rgba(249,168,212,.85);animation-duration:4.6s,2.8s}
+.hs20-face[data-f="sakura"]::before,.hs20-face[data-f="aurora"]::before,.hs20-face[data-f="toxic"]::before,.hs20-face[data-f="holo"]::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:3;opacity:.7;background-image:radial-gradient(circle,#fff 0 1.1px,transparent 1.7px),radial-gradient(circle,rgba(255,255,255,.85) 0 .8px,transparent 1.4px),radial-gradient(circle,rgba(255,255,255,.7) 0 .7px,transparent 1.3px);background-size:17px 22px,23px 19px,13px 17px;animation:hsfSparkle 2.6s linear infinite}
+.hs20-face[data-f="sakura"]::before{background-image:radial-gradient(ellipse,#fff 0 1.3px,transparent 2px),radial-gradient(ellipse,#fecdd3 0 1px,transparent 1.7px),radial-gradient(ellipse,#fff 0 .8px,transparent 1.4px)}
+.hs20-face[data-f="toxic"]::before{animation-duration:1.9s}
+@media(prefers-reduced-motion:reduce){.hs20-face[data-f]::before{animation:none!important}}
+/* Mağaza / kart paneli: çerçeveye göre kart teması */
+.hs18-special-card[data-cf]{--cf:#fcd34d}
+[data-cf="gold"]{--cf:#ffd84a}[data-cf="neon"]{--cf:#00ffb0}[data-cf="flame"]{--cf:#ff7a1a}[data-cf="ice"]{--cf:#5fd0ff}[data-cf="royal"]{--cf:#b46bff}[data-cf="rainbow"]{--cf:#ff7ad9}[data-cf="lightning"]{--cf:#6aa8ff}[data-cf="galaxy"]{--cf:#9a6bff}[data-cf="ruby"]{--cf:#ff3d63}[data-cf="diamond"]{--cf:#bdeaff}
+[data-cf="emerald"]{--cf:#19c486}[data-cf="obsidian"]{--cf:#8b5cf6}[data-cf="sunset"]{--cf:#ff8f66}[data-cf="aurora"]{--cf:#19f0c8}[data-cf="holo"]{--cf:#c5b3ff}[data-cf="chrome"]{--cf:#cbd5e1}[data-cf="plasma"]{--cf:#e24bd0}[data-cf="sakura"]{--cf:#f9a8d4}[data-cf="lava"]{--cf:#f5611a}[data-cf="toxic"]{--cf:#8fe21f}[data-cf="bronze"]{--cf:#d58a3f}[data-cf="silver"]{--cf:#cfd8e3}
+.hs18-special-card[data-cf],#team-root .hs18-special-store .hs18-special-card[data-cf]{border-color:var(--cf);background:linear-gradient(165deg,color-mix(in srgb,var(--cf) 18%,transparent),rgba(255,255,255,.03) 60%);box-shadow:0 0 0 1px color-mix(in srgb,var(--cf) 55%,transparent),0 10px 24px color-mix(in srgb,var(--cf) 26%,transparent)}
+.hs18-special-card[data-cf]::before{content:"";position:absolute;left:12px;right:12px;top:0;height:3px;border-radius:0 0 4px 4px;background:var(--cf);box-shadow:0 0 12px var(--cf)}
+</style>
+
+<style id="hs-admin-avatar-ui-polish">
+.avatar-studio { position:relative; overflow:visible; }
+.avatar-controls .field { min-width:0; }
+.avatar-controls select {
+  width:100%; max-width:100%; min-height:44px;
+  border:1px solid #37636b; border-radius:12px;
+  background:linear-gradient(180deg,#0c3038,#08242b);
+  color:var(--tx); padding:10px 34px 10px 12px;
+  outline:none; transition:border-color .2s,box-shadow .2s,transform .2s;
+}
+.avatar-controls select:focus {
+  border-color:#42d995; box-shadow:0 0 0 3px rgba(33,201,120,.18);
+}
+.avatar-preview-wrap { position:relative; }
+.avatar-preview-wrap .preview {
+  border-radius:24px; background:radial-gradient(circle,rgba(61,220,132,.13),transparent 70%);
+  animation:hsAdminPreviewFloat 3.2s ease-in-out infinite;
+}
+@keyframes hsAdminPreviewFloat { 0%,100%{translate:0 0}50%{translate:0 -5px} }
+.avatar-preview-wrap .hs20-face { animation:hsAdminAvatarReveal .6s cubic-bezier(.18,.8,.25,1) both; }
+@keyframes hsAdminAvatarReveal {
+  0%{opacity:0;transform:translateY(12px) scale(.82) rotate(-5deg);filter:brightness(1.5)}
+  70%{opacity:1;transform:translateY(-3px) scale(1.06) rotate(2deg)}
+  100%{opacity:1;transform:translateY(0) scale(1) rotate(0);filter:none}
+}
+.avatar-preview-wrap button { transition:transform .2s,filter .2s,box-shadow .2s; }
+.avatar-preview-wrap button:hover { transform:translateY(-2px);filter:brightness(1.12);box-shadow:0 8px 20px rgba(33,201,120,.2); }
+.avatar-preview-wrap button:active { transform:scale(.97); }
+@media(max-width:640px) {
+ .avatar-layout { grid-template-columns:minmax(0,1fr); }
+ .avatar-preview-wrap { grid-row:1; }
+ .avatar-controls { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media(prefers-reduced-motion:reduce) {
+ .avatar-preview-wrap .preview,.avatar-preview-wrap .hs20-face { animation:none!important; }
+}
+</style>
+
+<style id="hs-gift-admin-css">
+.gift-row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:#0b2930;border:1px solid var(--line);border-radius:14px;padding:11px 13px;margin-bottom:8px}
+.gift-row b{font-size:16px;letter-spacing:.06em}.gift-row small{display:block;color:var(--mut)}
+.gift-row .gift-bar{height:6px;border-radius:4px;background:#08242b;overflow:hidden;margin-top:6px;min-width:160px}.gift-row .gift-bar i{display:block;height:100%;background:var(--green)}
+.gift-row .row button{padding:8px 11px;font-size:12px}
+</style>
+
+
+<style id="hs-ban-admin-css">
+.ban-row{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:#0b2930;border:1px solid var(--line);border-radius:14px;padding:12px;margin:8px 0}
+.ban-row .ban-meta{min-width:220px;flex:1}.ban-row small{display:block;color:var(--mut);overflow-wrap:anywhere}
+.ban-row .ban-actions{display:flex;gap:7px;flex-wrap:wrap}.ban-row .ban-actions button{font-size:12px;padding:8px 10px}
+.ban-status{display:inline-block;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:900;background:#563d22;color:#ffe1a2}
+.ban-status.active{background:#6b252b;color:#ffd4d4}.ban-status.expired{background:#4b5563;color:#e5e7eb}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="head">
+    <div><h1>🏟️ Halısaha Patronu · Yönetim Paneli</h1><small>Özel oyuncular, özellikler, satış kayıtları, serbest oyuncu ve hediye kodu yönetimi</small></div>
+    <div id="sessionBar" class="row hidden"><span id="adminIdentity" class="pill"></span><button onclick="logout()">Çıkış</button></div>
+  </header>
+
+  <section id="loginPanel" class="panel">
+    <h2>🔐 Yönetici girişi</h2>
+    <p class="muted">Firebase hesabınla giriş yap. Hesabının <code>hsAdmins/{UID}</code> belgesinde <code>active=true</code> olması gerekir.</p>
+    <div class="field"><label>Kullanıcı adı</label><input id="username" placeholder="Yönetici kullanıcı adı" autocomplete="username" autocapitalize="none"></div>
+    <div class="field" style="margin-top:10px"><label>Şifre</label><input id="password" type="password" autocomplete="current-password"></div>
+    <button class="primary" style="width:100%;margin-top:14px" onclick="login()">Yönetici olarak giriş yap</button>
+    <div id="loginStatus" class="status">Giriş bilgileri yalnızca Firebase Authentication üzerinden doğrulanır.</div>
+  </section>
+
+  <main id="adminApp" class="hidden">
+    <div class="tabs">
+      <button class="active" onclick="showTab('shop',this)">🌟 Özel mağaza</button>
+      <button onclick="showTab('free',this)">🆓 Serbest oyuncular</button>
+      <button onclick="showTab('sold',this)">💰 Satılan oyuncular</button>
+      <button onclick="showTab('gift',this)">🎁 Hediye kodları</button>
+      <button onclick="showTab('passwords',this)">🔐 Kullanıcı şifreleri</button>
+      <button onclick="showTab('bans',this)">🚫 Kullanıcı banları</button>
+      <button onclick="showTab('economy',this)">🧾 Ekonomi denetimi</button>
+    </div>
+
+    <section id="tab-shop">
+      <div class="panel">
+        <div class="row" style="justify-content:space-between"><h2 id="formTitle">➕ Özel oyuncu oluştur</h2><button onclick="resetForm()">Yeni oyuncu</button></div>
+        <form id="playerForm" onsubmit="savePlayer(event)">
+          <input type="hidden" id="editId">
+          <div class="grid">
+            <div class="field"><label>Oyuncu adı</label><input id="name" required maxlength="60"></div>
+            <div class="field"><label>Pozisyon</label><select id="pos"><option value="GK">Kaleci</option><option value="DEF">Defans</option><option value="MID">Orta saha</option><option value="ATT">Forvet</option></select></div>
+            <div class="field"><label>OVR</label><input id="ovr" type="number" min="30" max="106" value="75" required></div>
+            <div class="field"><label>Potansiyel</label><input id="potential" type="number" min="30" max="110" value="85" required></div>
+            <div class="field"><label>Yaş</label><input id="age" type="number" min="16" max="80" value="20" required></div>
+            <div class="field"><label>Ülke / Milliyet</label><select id="nationality" required><option value="">Ülke seç</option></select></div>
+            <div class="field"><label>Kart türü</label><select id="rarity"><option>Standart</option><option>Nadir</option><option>Elit</option><option>İkon</option><option>Efsanevi</option><option>Özel</option></select></div>
+            <div class="field"><label id="priceLabel">Mağaza satış tutarı (₺)</label><input id="price" type="number" min="0" step="1000" value="1000000" required></div>
+            <div class="field"><label>Satış modeli</label><select id="saleMode"><option value="fixed">🛒 Normal satış</option><option value="auction">🔨 Teklifli açık artırma</option></select></div>
+            <div id="auctionFields" class="field full hidden">
+              <div class="grid">
+                <div class="field"><label>Minimum teklif artışı (₺)</label><input id="auctionMinIncrement" type="number" min="1" step="1000" value="10000"></div>
+                <div class="field"><label>Açık artırma süresi</label><input type="text" value="4 saat" readonly></div>
+              </div>
+              <small class="muted">Girilen mağaza fiyatı açık artırmanın başlangıç fiyatıdır. Son 10 dakika içinde teklif gelirse süre otomatik olarak yeniden 10 dakikaya uzatılır. En yüksek teklif sahibi süre bitince oyuncuyu teklif ettiği tutarla alır.</small>
+            </div>
+            <div class="field"><label>✨ Animasyonlu kart çerçevesi</label><select id="cardFrame"><option value="">Otomatik (OVR'ye göre)</option><option value="gold">🥇 Altın Parıltı</option><option value="neon">💚 Neon</option><option value="flame">🔥 Alev</option><option value="ice">🧊 Buz</option><option value="royal">👑 Kraliyet</option><option value="rainbow">🌈 Gökkuşağı</option><option value="lightning">⚡ Yıldırım</option><option value="galaxy">🌌 Galaksi</option><option value="ruby">♦️ Yakut</option><option value="diamond">💎 Elmas</option><option value="emerald">🟢 Zümrüt</option><option value="obsidian">🖤 Obsidyen</option><option value="sunset">🌅 Gün Batımı</option><option value="aurora">🌠 Aurora</option><option value="holo">🪩 Hologram</option><option value="chrome">🪞 Krom</option><option value="plasma">🔮 Plazma</option><option value="sakura">🌸 Sakura</option><option value="lava">🌋 Lav</option><option value="toxic">☣️ Zehir</option><option value="bronze">🥉 Bronz</option><option value="silver">🥈 Gümüş</option></select></div>
+            <div class="field full">
+              <label>⚡ Oyuncu özellikleri (en fazla 6; Standart 1, Nadir 2-3, Efsanevi 4-6 gibi) — hiçbiri seçilmezse oyun kimlikten otomatik türetir</label>
+              <div id="traitBox" class="traitbox"></div>
+            </div>
+            <div class="avatar-studio">
+              <h3 style="margin:0 0 5px">🎨 Oyun içi oyuncu avatarı oluştur</h3>
+              <p class="avatar-note">Oyundaki oyuncu kartlarıyla aynı çizim stilinde portre oluştur. Çerçeve seçimi önizlemede de canlı görünür.</p>
+              <div class="avatar-layout" style="margin-top:12px">
+                <div class="avatar-controls"><div class="field"><label>Ten rengi</label><select id="avatarSkin"><option value="0">Çok açık</option><option value="1">Açık</option><option value="2">Buğday</option><option value="3">Bronz</option><option value="4">Esmer</option><option value="5">Koyu</option><option value="6">Sıcak zeytin</option><option value="7">Derin kahve</option></select></div><div class="field"><label>Yüz şekli</label><select id="avatarFace"><option value="0">Oval</option><option value="1">Uzun</option><option value="2">Geniş</option><option value="3">Köşeli</option><option value="4">Kalp yüz</option><option value="5">İnce oval</option></select></div><div class="field"><label>Saç modeli</label><select id="avatarHair"><option value="0">Kısa</option><option value="1">İnce / seyrek</option><option value="2">Kıvırcık</option><option value="3">Uzun</option><option value="4">Dağınık kıvırcık</option><option value="5">Yandan taralı</option><option value="6">Kel</option><option value="7">Sıfıra yakın</option><option value="8">Mohawk</option><option value="9">Afro</option><option value="10">Topuz</option><option value="11">Geriye taralı</option><option value="12">Perde / orta boy</option><option value="13">Uzun dalgalı</option><option value="14">Fade / undercut</option><option value="15">Kabarık (pompadour)</option><option value="16">Örgü (cornrow)</option><option value="17">Rasta</option><option value="18">Düz tepe (high-top)</option><option value="19">At kuyruğu</option><option value="20">Bob / omuz boyu</option><option value="21">Dikenli jöleli</option><option value="22">Ortadan ayrık</option><option value="23">Dalgalı kısa</option><option value="24">Buzz cut / kısa tıraş</option><option value="25">Yan ayrık klasik</option><option value="26">Küt kesim</option><option value="27">Kıvırcık yüksek</option><option value="28">Textured crop</option><option value="29">Örgülü arka saç</option><option value="30">Man bun / erkek topuzu</option><option value="31">Uzun katlı saç</option><option value="32">Taper fade</option><option value="33">Geri taranmış fade</option><option value="34">Kıvırcık perçem</option><option value="35">Dokulu kısa kesim</option><option value="36">Omuz hizası dalgalı</option><option value="37">At kuyruğu</option><option value="38">Örgülü üst</option><option value="39">Keskin fade</option><option value="40">Cornrow örgüler</option><option value="41">Çizgili yan kesim</option><option value="42">Dağınık uzun</option><option value="43">Kısa klasik</option><option value="44">Uzun kıvırcık</option><option value="45">Topuz ve tutamlar</option></select></div><div class="field"><label>Saç rengi</label><select id="avatarHairColor"><option value="0">Siyah</option><option value="1">Koyu kahve</option><option value="2">Kahverengi</option><option value="3">Bal rengi</option><option value="4">Sarı</option><option value="5">Gri</option><option value="6">Kızıl</option><option value="7">Platin</option><option value="8">Mavi (boyalı)</option><option value="9">Beyaz</option><option value="10">Bakır</option><option value="11">Koyu sarı</option><option value="12">Pembe (boyalı)</option><option value="13">Yeşil (boyalı)</option><option value="14">Mor (boyalı)</option><option value="15">Turuncu (boyalı)</option><option value="16">Gece mavisi</option><option value="17">Petrol yeşili</option><option value="18">Küllü kumral</option><option value="19">Bordo</option><option value="20">Pembe</option><option value="21">Mint</option><option value="22">Gece moru</option><option value="23">Gümüş mavi</option></select></div><div class="field"><label>Göz rengi</label><select id="avatarEyes"><option value="0">Koyu</option><option value="1">Mavi</option><option value="2">Yeşil</option><option value="3">Ela</option><option value="4">Gri</option><option value="5">Kehribar</option><option value="6">Turkuaz</option><option value="7">Zeytin</option><option value="8">Mor</option><option value="9">Buz mavisi</option></select></div><div class="field"><label>Kaş</label><select id="avatarBrow"><option value="0">Normal</option><option value="1">Kalın</option><option value="2">Sert / çatık</option><option value="3">İnce</option></select></div><div class="field"><label>Burun</label><select id="avatarNose"><option value="0">Normal</option><option value="1">Geniş</option><option value="2">Küçük</option></select></div><div class="field"><label>Ağız / ifade</label><select id="avatarMouth"><option value="0">Gülümseyen</option><option value="1">Ciddi</option><option value="2">Hafif gülümseme</option><option value="3">Geniş gülüş</option><option value="4">Yan sırıtış</option><option value="5">Gol sevinci (bağıran)</option></select></div><div class="field"><label>Sakal / bıyık</label><select id="avatarBeard"><option value="0">Yok</option><option value="1">Tam sakal</option><option value="2">Keçi sakal + bıyık</option><option value="3">Kirli sakal</option><option value="4">Sadece bıyık</option><option value="5">Çene sakalı</option><option value="6">Uzun sakal</option><option value="7">Favori + bıyık</option><option value="8">Kısa kutu sakal</option><option value="9">Dairesel sakal</option><option value="10">Uzun çene sakalı</option><option value="11">Bıyık + ince çene</option></select></div><div class="field"><label>Aksesuar</label><select id="avatarAcc"><option value="0">Yok</option><option value="1">Saç bandı</option><option value="2">Gözlük</option><option value="3">Küpe</option><option value="4">Yüzde yara izi</option><option value="5">Göz altı siyahı</option><option value="6">Güneş gözlüğü</option><option value="7">Altın zincir</option><option value="8">Yüz boyası</option><option value="9">Burun bandı</option><option value="10">Beyaz spor kafa bandı</option><option value="11">Mavi vizör gözlük</option><option value="12">Altın madalya</option><option value="13">Çift yüz çizgisi</option></select></div><div class="field"><label>Forma rengi</label><select id="avatarJersey"><option value="auto">Pozisyona göre (oyundaki gibi)</option><option value="#f59e0b">Turuncu</option><option value="#3b82f6">Mavi</option><option value="#10b981">Yeşil</option><option value="#ef4444">Kırmızı</option><option value="#f1f1f1">Beyaz</option><option value="#343b55">Lacivert</option><option value="#773fc1">Mor</option><option value="#20252b">Siyah</option><option value="#14b8a6">Turkuaz</option><option value="#eab308">Sarı</option><option value="#be123c">Bordo</option><option value="#0ea5e9">Gökyüzü mavisi</option></select></div><div class="field"><label>Forma deseni</label><select id="avatarKit"><option value="0">Düz</option><option value="1">Yatay çizgili</option><option value="2">Dikey çizgili</option><option value="3">Çapraz şerit</option><option value="4">Koyu kollu</option><option value="5">Kalın halkalı</option><option value="6">Yarı yarıya</option><option value="7">Baklava desen</option><option value="8">Degrade</option><option value="9">Çapraz çift şerit</option><option value="10">Klasik yatay bant</option><option value="11">Işık geçişli</option></select></div><div class="field"><label>Arka plan</label><select id="avatarBg"><option value="0">Yeşil</option><option value="1">Mavi</option><option value="2">Krem</option><option value="3">Mor</option><option value="4">Pembe</option><option value="5">Turkuaz</option><option value="6">Sarı</option><option value="7">Lavanta</option><option value="8">Gül</option><option value="9">Limon</option><option value="10">Buz</option><option value="11">Nane</option><option value="12">Kiraz çiçeği</option><option value="13">Gümüş</option></select></div></div>
+                <div class="avatar-preview-wrap">
+                  <div id="preview" class="preview"></div>
+                  <button type="button" onclick="randomAvatar()">🎲 Rastgele görünüm</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="margin-top:14px"><button class="primary" type="submit">Kaydet / mağazaya koy</button><button type="button" onclick="resetForm()">Temizle</button></div>
+        </form>
+        <div id="saveStatus" class="status"></div>
+      </div>
+      <div class="panel">
+        <div class="row" style="justify-content:space-between"><h2>🗂️ Mağaza envanteri</h2><button onclick="loadAll()">Yenile</button></div>
+        <div id="shopItems" class="cards"><div class="empty">Yükleniyor…</div></div>
+      </div>
+    </section>
+
+    <section id="tab-free" class="hidden">
+      <div class="panel">
+        <div class="row" style="justify-content:space-between"><h2>🆓 Serbest oyuncu havuzu</h2><button onclick="loadAll()">Yenile</button></div>
+        <p class="muted">Serbest statüsüne alınan oyuncular transfer pazarında maaşla alınabilir. Kulüplerin genel serbest oyuncuları da listelenir.</p>
+        <div id="freeItems" class="cards"><div class="empty">Yükleniyor…</div></div>
+      </div>
+    </section>
+
+    <section id="tab-sold" class="hidden">
+      <div class="panel">
+        <div class="row" style="justify-content:space-between"><h2>💰 Satış geçmişi</h2><button onclick="loadAll()">Yenile</button></div>
+        <div id="soldItems" class="cards"><div class="empty">Henüz satış yok.</div></div>
+      </div>
+    </section>
+
+    <section id="tab-gift" class="hidden">
+      <div class="panel">
+        <h2>🎁 Hediye kodu oluştur</h2>
+        <p class="muted">Oyuncular Abla panelinden kodu girer. Her hesap bir kodu yalnızca bir kez kullanabilir; kullanım sayısı dolunca kod kapanır.</p>
+        <div class="grid">
+          <div class="field"><label>Kod (harf, rakam, - ve _)</label><input id="gcCode" maxlength="32" placeholder="ÖRN: HOSGELDIN" style="text-transform:uppercase"></div>
+          <div class="field"><label>Ödül miktarı (₺)</label><input id="gcAmount" type="number" min="1" step="1" value="100000"></div>
+          <div class="field"><label>Kaç kişi kullanabilsin (kullanım sayısı)</label><input id="gcMax" type="number" min="1" step="1" value="100"></div>
+          <div class="field"><label>Son kullanma (isteğe bağlı)</label><input id="gcExp" type="date"></div>
+        </div>
+        <div class="row" style="margin-top:14px"><button class="primary" type="button" onclick="saveGiftCode()">Kodu oluştur</button><button type="button" onclick="randomGiftCode()">🎲 Rastgele kod</button></div>
+        <div id="giftStatus" class="status"></div>
+      </div>
+      <div class="panel">
+        <div class="row" style="justify-content:space-between"><h2>🗂️ Kodlar</h2><button type="button" onclick="loadGiftCodes()">Yenile</button></div>
+        <div id="giftList"><div class="empty">Yükleniyor…</div></div>
+      </div>
+    </section>
+
+    <section id="tab-passwords" class="hidden">
+      <div class="panel">
+        <h2>🔐 Kullanıcı şifresi sıfırlama</h2>
+        <p class="muted">Kullanıcının Firebase UID bilgisini ve sıfırlama bağlantısının gönderileceği e-posta adresini gir. Firestore kullanıcı profilindeki UID-e-posta eşleşmesi kontrol edilir. Eşleşirse Firebase Authentication şifre sıfırlama e-postası isteği gönderilir.</p>
+        <div class="grid">
+          <div class="field">
+            <label>Kullanıcı Firebase UID</label>
+            <input id="passwordResetUid" type="text" placeholder="Firebase Authentication UID" autocomplete="off" spellcheck="false" required>
+          </div>
+          <div class="field">
+            <label>Sıfırlama e-postasının gönderileceği adres</label>
+            <input id="passwordResetEmail" type="email" placeholder="kullanici@ornek.com" autocomplete="off" required>
+          </div>
+        </div>
+        <div class="row" style="margin-top:14px">
+          <button class="primary" type="button" onclick="sendUserPasswordReset()">📩 UID hesabı için sıfırlama bağlantısı gönder</button>
+          <button type="button" onclick="document.getElementById('passwordResetUid').value='';document.getElementById('passwordResetEmail').value='';document.getElementById('passwordResetStatus').textContent='';">Temizle</button>
+        </div>
+        <div id="passwordResetStatus" class="status">UID ile e-posta, Firestore kullanıcı profilindeki email alanı üzerinden karşılaştırılır. Eşleşme yoksa gönderim yapılmaz. Spark istemci SDK'sı Authentication UID'sini doğrudan sorgulayamaz.</div>
+      </div>
+      <div class="panel">
+        <h2>ℹ️ Nasıl çalışır?</h2>
+        <ul class="muted" style="padding-left:20px;line-height:1.8">
+          <li>Yalnızca yönetici girişi yaptıktan sonra bu sekme görünür.</li>
+          <li>Panel, UID'ye ait Firestore kullanıcı profilindeki email alanını kontrol eder.</li>
+          <li>E-posta eşleşmezse Firebase sıfırlama isteği gönderilmez.</li>
+          <li>İşlem Firebase Authentication'ın mevcut sendPasswordResetEmail özelliğini kullanır; Cloud Functions veya SMTP kurulumu gerektirmez.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="tab-bans" class="hidden">
+      <div class="panel">
+        <h2>🚫 Kullanıcı banlama</h2>
+        <p class="muted">Kullanıcının UID bilgisini girerek hesabına ban kaydı ekle. Süre dolduğunda ban geçersiz sayılır; kalıcı ban için "Süresiz" seç.</p>
+        <div class="grid">
+          <div class="field"><label>Kullanıcı UID</label><input id="banUid" placeholder="Firebase Authentication UID"></div>
+          <div class="field"><label>Ban süresi</label>
+            <select id="banDuration">
+              <option value="1">1 saat</option><option value="6">6 saat</option>
+              <option value="24" selected>1 gün</option><option value="72">3 gün</option>
+              <option value="168">7 gün</option><option value="720">30 gün</option>
+              <option value="2160">90 gün</option><option value="permanent">Süresiz / kalıcı</option>
+            </select>
+          </div>
+          <div class="field full"><label>Ban nedeni</label><input id="banReason" maxlength="240" placeholder="Örn. hakaret, hile, spam..."></div>
+        </div>
+        <div class="row" style="margin-top:14px">
+          <button class="danger" type="button" onclick="banUser()">🚫 Kullanıcıyı banla</button>
+          <button type="button" onclick="loadBanUsers()">Listeyi yenile</button>
+        </div>
+        <div id="banStatus" class="status">Ban işlemi Firestore üzerinde kayıt oluşturur. Oyunun global listelerinde gizlemek için oyun tarafındaki kullanıcı listeleme sorgularının da ban durumunu kontrol etmesi gerekir.</div>
+      </div>
+      <div class="panel">
+        <div class="row" style="justify-content:space-between">
+          <h2>📋 Kullanıcılar ve ban durumu</h2>
+          <input id="banSearch" placeholder="UID veya kullanıcı adı ara" style="max-width:300px" oninput="renderBanUsers()">
+        </div>
+        <div id="banUserList"><div class="empty">Kullanıcılar yükleniyor…</div></div>
+      </div>
+    </section>
+
+    <section id="tab-economy" class="hidden">
+      <div class="panel">
+        <h2>🧾 Ekonomi denetimi</h2>
+        <p class="muted">Oyunun kaydettiği bakiye farkları burada listelenir. Bu kayıtlar istemci tarafından gönderildiği için inceleme sinyalidir; tek başına kesin hile kanıtı değildir.</p>
+        <div class="grid" style="margin-top:12px">
+          <div class="field full"><label>Oyuncu Firebase UID</label><input id="economyUid" placeholder="Oyuncunun UID bilgisini gir"></div>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="primary" type="button" onclick="loadEconomyAudit()">İşlem geçmişini getir</button>
+          <button type="button" onclick="document.getElementById('economyUid').value='';document.getElementById('economyAuditList').innerHTML='';">Temizle</button>
+        </div>
+        <div id="economyAuditStatus" class="status">Bir oyuncunun UID bilgisini girerek son bakiye hareketlerini görüntüleyebilirsin.</div>
+      </div>
+      <div class="panel">
+        <div class="row" style="justify-content:space-between"><h2>📊 Bakiye hareketleri</h2><span id="economyAuditSummary" class="pill">Henüz yüklenmedi</span></div>
+        <div id="economyAuditList"><div class="empty">Henüz oyuncu seçilmedi.</div></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script type="module">
+const FBV='10.12.5';
+const FBC={apiKey:"AIzaSyAwsrty-u2_KW-hzdemM_dMejU6W-fDMDs",authDomain:"mincup.firebaseapp.com",projectId:"mincup",storageBucket:"mincup.firebasestorage.app",messagingSenderId:"519457645517",appId:"1:519457645517:web:fed01174e64905d98d5a84",measurementId:"G-D1J1HTHW8F"};
+let appMod,authMod,fsMod,lastErr;
+for(const h of [m=>`https://www.gstatic.com/firebasejs/${FBV}/firebase-${m}.js`,m=>`https://cdn.jsdelivr.net/npm/firebase@${FBV}/${m}/+esm`,m=>`https://esm.sh/firebase@${FBV}/${m}`]){try{[appMod,authMod,fsMod]=await Promise.all(['app','auth','firestore'].map(m=>import(h(m))));lastErr=null;break;}catch(e){lastErr=e;console.warn('Firebase yüklenemedi, yedek adres deneniyor:',e);}}
+if(lastErr)throw lastErr;
+const app=appMod.initializeApp(FBC);
+const auth=authMod.getAuth(app),db=fsMod.getFirestore(app);
+let currentAdmin=null,products=[],globalFree=[];
+const $=id=>document.getElementById(id);
+
+/* Oyundaki traits kimlikleriyle birebir aynı (oyun en fazla 3 özellik okur) */
+const TRAITS=[
+ ['finisher','🎯 Bitirici','Karşı karşıya ve genel şutlarda soğukkanlı'],
+ ['dribbler','🌀 Dribblingci','Kontra ve karşı karşıyada rakibi geçer'],
+ ['header','🦅 Kafacı','Korner ve ortalarda tehlikeli'],
+ ['sniper','🚀 Nişancı','Uzaktan şut ve serbest vuruşta üstün'],
+ ['speedster','⚡ Hızlı','Kontra ataklarda fark yaratır'],
+ ['playmaker','🧩 Oyun kurucu','Takımın hücumlarını güçlendirir'],
+ ['tackler','🛡️ Müdahaleci','Rakibin gol şansını düşürür'],
+ ['clutch','🧊 Soğukkanlı','Her pozisyonda küçük sürekli katkı'],
+ ['captain','👑 Kaptan','Takım arkadaşlarının hücumunu güçlendirir'],
+ ['engine','🔋 Motor','Baskı ve kontra sonrası etkili'],
+ ['stopper','🔒 Stoper','Rakibin karşı karşıya/kontra şansını düşürür'],
+ ['reflex','🧤 Refleks','Kaleci: tüm şutlarda daha iyi kurtarış'],
+ ['closer','🧱 Çıkış ustası','Kaleci: karşı karşıya ve kontralarda güçlü'],
+ ['catcher','🥅 Sağlam eldiven','Kaleci: uzaktan şut, korner, serbest vuruş'],
+ ['poacher','🦊 Fırsatçı','Baskı sonrası ve dönen toplarda tehlikeli'],
+ ['freekicker','🪄 Serbest vuruş ustası','Serbest vuruş ve uzaktan şutta çok tehlikeli'],
+ ['winger','🏹 Kanat oyuncusu','Kontra ve baskı sonrası kanat ataklarında fark yaratır'],
+ ['wall','🏰 Duvar','Savunmada: rakibin tüm gol şanslarını düşürür'],
+ ['sweeper','🧹 Libero kaleci','Kaleci: kontra ve baskı ataklarını önden keser']
+];
+const FRAMES=['','gold','neon','flame','ice','royal','rainbow','lightning','galaxy','ruby','diamond','emerald','obsidian','sunset','aurora','holo','chrome','plasma','sakura','lava','toxic','bronze','silver'];
+const traitName=id=>((TRAITS.find(t=>t[0]===id)||[id,id])[1]);
+function renderTraits(){$('traitBox').innerHTML=TRAITS.map(t=>`<label><input type="checkbox" name="trait" value="${t[0]}"><span>${t[1]}<small>${t[2]}</small></span></label>`).join('');
+  document.querySelectorAll('input[name=trait]').forEach(x=>x.addEventListener('change',()=>{if(getTraits().length>6){x.checked=false;status('En fazla 6 özellik seçebilirsin.','saveStatus',true);}}));}
+function getTraits(){return [...document.querySelectorAll('input[name=trait]:checked')].map(x=>x.value);}
+function setTraits(a){const s=new Set(Array.isArray(a)?a:[]);document.querySelectorAll('input[name=trait]').forEach(x=>x.checked=s.has(x.value));}
+renderTraits();
+
+const countryCodes=`AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS XK YE YT ZA ZM ZW`.trim().split(/\s+/);
+const countryNames=new Intl.DisplayNames(['tr'],{type:'region'});
+const flagEmoji=c=>[...c.toUpperCase()].map(ch=>String.fromCodePoint(127397+ch.charCodeAt(0))).join('');
+function populateCountries(selected=''){
+  const select=$('nationality');
+  const entries=countryCodes.map(code=>({code,name:countryNames.of(code)})).filter(x=>x.name&&x.name!==x.code).sort((a,b)=>a.name.localeCompare(b.name,'tr'));
+  select.innerHTML='<option value="">Ülke seç</option>';
+  for(const x of entries){const o=document.createElement('option');o.value=x.name;o.textContent=flagEmoji(x.code)+' '+x.name;select.appendChild(o);}
+  if(selected){
+    if(![...select.options].some(o=>o.value===selected)){const o=document.createElement('option');o.value=selected;o.textContent='🌐 '+selected+' (eski kayıt)';select.appendChild(o);}
+    select.value=selected;
+  }
+}
+populateCountries();
+const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=x=>Math.max(0,Number(x)||0).toLocaleString('tr-TR')+' ₺';
+function status(msg,where='loginStatus',bad=false){const el=$(where);if(el){el.textContent=msg;el.className='status'+(bad?' bad':' ok');}}
+
+async function enterAdmin(user,label){
+  currentAdmin=user;
+  $('loginPanel').classList.add('hidden');$('adminApp').classList.remove('hidden');$('sessionBar').classList.remove('hidden');
+  $('adminIdentity').textContent='Yönetici · '+label;
+  await loadAll();
+}
+async function login(){
+  const un=$('username').value.trim().toLowerCase(),pw=$('password').value;
+  if(!/^[a-z0-9_]{3,20}$/.test(un))return status('Kullanıcı adı geçersiz.','loginStatus',true);
+  if(!pw)return status('Şifre gir.','loginStatus',true);
+  status('Firebase hesabı doğrulanıyor…');
+  try{
+    const cred=await authMod.signInWithEmailAndPassword(auth,un+'@halisaha.game',pw);
+    const snap=await fsMod.getDoc(fsMod.doc(db,'hsAdmins',cred.user.uid));
+    if(!snap.exists()||snap.data().active!==true){
+      await authMod.signOut(auth);
+      return status('Bu hesaba yönetici yetkisi verilmemiş. Firebase Console\'da hsAdmins/'+cred.user.uid+' belgesini active=true olarak oluştur.','loginStatus',true);
+    }
+    $('password').value='';
+    await enterAdmin(cred.user,un);
+  }catch(e){console.error(e);status(e.code==='auth/invalid-credential'?'Kullanıcı adı veya şifre hatalı.':(e.message||'Giriş başarısız.'),'loginStatus',true);}
+}
+window.login=login;
+window.logout=async function(){await authMod.signOut(auth);currentAdmin=null;$('adminApp').classList.add('hidden');$('sessionBar').classList.add('hidden');$('loginPanel').classList.remove('hidden');status('Oturum kapatıldı.');};
+window.showTab=function(tab,btn){['shop','free','sold','gift','passwords','bans','economy'].forEach(k=>$('tab-'+k).classList.toggle('hidden',k!==tab));document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b===btn));if(tab==='gift')loadGiftCodes();if(tab==='bans')loadBanUsers();};
+
+/* ===== EKONOMİ DENETİMİ ===== */
+window.loadEconomyAudit=async function(){
+  if(!currentAdmin)return;
+  const uid=$('economyUid').value.trim();
+  if(!uid)return status('Önce oyuncunun Firebase UID bilgisini gir.','economyAuditStatus',true);
+  const box=$('economyAuditList');box.innerHTML='<div class="empty">İşlemler yükleniyor…</div>';
+  status('Firestore işlem kayıtları okunuyor…','economyAuditStatus');
+  try{
+    const ref=fsMod.collection(db,'users',uid,'hsEconomyLogs');
+    const [snap,userSnap]=await Promise.all([
+      fsMod.getDocs(fsMod.query(ref,fsMod.orderBy('createdAt','desc'),fsMod.limit(100))),
+      fsMod.getDoc(fsMod.doc(db,'users',uid))
+    ]);
+    const rows=snap.docs.map(d=>({id:d.id,...d.data()}));
+    const cloudData=userSnap.exists()?userSnap.data():{};
+    const cloudSave=cloudData.hsSave&&typeof cloudData.hsSave==='object'?cloudData.hsSave:{};
+    const cloudBalance=Number(cloudSave.para);
+    const lastLogged=rows.length?Number(rows[0].after):NaN;
+    const cloudMismatch=Number.isFinite(cloudBalance)&&Number.isFinite(lastLogged)&&Math.round(cloudBalance)!==Math.round(lastLogged);
+    const credits=rows.filter(x=>x.type==='credit').reduce((s,x)=>s+(Number(x.delta)||0),0);
+    const debits=rows.filter(x=>x.type==='debit').reduce((s,x)=>s+Math.abs(Number(x.delta)||0),0);
+    $('economyAuditSummary').textContent=rows.length+' kayıt · +'+fmtMoney(credits)+' / -'+fmtMoney(debits);
+    if(Number.isFinite(cloudBalance)){
+      const mismatchText=cloudMismatch?' · ⚠ Bulut bakiyesi son log ile uyuşmuyor':' · Bulut bakiyesi: '+fmtMoney(cloudBalance)+' ₺';
+      status('Bulut kayıt haftası: '+(Number(cloudData.hsWeek)||Number(cloudSave.hafta)||'?')+' · Son denetim bakiyesi: '+(Number.isFinite(lastLogged)?fmtMoney(lastLogged)+' ₺':'henüz yok')+mismatchText,'economyAuditStatus',cloudMismatch);
+    }
+    if(!rows.length){box.innerHTML='<div class="empty">Bu oyuncu için henüz işlem kaydı yok. Yeni kayıtlar oyun içindeki sonraki bakiye değişikliklerinde oluşur.</div>';status('Kayıt bulunamadı.','economyAuditStatus');return;}
+    box.innerHTML=rows.map(r=>{
+      const delta=Number(r.delta)||0,flag=!!r.review||Math.abs(delta)>=50000000;
+      const when=r.createdAt&&typeof r.createdAt.toDate==='function'?r.createdAt.toDate().toLocaleString('tr-TR'):new Date(Number(r.clientAt)||0).toLocaleString('tr-TR');
+      return `<div class="gift-row" style="align-items:flex-start">
+        <div style="min-width:220px;flex:1">
+          <b style="color:${delta>=0?'#8af0b4':'#ffaaaa'}">${delta>=0?'+':''}${fmtMoney(delta)} ₺</b>
+          <small>${esc(when)} · ${Number(r.week)||'?'} . hafta · ${r.type==='credit'?'Gelir':'Gider'}</small>
+          <small>Önce: ${fmtMoney(r.before)} ₺ → Sonra: ${fmtMoney(r.after)} ₺</small>
+          <small style="overflow-wrap:anywhere">Kaynak izi: ${esc(r.sourceHint||'Belirtilmemiş')}</small>
+          <small>Tür: ${esc(r.source||'unclassified')} · Sürüm: ${esc(r.version||'-')}</small>
+        </div>
+        <span class="ban-status ${flag?'active':'expired'}">${flag?'İnceleme gerekli':'Normal sinyal'}</span>
+      </div>`;
+    }).join('');
+    status('Son 100 bakiye hareketi yüklendi. Büyük hareketler otomatik olarak inceleme etiketi alır; kesin karar için oyun haftası ve gelir-gider kayıtlarıyla karşılaştır.','economyAuditStatus');
+  }catch(e){
+    box.innerHTML='<div class="empty">Kayıtlar okunamadı: '+esc(e.message||String(e))+'</div>';
+    status('Ekonomi kayıtları okunamadı. Firestore Rules içinde users/{uid}/hsEconomyLogs için admin okuma izni olduğundan emin ol.','economyAuditStatus',true);
+  }
+};
+function fmtMoney(v){return Math.round(Number(v)||0).toLocaleString('tr-TR');}
+
+
+
+/* ===== Kullanıcı ban yönetimi =====
+   hsUserBans/{UID}: merkezi ban kaydı.
+   teamAssignments/{UID}: oyunun kullanıcı kaydına da banned alanları yazılır.
+*/
+let banUsersCache=[];
+function banExpiryState(row){
+  if(!row || row.active!==true) return 'unbanned';
+  if(!row.expiresAt) return 'permanent';
+  return Number(row.expiresAt)>Date.now()?'active':'expired';
+}
+window.loadBanUsers=async function(){
+  if(!currentAdmin)return;
+  const box=$('banUserList');
+  box.innerHTML='<div class="empty">Kullanıcılar yükleniyor…</div>';
+  try{
+    const [usersSnap,bansSnap]=await Promise.all([
+      fsMod.getDocs(fsMod.query(fsMod.collection(db,'teamAssignments'),fsMod.limit(1000))),
+      fsMod.getDocs(fsMod.query(fsMod.collection(db,'hsUserBans'),fsMod.limit(1000)))
+    ]);
+    const bans=new Map(bansSnap.docs.map(d=>[d.id,{uid:d.id,...d.data()}]));
+    banUsersCache=usersSnap.docs.map(d=>{
+      const u=d.data(),b=bans.get(d.id)||null;
+      return {uid:d.id,username:u.username||u.pitchName||u.teamName||'İsimsiz kullanıcı',...u,ban:b};
+    });
+    for(const [uid,b] of bans){
+      if(!banUsersCache.some(x=>x.uid===uid))banUsersCache.push({uid,username:b.username||'Takım kaydı bulunamadı',ban:b});
+    }
+    renderBanUsers();
+  }catch(e){
+    console.error(e);
+    box.innerHTML='<div class="empty">Kullanıcılar okunamadı: '+esc(e.message||e.code||'Bilinmeyen hata')+'. Firestore kurallarında teamAssignments ve hsUserBans okuma iznini kontrol et.</div>';
+  }
+};
+window.renderBanUsers=function(){
+  const q=($('banSearch')?.value||'').trim().toLocaleLowerCase('tr');
+  const rows=banUsersCache.filter(u=>(u.uid+' '+u.username).toLocaleLowerCase('tr').includes(q));
+  const box=$('banUserList');
+  if(!rows.length){box.innerHTML='<div class="empty">Eşleşen kullanıcı bulunamadı.</div>';return;}
+  box.innerHTML=rows.map(u=>{
+    const b=u.ban,st=banExpiryState(b);
+    const label=st==='active'?'BANLI':st==='permanent'?'KALICI BAN':st==='expired'?'SÜRESİ DOLDU':'Ban yok';
+    const cls=(st==='active'||st==='permanent')?'active':st==='expired'?'expired':'';
+    const until=b?.expiresAt?new Date(Number(b.expiresAt)).toLocaleString('tr-TR'):st==='permanent'?'Süresiz':'—';
+    const reason=b?.reason||'—';
+    return `<div class="ban-row"><div class="ban-meta"><b>${esc(u.username)}</b> <span class="ban-status ${cls}">${label}</span><small>UID: ${esc(u.uid)}</small><small>Bitiş: ${esc(until)} · Neden: ${esc(reason)}</small></div><div class="ban-actions"><button type="button" onclick="fillBanUid('${esc(u.uid)}')">Seç</button>${(st==='active'||st==='permanent'||st==='expired')?`<button type="button" class="primary" onclick="unbanUser('${esc(u.uid)}')">Banı kaldır</button>`:''}</div></div>`;
+  }).join('');
+};
+window.fillBanUid=function(uid){$('banUid').value=uid;window.scrollTo({top:0,behavior:'smooth'});};
+window.banUser=async function(){
+  if(!currentAdmin){status('Önce yönetici olarak giriş yap.','banStatus',true);return;}
+  const uid=$('banUid').value.trim(),duration=$('banDuration').value,reason=$('banReason').value.trim();
+  if(!uid||uid.length<8){status('Geçerli bir Firebase UID gir.','banStatus',true);return;}
+  if(uid===currentAdmin.uid){status('Kendi yönetici hesabını bu panelden banlayamazsın.','banStatus',true);return;}
+  const hours=duration==='permanent'?null:Number(duration);
+  const now=Date.now(),expiresAt=hours===null?null:now+hours*60*60*1000;
+  try{
+    // İsim bilgisi yalnızca görüntüleme içindir; ban işlemi teamAssignments
+    // belgesini değiştirmez. Tek ve merkezi kaynak hsUserBans/{UID}'dir.
+    let username='';
+    try{
+      const userSnap=await fsMod.getDoc(fsMod.doc(db,'teamAssignments',uid));
+      if(userSnap.exists())username=userSnap.data().username||userSnap.data().pitchName||userSnap.data().teamName||'';
+    }catch(readErr){console.warn('Kullanıcı adı okunamadı; UID ile ban kaydedilecek.',readErr);}
+    const banData={uid,username,active:true,reason:reason||'Yönetici kararı',createdAt:now,createdBy:currentAdmin.uid,expiresAt};
+    await fsMod.setDoc(fsMod.doc(db,'hsUserBans',uid),banData);
+    status('✓ Kullanıcı banlandı. '+(expiresAt?'Bitiş: '+new Date(expiresAt).toLocaleString('tr-TR'):'Ban süresiz.'),'banStatus');
+    $('banUid').value='';$('banReason').value='';
+    await loadBanUsers();
+  }catch(e){
+    console.error(e);
+    status('Ban kaydedilemedi: '+(e.message||e.code||'Bilinmeyen hata')+'. Firestore kurallarındaki hsUserBans yönetici yazma iznini kontrol et.','banStatus',true);
+  }
+};
+window.unbanUser=async function(uid){
+  if(!currentAdmin)return;
+  if(!confirm(uid+' kullanıcısının banı kaldırılsın mı?'))return;
+  try{
+    // Merkezi ban kaydını kaldırmak yeterlidir; teamAssignments'e yazılmaz.
+    await fsMod.deleteDoc(fsMod.doc(db,'hsUserBans',uid));
+    status('✓ Kullanıcının banı kaldırıldı.','banStatus');
+    await loadBanUsers();
+  }catch(e){
+    console.error(e);
+    status('Ban kaldırılamadı: '+(e.message||e.code||'Bilinmeyen hata'),'banStatus',true);
+  }
+};
+
+// Spark uyumlu akış: UID'ye ait Firestore kullanıcı profili okunur,
+// kayıtlı e-posta ile girilen e-posta eşleşirse Firebase Auth e-postası gönderilir.
+// Not: istemci SDK'sı Auth UID->email eşleşmesini Admin SDK gibi doğrulayamaz.
+window.sendUserPasswordReset=async function(){
+  const uid=$('passwordResetUid').value.trim();
+  const email=$('passwordResetEmail').value.trim().toLowerCase();
+  if(!currentAdmin){status('Önce yönetici olarak giriş yapmalısın.','passwordResetStatus',true);return;}
+  if(!uid||uid.length<8){status('Geçerli Firebase UID gir.','passwordResetStatus',true);return;}
+  if(!email||!/^\S+@\S+\.\S+$/.test(email)){status('Geçerli bir e-posta adresi gir.','passwordResetStatus',true);return;}
+  const btn=document.querySelector('#tab-passwords button.primary');
+  if(btn)btn.disabled=true;
+  status('UID kullanıcısının Firestore profili kontrol ediliyor…','passwordResetStatus');
+  try{
+    let userData=null;
+    // Kullanıcı profili öncelikle users/{uid} içinde aranır.
+    const userSnap=await fsMod.getDoc(fsMod.doc(db,'users',uid));
+    if(userSnap.exists())userData=userSnap.data()||{};
+    // Eski sürüm profillerinde e-posta hsUsers/{uid} içinde tutuluyorsa onu da kontrol et.
+    if(!userData){
+      try{
+        const hsSnap=await fsMod.getDoc(fsMod.doc(db,'hsUsers',uid));
+        if(hsSnap.exists())userData=hsSnap.data()||{};
+      }catch(_){}
+    }
+    const storedEmail=String(userData?.email||userData?.mail||userData?.emailAddress||'').trim().toLowerCase();
+    if(!userData){
+      status('Bu UID için Firestore kullanıcı profili bulunamadı. Auth hesabı yalnızca Spark istemci SDK’sıyla UID üzerinden sorgulanamaz.','passwordResetStatus',true);
+      return;
+    }
+    if(!storedEmail){
+      status('Bu UID profilinde kayıtlı e-posta alanı bulunamadı. Önce kullanıcı profiline email alanı eklenmeli.','passwordResetStatus',true);
+      return;
+    }
+    if(storedEmail!==email){
+      status('Girilen e-posta, bu UID profilinde kayıtlı e-posta ile eşleşmiyor. Gönderim yapılmadı.','passwordResetStatus',true);
+      return;
+    }
+    await authMod.sendPasswordResetEmail(auth,email);
+    status('✓ Firestore UID-e-posta eşleşmesi sağlandı. Firebase şifre sıfırlama isteğini kabul etti; e-posta kayıtlı Auth hesabına aitse bağlantı gönderilir.','passwordResetStatus');
+  }catch(e){
+    console.error('Spark şifre sıfırlama hatası:',e);
+    const messages={
+      'permission-denied':'Kullanıcı profilini okuma izni yok. Mevcut Firestore Rules içinde yöneticinin users/{uid} kaydını okuyabildiğini kontrol et.',
+      'auth/invalid-email':'E-posta adresi geçersiz.',
+      'auth/user-not-found':'Bu e-posta ile eşleşen Authentication hesabı bulunamadı.',
+      'auth/too-many-requests':'Çok fazla deneme yapıldı. Daha sonra tekrar dene.'
+    };
+    status(messages[e.code]||('Şifre sıfırlama isteği gönderilemedi: '+(e.message||e.code||'Bilinmeyen hata')),'passwordResetStatus',true);
+  }finally{if(btn)btn.disabled=false;}
+};
+
+/* ===== Oyundaki hs20Face ile aynı avatar çizici ===== */
+const avatarFields=['avatarSkin','avatarHair','avatarHairColor','avatarJersey','avatarMouth','avatarBeard','avatarBg','avatarFace','avatarEyes','avatarBrow','avatarNose','avatarAcc','avatarKit'];
+const AV_DEFAULT={avatarSkin:'2',avatarHair:'0',avatarHairColor:'0',avatarJersey:'auto',avatarMouth:'0',avatarBeard:'0',avatarBg:'0',avatarFace:'0',avatarEyes:'0',avatarBrow:'0',avatarNose:'0',avatarAcc:'0',avatarKit:'0'};
+const avatarConfig=()=>Object.fromEntries(avatarFields.map(id=>[id,$(id).value]));
+const AV_SK=['#f6d2b0','#eab98b','#d29a6a','#b87a4b','#8d5a35','#5c3a21','#a97858','#4a2c21'],AV_HR=['#17171b','#3b2616','#6b4423','#a8742a','#d9b45b','#c2c2c8','#b5451b','#f0e6c8','#3b82f6','#f5f5f5','#9a4a1f','#8b6a3a','#ec4899','#22c55e','#8b5cf6','#f97316','#173b72','#0f766e','#b6a38a','#7f1d1d','#f0a6ca','#9bd7c4','#43306b','#9aa9c6'],AV_EC=['#1f2937','#3b6fb6','#3f8f5a','#7a4b25','#6b7280','#a16207','#0e7490','#a3a014','#8b5cf6','#dbeafe'],AV_SH={GK:'#f59e0b',DEF:'#3b82f6',MID:'#10b981',ATT:'#ef4444'},AV_PS={GK:'KL',DEF:'DF',MID:'OS',ATT:'FV'},AV_BG=['#bfe3cf','#cfe0f5','#f3dfc0','#e6d5f2','#f9d3d3','#d3eef0','#fde68a','#c7d2fe','#fecdd3','#d9f99d'];
+function avMix(hex,amt){const m=/^#([0-9a-f]{6})$/i.exec(String(hex));if(!m)return hex;const v=parseInt(m[1],16),t=amt<0?0:255,a=Math.abs(amt),c=s=>Math.round(((v>>s)&255)+(t-((v>>s)&255))*a);return '#'+((1<<24)+(c(16)<<16)+(c(8)<<8)+c(0)).toString(16).slice(1);}
+let avUid=0;
+function AVX(o){
+  const sk=o.sk,hc=o.hc,st=o.st,bt=o.bt,sh=o.sh,bg=o.bg,mouth=o.mouth,brow=o.brow,nose=o.nose,acc=o.acc,kit=o.kit,uid='avx'+(++avUid);
+  const hd=avMix(hc,-.34),hl=avMix(hc,.4),skd=avMix(sk,-.22),skl=avMix(sk,.16),shd=avMix(sh,-.32);
+  const fr=[[13,15,28],[12,16.5,29],[14.5,14,28.5],[13.6,15.5,28],[13.2,14.1,28],[12.4,15.1,28.8]][o.face]||[13,15,28],rx=fr[0],ry=fr[1],cy=fr[2];
+  const cap='M19 27C17 9 47 9 45 27C43 19 38 17 32 17C26 17 21 19 19 27Z';
+  const hairline=`<path d="M20 25.5C22 19.5 26 17.6 32 17.8C38 17.6 42 19.5 44 25.5C41 21.5 37 19.8 32 20C27 19.8 23 21.5 20 25.5Z" fill="${hd}" opacity=".28"/>`;
+  const sd=(d,op=.3,w=.9)=>`<path d="${d}" stroke="${hd}" stroke-opacity="${op}" stroke-width="${w}" fill="none" stroke-linecap="round"/>`;
+  const sl=(d,op=.38,w=1.5)=>`<path d="${d}" stroke="${hl}" stroke-opacity="${op}" stroke-width="${w}" fill="none" stroke-linecap="round"/>`;
+  let back='',hair='';
+  switch(st){
+    case 0:hair=`<path d="${cap}" fill="${hc}"/>${hairline}${sd('M24 15Q26 12 30 11M34 11Q39 12 41 16M21.5 20Q22.5 16 25 14')}${sl('M25 14Q31 9.6 39 12.5')}`;break;
+    case 1:hair=`<path d="M20 25C20 13 44 13 44 25C41 20 23 20 20 25Z" fill="${hc}" opacity=".6"/>${sd('M25 17Q28 14.6 32 14.4M36 15Q39 16 41 19',.25,.7)}`;break;
+    case 2:{const pts=[[22,16],[27,13],[32,16],[37,13],[42,16]];
+      hair=pts.map(([x,y])=>`<circle cx="${x}" cy="${y+1}" r="6.6" fill="${hd}"/>`).join('')+`<circle cx="19.5" cy="24.6" r="4" fill="${hd}"/><circle cx="44.5" cy="24.6" r="4" fill="${hd}"/>`
+        +pts.map(([x,y])=>`<circle cx="${x}" cy="${y}" r="6.4" fill="${hc}"/>`).join('')+`<circle cx="19" cy="24" r="3.8" fill="${hc}"/><circle cx="45" cy="24" r="3.8" fill="${hc}"/>`
+        +pts.map(([x,y])=>sl(`M${x-3} ${y-.6}Q${x} ${y-3.8} ${x+3} ${y-.6}`,.42,1)).join('');break;}
+    case 3:hair=`<path d="${cap}" fill="${hc}"/><path d="M18 24L15 47L23 44L22 26ZM46 24L49 47L41 44L42 26Z" fill="${hc}"/>${hairline}${sd('M17 30L16.4 44M20 29L19.6 42M47 30L47.6 44M44 29L44.4 42',.3)}${sd('M24 15Q26 12 30 11M34 11Q39 12 41 16')}${sl('M25 14Q31 9.6 39 12.5')}`;break;
+    case 4:hair=`<path d="M18 29C14 17 22 9 32 11C42 8 50 17 46 29L42 23L39 18L35 22L31 17L26 22L22 20Z" fill="${hc}"/><circle cx="21" cy="17" r="4" fill="${hc}"/><circle cx="28" cy="13" r="4" fill="${hc}"/><circle cx="36" cy="13" r="4" fill="${hc}"/><circle cx="43" cy="18" r="4" fill="${hc}"/>${sl('M18.6 16Q21 13.4 23.6 15.6M26 12Q28 9.8 31 11.4M34 11.6Q37 9.8 39 12.4M41 16.6Q43 14.4 45.6 16.4',.42,1)}${sd('M24 24L26 18M33 22L34 17',.25)}`;break;
+    case 5:hair=`<path d="M19 27C17 11 28 8 37 11C46 12 48 20 45 28L41 21L37 18L32 21L27 17L22 22Z" fill="${hc}"/><path d="M19 22L22 29M45 22L42 29" stroke="${hc}" stroke-width="4" stroke-linecap="round"/>${sd('M22 16Q28 11 35 12.4M25 19Q31 13.6 41 15.4',.28)}<path d="M28 13L34 17" stroke="#fff" stroke-opacity=".38" stroke-width="2" stroke-linecap="round"/>${sl('M24 12.6Q31 8.6 40 12',.3,1.2)}`;break;
+    case 6:hair=`<path d="M19.5 27C18 12 46 12 44.5 27C42 19 22 19 19.5 27Z" fill="${hc}" opacity=".16"/><ellipse cx="27" cy="16" rx="4" ry="2" fill="#fff" opacity=".24"/><path d="M19.4 27C19 23 19.6 21.5 20.5 20.6L21.8 25Z" fill="${hc}" opacity=".7"/><path d="M44.6 27C45 23 44.4 21.5 43.5 20.6L42.2 25Z" fill="${hc}" opacity=".7"/>`;break;
+    case 7:{let d='';for(let y=12.5;y<=20;y+=2){for(let x=21;x<=43;x+=2.4){const dx=(x-32)/(rx*1.04),dy=(y-cy)/(ry*1.04);if(dx*dx+dy*dy<=1&&y<=22)d+=`<circle cx="${(x+(y%4?1.2:0)).toFixed(1)}" cy="${y}" r=".38" fill="${hd}" opacity=".55"/>`;}}
+      hair=`<path d="${cap}" fill="${hc}" opacity=".5"/>${d}`;break;}
+    case 8:hair=`<path d="${cap}" fill="${hc}" opacity=".25"/><path d="M29 19C27 9 29 3 32 2C35 3 37 9 35 19Z" fill="${hc}"/>${sd('M31 17L30.4 6M33 17L33.6 6',.35,.8)}${sl('M31 14Q30 8 32 4',.42,1.1)}`;break;
+    case 9:{let tx='';for(let i=0;i<22;i++){const a=i/22*Math.PI*2+.3,r=(i%3?13.2:16)+(i%2),x=32+Math.cos(a)*r,y=19+Math.sin(a)*r*.96;tx+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="1.15" fill="${i%2?hd:hl}" opacity=".3"/>`;}
+      back=`<circle cx="32" cy="19" r="18.5" fill="${hc}"/>${tx}`;hair=`<path d="M19 27C17 11 47 11 45 27C43 20 38 18 32 18C26 18 21 20 19 27Z" fill="${hc}"/>${hairline}`;break;}
+    case 10:hair=`<path d="${cap}" fill="${hc}"/><circle cx="32" cy="8.5" r="5.2" fill="${hc}"/>${hairline}<path d="M28 12Q32 14 36 12" stroke="#000" stroke-opacity=".2" fill="none" stroke-width="1"/>${sl('M29 6.8Q32 4.6 35 6.8',.46,1)}${sd('M25 15Q28 12 31 12M34 12Q38 12 41 15')}${sl('M25 14.4Q31 10.6 39 13',.34,1.3)}`;break;
+    case 11:hair=`<path d="M19.5 27C17 10 47 10 44.5 27C43 21 40 17 32 16.5C24 17 21 21 19.5 27Z" fill="${hc}"/><path d="M24 15Q32 11.5 40 15M26 13Q32 10.5 38 13" stroke="#fff" stroke-opacity=".28" fill="none" stroke-width="1.2" stroke-linecap="round"/>${sd('M23 19Q27 14 33 13M26 20Q31 15.5 38 15.5M30 18Q35 15.5 41 17',.3)}`;break;
+    case 12:hair=`<path d="${cap}" fill="${hc}"/><path d="M19 24L17.5 37L22.5 34L22 25ZM45 24L46.5 37L41.5 34L42 25Z" fill="${hc}"/><path d="M32 17L28 23" stroke="#000" stroke-opacity=".18" fill="none" stroke-width="1"/>${hairline}${sd('M18.6 28L18.2 35M45.4 28L45.8 35',.3)}${sl('M25 14Q31 9.8 39 12.8')}`;break;
+    case 14:hair=`<path d="M19.4 27C18.4 21 19 16 21.5 14.6L22.6 25Z" fill="${hc}" opacity=".32"/><path d="M44.6 27C45.6 21 45 16 42.5 14.6L41.4 25Z" fill="${hc}" opacity=".32"/><path d="M21.5 24C20 12.5 44 12.5 42.5 24C40 19.5 24 19.5 21.5 24Z" fill="${hc}"/>${sd('M25 15.5Q31 12 38 15.5M23.5 19Q32 14.5 40.5 19',.28)}${sl('M26 14.5Q32 11.2 38 14',.4,1.6)}`;break;
+    case 15:hair=`<path d="M19 27C16.5 13 21 6.5 33 5.8C43.5 6 49 13 45 27C43.5 21 40.5 17.5 32 17C24.5 17.5 21 21 19 27Z" fill="${hc}"/><path d="M22 14C25 7.5 38 6.5 43 13C38 10.5 28 10.5 22 14Z" fill="${hl}" opacity=".3"/>${hairline}${sd('M22 18Q24 11 30 8M27 17Q29 11 35 8M33 16Q35 11 41 10')}`;break;
+    case 16:hair=`<path d="${cap}" fill="${hc}"/>${hairline}`+['M23.8 18.4Q22.4 13.2 26 10.2','M27.8 17.6Q27.4 12.2 30 9.9','M32 17.2Q32 11.6 32 9.6','M36.2 17.6Q36.6 12.2 34 9.9','M40.2 18.4Q41.6 13.2 38 10.2'].map(d=>sd(d,.7,.8)+sl(d,.22,.5)).join('');break;
+    case 17:back=[[19,24,16,47],[23,22,21,43],[41,22,43,43],[45,24,48,47]].map(([x1,y1,x2,y2])=>{const d=`M${x1} ${y1}Q${x1-2.5} ${(y1+y2)/2} ${x2} ${y2}`;return `<path d="${d}" stroke="${hc}" stroke-width="3.6" stroke-linecap="round" fill="none"/><path d="${d}" stroke="${hl}" stroke-opacity=".28" stroke-width="1" stroke-linecap="round" fill="none"/>`;}).join('');
+      hair=`<path d="${cap}" fill="${hc}"/>${hairline}`+[22,27,32,37,42].map(x=>`<circle cx="${x}" cy="${x%2?17.5:18.5}" r="2.2" fill="${hc}"/>`).join('')+sd('M24 14Q30 10 37 12M22 18Q32 13 42 18',.3);break;
+    case 18:hair=`<path d="M19.6 27C18.6 20 19.4 15 21.4 14L22.4 25Z" fill="${hc}" opacity=".3"/><path d="M44.4 27C45.4 20 44.6 15 42.6 14L41.6 25Z" fill="${hc}" opacity=".3"/><path d="M21 24.5L19.8 8.2Q32 4.4 44.2 8.2L43 24.5C40.5 19.5 23.5 19.5 21 24.5Z" fill="${hc}"/>${sd('M22 12H42M21.5 16H42.5',.18,.7)}${sl('M23 8.8Q32 6.4 41 8.8',.4,1.6)}${hairline}`;break;
+    case 19:back=`<path d="M43 18C54 17 58 30 51 45C51 38 48 31 43 28Z" fill="${hc}"/>${sd('M46 22Q52 28 50.5 40',.3)}`;
+      hair=`<path d="${cap}" fill="${hc}"/>${hairline}<circle cx="46.2" cy="20.6" r="1.7" fill="${sh}" stroke="#fff" stroke-opacity=".4" stroke-width=".5"/>${sd('M24 15Q30 11 38 14',.3)}${sl('M25 14Q31 9.8 39 12.5')}`;break;
+    case 20:back=`<path d="M16.5 23C12.5 35 14.5 46 21 49L25 45H39L43 49C49.5 46 51.5 35 47.5 23Z" fill="${hc}"/>${sd('M16 30Q15 38 18 45M48 30Q49 38 46 45',.3)}`;
+      hair=`<path d="M19 27C16 10 48 10 45 27L40.5 20.5L36.5 22.5L31.5 18L27 21.5L23 19.5Z" fill="${hc}"/>${hairline}${sl('M24 14Q32 10 40 14')}`;break;
+    case 21:hair=`<path d="M18.5 28L17 15.5L23 20.5L25 8.5L30 17.5L33 5L37 17.5L42 8.5L43 20.5L48 15L46 28C43 20.5 38 17.5 32 17.5C26 17.5 21 20.5 18.5 28Z" fill="${hc}"/>${hairline}${sl('M24 18L25 11.5M32 15L33 8.5M40 18L42 12',.42,1.1)}${sd('M27 18L28 12M36 17L38 12',.25)}`;break;
+    case 22:hair=`<path d="M19 27C15.6 12 26 8 32.4 10.6C30.4 16.4 27 21.4 21.6 26Z" fill="${hc}"/><path d="M45 27C48.4 12 38 8 31.6 10.6C33.6 16.4 37 21.4 42.4 26Z" fill="${hc}"/>${sd('M22 20Q26 14 30.5 12M42 20Q38 14 33.5 12',.3)}${sl('M23 14Q26 11 29.6 11',.4,1.2)}${sl('M41 14Q38 11 34.4 11',.4,1.2)}`;break;
+    case 23:hair=`<path d="${cap}" fill="${hc}"/>${hairline}`+['M22 17Q25 14 28 17T34 17T40 17','M23 13.4Q26 10.6 29 13.4T35 13.4T41 13.4'].map(d=>sd(d,.35,.9)+sl(d,.22,.6)).join('')+sl('M25 15Q32 12.4 39 15',.32,1.1);break;
+
+    case 13:back=`<path d="M18 23C12 34 15 48 21 53L25 45L39 45L43 53C49 48 52 34 46 23Z" fill="${hc}"/>${sd('M17 31Q15 41 20 49M47 31Q49 41 44 49',.35)}`;
+      hair=`<path d="M18 28C15 12 24 7 32 9C42 7 49 15 46 29L42 24Q39 20 36 23Q32 18 29 23Q25 19 21 27Z" fill="${hc}"/>${hairline}<path d="M20 23Q17 31 21 38M44 23Q47 31 43 38" stroke="${hc}" stroke-width="3.2" fill="none" stroke-linecap="round"/>${sd('M21 28Q18 33 21 37M43 28Q46 33 43 37M25 15Q28 10 32 12M35 12Q40 11 42 16',.42,1.1)}${sl('M24 13Q30 8 37 11',.42,1.4)}`;break;
+    case 24:hair=`<path d="M19.5 27C19 17 23 13 32 13C41 13 45 17 44.5 27C41 22 23 22 19.5 27Z" fill="${hc}"/>${sd('M23 18Q32 14 41 18M21 22Q32 19 43 22',.25,.8)}${sl('M25 16Q32 13 39 16',.3,1)}`;break;
+    case 25:hair=`<path d="M19 27C16 12 25 8 34 10C43 10 48 17 45 27C42 21 38 18 32 18C26 18 22 21 19 27Z" fill="${hc}"/><path d="M23 17Q31 10 43 14Q37 15 32 19Q27 18 23 23Z" fill="${hl}" opacity=".32"/>${hairline}${sd('M23 17Q30 11 40 13M25 20Q33 15 42 17',.32,1)}${sl('M24 15Q32 9 41 13',.4,1.3)}`;break;
+    case 26:hair=`<path d="M18 27C17 12 24 9 32 9C41 9 47 13 46 27L43 25L42 31L38 27H26L22 31L21 25Z" fill="${hc}"/>${sd('M21 17Q32 12 43 17M20 22Q32 18 44 22',.28,.9)}${sl('M25 13Q32 10 39 13',.35,1.2)}`;break;
+    case 27:hair=`<path d="M20 27C17 12 24 7 32 8C41 7 47 13 44 27L41 23L38 20L35 23L32 19L29 23L25 20L22 25Z" fill="${hc}"/>${[23,27,31,35,39,43].map((x,i)=>`<circle cx="${x}" cy="${i%2?13:15}" r="3.2" fill="${i%2?hl:hd}" opacity=".55"/>`).join('')}${sd('M22 19Q25 12 29 13M33 12Q38 10 41 17',.35,1)}`;break;
+    case 28:hair=`<path d="M19 27C17 14 23 10 31 11C39 9 46 14 45 27L41 23L37 24L34 20L30 24L26 21L22 26Z" fill="${hc}"/>${sd('M23 17L26 13M29 18L32 12M36 18L39 13M41 20L43 17',.38,1)}${sl('M24 15Q31 10 39 13',.32,1.1)}`;break;
+    case 29:back=`<path d="M21 22Q14 31 18 49M43 22Q50 31 46 49" stroke="${hc}" stroke-width="3.8" stroke-linecap="round" fill="none"/>${sd('M18 34L19 46M46 34L45 46',.35)}`;
+      hair=`<path d="M19 27C17 12 25 9 32 10C40 9 47 14 45 27L41 22L37 19L32 22L27 19L22 23Z" fill="${hc}"/>${[23,27,31,35,39,43].map(x=>`<path d="M${x} 15L${x+1} 24" stroke="${hl}" stroke-opacity=".55" stroke-width="1.2" stroke-linecap="round"/>`).join('')}${sd('M23 17Q31 11 40 15',.3)}`;break;
+    case 30:back=`<path d="M40 15Q53 12 53 25Q51 31 44 29Z" fill="${hc}"/>${sd('M44 18Q51 18 50 25',.35)}`;
+      hair=`<path d="M19 27C17 12 25 9 32 10C40 9 46 14 45 27C42 21 38 18 32 18C26 18 22 21 19 27Z" fill="${hc}"/>${hairline}${sd('M23 17Q31 11 40 15',.3)}${sl('M25 14Q32 10 39 13',.38,1.2)}`;break;
+    case 31:back=`<path d="M17 23C12 34 15 50 21 55L25 46L39 46L43 55C49 50 52 34 47 23Z" fill="${hc}"/>${sd('M17 31Q15 43 20 51M47 31Q49 43 44 51',.35)}`;
+      hair=`<path d="M18 28C15 12 24 8 32 9C42 8 49 15 46 29L42 23L38 21L34 24L30 20L26 24L22 22Z" fill="${hc}"/>${hairline}${sd('M21 17Q28 10 35 13M34 14Q40 11 43 18',.32,1)}${sl('M24 14Q32 9 40 13',.4,1.3)}`;break;
+
+    case 32:hair=`<path d="M18.8 27C18 18 21 13 25 12.2L23 24L21 27Z" fill="${hc}"/><path d="M45.2 27C46 18 43 13 39 12.2L41 24L43 27Z" fill="${hc}"/><path d="M22 24C20 14 26 9 34 10C41 10 46 15 43 24C38 19 28 18 22 24Z" fill="${hc}"/><path d="M25 16Q32 11 40 15M24 20Q32 15 41 19" stroke="${hl}" stroke-opacity=".5" stroke-width="1.2" fill="none" stroke-linecap="round"/>${hairline}`;break;
+    case 33:hair=`<path d="M19.5 27C18 16 23 10 32 10C42 10 47 17 44.5 27L41 22L37 18L32 20L27 17L22 22Z" fill="${hc}"/><path d="M23 15Q28 8 37 11Q42 12 44 18Q37 14 30 17Z" fill="${hl}" opacity=".38"/>${sd('M24 18Q30 11 38 14M29 19Q35 13 41 17',.42,1.1)}${sl('M25 13Q32 8.5 39 12',.45,1.4)}`;break;
+    case 34:hair=`<path d="M19 27C16 15 22 9 32 10C43 8 48 17 45 27L41 25L39 30L35 23L32 29L28 23L24 29L22 24Z" fill="${hc}"/>${[22,27,32,37,42].map((x,i)=>`<circle cx="${x}" cy="${i%2?16:13.5}" r="2.8" fill="${i%2?hl:hd}" opacity=".55"/>`).join('')}${hairline}`;break;
+    case 35:hair=`<path d="M19 27C17 14 23 11 32 11C41 11 47 14 45 27L41 23L38 25L34 20L30 25L26 21L22 26Z" fill="${hc}"/>${sd('M22 17Q26 12 30 15M32 15Q36 11 41 15M24 21Q29 17 33 20M35 20Q39 16 43 20',.38,1)}${sl('M24 14Q32 10 40 14',.36,1.1)}`;break;
+    case 36:back=`<path d="M17 22C12 34 15 49 21 55L25 44L39 44L43 55C49 49 52 34 47 22Z" fill="${hc}"/>${sd('M17 31Q14 43 20 51M47 31Q50 43 44 51',.38,1.1)}`;hair=`<path d="M18 28C15 12 23 7 32 9C42 7 49 15 46 29L42 24L38 21L34 24L30 20L26 24L22 22Z" fill="${hc}"/>${hairline}${sl('M23 13Q31 8 40 13',.4,1.3)}`;break;
+    case 37:back=`<path d="M41 17C52 17 57 28 55 42C54 49 49 53 45 52C49 43 49 33 41 27Z" fill="${hc}"/><path d="M45 22Q53 31 50 43" stroke="${hl}" stroke-opacity=".45" stroke-width="1.2" fill="none"/>`;hair=`<path d="M19 27C17 11 26 8 34 10C43 10 47 17 45 27C40 20 25 18 19 27Z" fill="${hc}"/>${hairline}<circle cx="44.2" cy="21" r="2.1" fill="${sh}" stroke="#fff" stroke-opacity=".5" stroke-width=".6"/>${sl('M24 14Q31 10 39 14',.4,1.2)}`;break;
+    case 38:hair=`<path d="M19 27C17 12 24 8 32 9C41 8 47 13 45 27L41 22L37 18L33 22L29 18L25 22L22 26Z" fill="${hc}"/>${[22,26,30,34,38,42].map((x,i)=>`<path d="M${x} 17Q${x-1} 12 ${x+1} 9" stroke="${hl}" stroke-opacity=".6" stroke-width="1.1" fill="none" stroke-linecap="round"/>`).join('')}${sd('M23 17Q31 10 41 15',.28)}`;break;
+    case 39:hair=`<path d="M19 27C17 12 23 8 32 9C42 8 47 14 45 27L41 23L37 20L33 23L29 20L25 24L22 26Z" fill="${hc}"/><path d="M22 24L21 29M25 24L24 29M42 24L43 29" stroke="${hd}" stroke-width="1.1" stroke-linecap="round"/>${sd('M24 16Q31 10 39 14',.32)}${sl('M25 13Q32 9 40 13',.4,1.2)}`;break;
+    case 40:back=`<path d="M18 24Q13 34 18 48M46 24Q51 34 46 48" stroke="${hc}" stroke-width="3.2" stroke-linecap="round" fill="none"/>`;hair=`<path d="M19 27C17 12 24 8 32 9C41 8 47 14 45 27L41 22L37 19L32 22L27 19L22 23Z" fill="${hc}"/>`+['M22 17Q27 11 30 21','M27 14Q31 11 32 22','M32 12Q34 14 34 22','M37 14Q34 17 37 22','M42 17Q37 19 38 24'].map(d=>`<path d="${d}" stroke="${hl}" stroke-opacity=".72" stroke-width="1.05" fill="none" stroke-linecap="round"/>`).join('');break;
+    case 41:hair=`<path d="M19 27C17 12 24 8 32 9C41 8 47 14 45 27L42 23L39 25L35 21L31 25L27 21L23 26Z" fill="${hc}"/>${sd('M22 17Q26 12 31 14M33 14Q38 10 42 16',.42,1)}<path d="M24 20L23 26M27 18L27 24M40 18L41 24" stroke="${hd}" stroke-width="1" stroke-linecap="round"/>${sl('M25 13Q32 9 39 13',.38,1.1)}`;break;
+    case 42:back=`<path d="M17 22C12 33 15 46 21 52L25 45L39 45L43 52C49 46 52 33 47 22Z" fill="${hc}"/>`;hair=`<path d="M18 28C14 15 23 7 32 9C43 7 50 16 46 29L42 24L39 20L35 23L31 18L27 23L22 21Z" fill="${hc}"/>${[21,25,29,33,37,41,45].map((x,i)=>`<circle cx="${x}" cy="${i%2?14:17}" r="3.1" fill="${i%2?hl:hd}" opacity=".42"/>`).join('')}${hairline}`;break;
+    case 43:hair=`<path d="M19.5 27C19 16 24 12 32 12C40 12 45 16 44.5 27C40 22 24 22 19.5 27Z" fill="${hc}"/>${sd('M23 17Q32 13 41 17M21 21Q32 18 43 21',.35,1)}${sl('M25 15Q32 12 39 15',.35,1.1)}`;break;
+    case 44:back=`<path d="M17 23C12 34 15 49 21 55L25 44L39 44L43 55C49 49 52 34 47 23Z" fill="${hc}"/>`;hair=`<path d="M18 28C15 12 24 7 32 9C42 7 49 15 46 29L42 24L38 20L34 24L30 20L26 24L22 22Z" fill="${hc}"/>`+[21,26,31,36,41].map((x,i)=>`<circle cx="${x}" cy="${i%2?15:12.5}" r="4" fill="${i%2?hl:hd}" opacity=".46"/>`).join('')+`${sd('M20 31Q17 42 21 50M44 31Q47 42 43 50',.4,1.1)}${hairline}`;break;
+    case 45:back=`<path d="M41 15Q54 12 54 25Q52 32 44 30Z" fill="${hc}"/>${sd('M46 18Q52 20 50 26',.35)}`;hair=`<path d="M19 27C17 12 24 8 32 9C41 8 47 14 45 27C42 21 38 18 32 18C26 18 22 21 19 27Z" fill="${hc}"/><circle cx="32" cy="8.2" r="5.5" fill="${hc}" stroke="${hd}" stroke-opacity=".35" stroke-width="1"/>${hairline}${sl('M24 14Q31 10 39 13',.4,1.2)}`;break;
+    default:back=`<path d="M17 22C12 36 15 50 20 55L25 46L39 46L44 55C49 50 52 36 47 22Z" fill="${hc}"/>${sd('M16 30Q14.4 40 18 50M48 30Q49.6 40 46 50',.3)}`;
+      hair=`<path d="M19 27C16 10 48 10 45 27C43 19 38 16 32 17C26 16 21 19 19 27Z" fill="${hc}"/>${hairline}<path d="M24 14Q32 10 40 14" stroke="#fff" stroke-opacity=".22" fill="none" stroke-width="1.4" stroke-linecap="round"/>${sl('M22 19Q27 12 36 12',.26,1.2)}`;
+  }
+  const dyed=['#3b82f6','#ec4899','#22c55e','#8b5cf6','#f97316'],bc=dyed.includes(hc)?'#2b2118':(hc==='#f5f5f5'||hc==='#f0e6c8'?'#8a8a8a':hc);
+  const bw=brow===1?2.7:brow===3?1.2:1.8,bd=brow===2?'M22.5 24.2L29.5 25.8M34.5 25.8L41.5 24.2':brow===3?'M22.5 24.6Q26 22 29.5 24.2M34.5 24.2Q38 22 41.5 24.6':'M22.5 25.2Q26 23.5 29.5 25.2M34.5 25.2Q38 23.5 41.5 25.2';
+  const nd=nose===1?'M32 30L29.5 34.6Q32 35.8 34.5 34.6':nose===2?'M32 31.5L31 33.8H33':'M32 30L30.5 34H33.5';
+  const nx=nose===1?1.9:nose===2?.9:1.3;
+  const beardFull='M19 31C19 47 45 47 45 31L42 39L37 43L32 45L27 43L22 39Z';
+  let beard='';
+  if(bt===1)beard=`<path d="${beardFull}" fill="${hc}" opacity=".94"/><path d="M22 39C24 44 40 44 42 39C40 42.4 24 42.4 22 39Z" fill="${hd}" opacity=".3"/>${sd('M22 34Q23 40 27 43M42 34Q41 40 37 43',.25)}`;
+  else if(bt===2)beard=`<path d="M27 39C27.5 46.5 36.5 46.5 37 39C34.5 41.2 29.5 41.2 27 39Z" fill="${hc}"/><path d="M26 35.6Q29 34 32 35.4Q35 34 38 35.6Q35 36.8 32 36Q29 36.8 26 35.6Z" fill="${hc}"/>${sd('M29 42L29.4 45M35 42L34.6 45',.3)}`;
+  else if(bt===3){let d='';for(let i=0;i<26;i++){const a=.15+i/25*(Math.PI-.3),x=32+Math.cos(a)*11.4,y=31+Math.sin(a)*12.2;d+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r=".4" fill="${hd}" opacity=".45"/>`;}
+    beard=`<path d="${beardFull}" fill="${hc}" opacity=".28"/>${d}`;}
+  else if(bt===4)beard=`<path d="M25.5 36Q29 33.6 32 35.4Q35 33.6 38.5 36Q35 37.6 32 36.4Q29 37.6 25.5 36Z" fill="${hc}"/>`;
+  else if(bt===5)beard=`<path d="M19.4 31.5Q19.6 45 32 46.6Q44.4 45 44.6 31.5L43 33Q42.6 42.4 32 44Q21.4 42.4 21 33Z" fill="${hc}" opacity=".96"/>`;
+  else if(bt===6)beard=`<path d="M19 31C18 46 25 54 32 56C39 54 46 46 45 31L42 39L37 43L32 46L27 43L22 39Z" fill="${hc}"/>${sd('M25 44L26 52M32 46V54M39 44L38 52',.3)}${sl('M23 38Q27 47 30 52',.25,1)}`;
+  else if(bt===7)beard=`<path d="M19.6 26.5L21.2 38.4L23 38L22.4 27Z" fill="${hc}"/><path d="M44.4 26.5L42.8 38.4L41 38L41.6 27Z" fill="${hc}"/><path d="M25.5 36Q29 33.6 32 35.4Q35 33.6 38.5 36Q35 37.6 32 36.4Q29 37.6 25.5 36Z" fill="${hc}"/>`;
+  else if(bt===8)beard=`<path d="M24 35.8Q28 33.4 32 35.4Q36 33.4 40 35.8Q37 38.4 32 37Q27 38.4 24 35.8Z" fill="${hc}"/><path d="M27 39Q32 45 37 39L36 44Q32 47 28 44Z" fill="${hc}"/>`;
+  else if(bt===9)beard=`<path d="M21 33Q25 31 29 34M35 34Q39 31 43 33" stroke="${hc}" stroke-width="2.4" stroke-linecap="round" fill="none"/><path d="M24 39Q32 43 40 39" stroke="${hc}" stroke-width="1.6" stroke-linecap="round" fill="none"/>`;
+  else if(bt===10)beard=`<path d="M20 32Q20 45 32 48Q44 45 44 32L41 40Q32 46 23 40Z" fill="${hc}"/><path d="M26 42L28 47M32 44V49M38 42L36 47" stroke="${hl}" stroke-opacity=".5" stroke-width="1" fill="none"/>`;
+  else if(bt===11)beard=`<path d="M24 36Q28 33 32 35Q36 33 40 36Q37 38 32 37Q27 38 24 36Z" fill="${hc}"/><path d="M22 40Q32 45 42 40" stroke="${hc}" stroke-width="2" stroke-linecap="round" fill="none"/>`;
+  let mo;
+  if(mouth===5)mo=`<path d="M26.2 36.4Q32 49 37.8 36.4Q32 38.2 26.2 36.4Z" fill="#7f1d1d"/><path d="M27 36.7Q32 38.6 37 36.7L36.4 38.4Q32 39.6 27.6 38.4Z" fill="#fff"/><ellipse cx="32" cy="42.4" rx="3.2" ry="1.7" fill="#f87171"/>`;
+  else{
+    if(mouth===0)mo='<path d="M27 37Q32 41.5 37 37"';else if(mouth===1)mo='<path d="M28 38.5H36"';else if(mouth===2)mo='<path d="M27 38Q32 40 37 37.5"';
+    else if(mouth===3)mo='<path d="M26.5 36.6Q32 44 37.5 36.6Z" fill="#fff"';else mo='<path d="M27.5 38.4Q31.5 40 34.5 38.2Q36 37.6 37 36.6"';
+    mo+=` stroke="${bt===1||bt===6?'#fff':'#7a3b2e'}" stroke-width="${mouth===3?1.2:1.6}" ${mouth===3?'':'fill="none" '}stroke-linecap="round"/>`;
+  }
+  let ac='';
+  if(acc===1)ac=`<path d="M19.2 22.5Q32 17.5 44.8 22.5L44.6 26Q32 21.2 19.4 26Z" fill="${sh}" stroke="#fff" stroke-opacity=".45" stroke-width=".8"/>`;
+  else if(acc===2)ac=`<g fill="none" stroke="#111827" stroke-width="1.15"><circle cx="26.5" cy="29" r="3.9"/><circle cx="37.5" cy="29" r="3.9"/><path d="M30.4 29H33.6M22.6 28.5L19.5 27.5M41.4 28.5L44.5 27.5"/></g><circle cx="25.3" cy="27.8" r="1" fill="#fff" opacity=".35"/>`;
+  else if(acc===3)ac=`<circle cx="19" cy="34" r="1.4" fill="#fbbf24" stroke="#b45309" stroke-width=".4"/>`;
+  else if(acc===4)ac=`<path d="M38 23.5L41.2 33" stroke="#b9382d" stroke-opacity=".7" stroke-width="1.1" stroke-linecap="round"/><path d="M37 27.5L40 27" stroke="#b9382d" stroke-opacity=".5" stroke-width=".8"/>`;
+  else if(acc===5)ac=`<path d="M23.4 32.2H29.4M34.6 32.2H40.6" stroke="#111827" stroke-opacity=".7" stroke-width="1.7" stroke-linecap="round"/>`;
+  else if(acc===6)ac=`<path d="M20.5 27.2L43.5 27.2" stroke="#0b0b10" stroke-width="1.2"/><path d="M22 27.4H30.4Q30.4 33.4 26.2 33.4Q22 33.4 22 27.4Z" fill="#0b0b10"/><path d="M33.6 27.4H42Q42 33.4 37.8 33.4Q33.6 33.4 33.6 27.4Z" fill="#0b0b10"/><path d="M23.4 28.6H26.6M34.9 28.6H38.1" stroke="#fff" stroke-opacity=".5" stroke-width=".9" stroke-linecap="round"/>`;
+  else if(acc===7)ac=`<path d="M24.6 48Q32 60 39.4 48" stroke="#fbbf24" stroke-width="1.15" fill="none"/><circle cx="32" cy="57" r="2" fill="#fbbf24" stroke="#b45309" stroke-width=".5"/><circle cx="31.3" cy="56.3" r=".6" fill="#fff" opacity=".7"/>`;
+  else if(acc===8)ac=`<path d="M22 33.5L26.6 33.1M23 35.6L27.6 35.1M42 33.5L37.4 33.1M41 35.6L36.4 35.1" stroke="${sh}" stroke-width="1.5" stroke-linecap="round" opacity=".9"/><path d="M22.4 34.5L26.4 34.1M41.6 34.5L37.6 34.1" stroke="#fff" stroke-width=".7" stroke-linecap="round" opacity=".8"/>`;
+  else if(acc===9)ac=`<path d="M29.4 29.6Q32 32 34.6 29.6L34.4 31.6Q32 33.6 29.6 31.6Z" fill="#f3e5c8" stroke="#c9b48a" stroke-width=".4"/>`;
+  else if(acc===10)ac=`<path d="M19 21Q32 17 45 21L43.8 24Q32 21 20.2 24Z" fill="#f8fafc" stroke="${sh}" stroke-width="1.2"/><path d="M23 21L25 24M41 21L39 24" stroke="${sh}" stroke-width=".8"/>`;
+  else if(acc===11)ac=`<path d="M20.5 28.5H43.5" stroke="#111827" stroke-width="1.5"/><path d="M22 28.5Q32 25.5 42 28.5L40.5 33Q32 31 23.5 33Z" fill="#111827"/><path d="M25 29.5H30M34 29.5H39" stroke="#93c5fd" stroke-width="1"/>`;
+  else if(acc===12)ac=`<path d="M21 47Q32 52 43 47" stroke="#fbbf24" stroke-width="2.2" fill="none"/><path d="M32 47L30 54L32 58L34 54Z" fill="#fbbf24" stroke="#b45309" stroke-width=".5"/>`;
+  else if(acc===13)ac=`<path d="M22 31L25 33L22 35M42 31L39 33L42 35" stroke="#dc2626" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M24 26L27 25M40 26L37 25" stroke="#dc2626" stroke-width="1"/>`;
+  const body='M5 64C6 50 19 46 32 46C45 46 58 50 59 64Z';let kt='';
+  if(kit===1)kt='<rect x="0" y="52" width="64" height="3.4" fill="#fff" opacity=".3"/><rect x="0" y="58.4" width="64" height="3.4" fill="#fff" opacity=".3"/>';
+  else if(kit===2)kt=[10,18,26,34,42,50].map(x=>`<rect x="${x}" y="44" width="3.6" height="22" fill="#fff" opacity=".24"/>`).join('');
+  else if(kit===3)kt='<path d="M6 64L33 44L42 44L15 66Z" fill="#fff" opacity=".34"/>';
+  else if(kit===4)kt='<rect x="0" y="44" width="15" height="22" fill="#000" opacity=".2"/><rect x="49" y="44" width="15" height="22" fill="#000" opacity=".2"/>';
+  else if(kit===5)kt='<rect x="0" y="47.5" width="64" height="5.2" fill="#fff" opacity=".26"/><rect x="0" y="57.5" width="64" height="5.2" fill="#fff" opacity=".26"/>';
+  else if(kit===6)kt='<rect x="32" y="44" width="32" height="22" fill="#fff" opacity=".22"/><rect x="31.4" y="44" width="1.2" height="22" fill="#000" opacity=".22"/>';
+  else if(kit===7){for(let y=50;y<=62;y+=6)for(let x=(y%12?12:8);x<=58;x+=8)kt+=`<path d="M${x} ${y-3}L${x+3} ${y}L${x} ${y+3}L${x-3} ${y}Z" fill="#fff" opacity=".2"/>`;}
+  else if(kit===8)kt=`<rect x="0" y="44" width="64" height="22" fill="url(#${uid}g)"/>`;
+  else if(kit===9)kt=`<path d="M0 48L64 62M0 57L45 66" stroke="#fff" stroke-opacity=".32" stroke-width="3" fill="none"/>`;
+  else if(kit===10)kt=`<path d="M0 48H64M0 61H64" stroke="#fff" stroke-opacity=".32" stroke-width="2"/><path d="M8 44V66M56 44V66" stroke="#000" stroke-opacity=".12" stroke-width="2"/>`;
+  else if(kit===11)kt=`<path d="M0 44H64V66H0Z" fill="url(#${uid}g)"/><path d="M0 55H64" stroke="#fff" stroke-opacity=".3" stroke-width="1.5"/>`;
+  const crest=`<circle cx="40" cy="58.2" r="2.4" fill="#fff" opacity=".55"/><path d="M40 56.6l.64 1.3 1.4.2-1 1 .24 1.4-1.28-.68-1.28.68.24-1.4-1-1 1.4-.2z" fill="${shd}" opacity=".75"/>`;
+  const defs=`<defs><radialGradient id="${uid}h" cx="40%" cy="32%" r="78%"><stop offset="0" stop-color="${skl}"/><stop offset=".55" stop-color="${sk}"/><stop offset="1" stop-color="${skd}"/></radialGradient><linearGradient id="${uid}b" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".26"/><stop offset=".28" stop-color="#000" stop-opacity="0"/><stop offset=".72" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".26"/></linearGradient><linearGradient id="${uid}g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".34"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><radialGradient id="${uid}v" cx="50%" cy="42%" r="75%"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".2"/></radialGradient><clipPath id="${uid}c"><path d="${body}"/></clipPath></defs>`;
+  const eyes=`<g><ellipse cx="26.5" cy="29" rx="3.3" ry="2.6" fill="#fff"/><ellipse cx="37.5" cy="29" rx="3.3" ry="2.6" fill="#fff"/><circle cx="26.7" cy="29.2" r="1.9" fill="${o.ec}"/><circle cx="37.3" cy="29.2" r="1.9" fill="${o.ec}"/><circle cx="26.7" cy="29.2" r="1.9" fill="none" stroke="${avMix(o.ec,-.45)}" stroke-width=".35"/><circle cx="37.3" cy="29.2" r="1.9" fill="none" stroke="${avMix(o.ec,-.45)}" stroke-width=".35"/><circle cx="26.9" cy="29.2" r=".85" fill="#0b0b0f" opacity=".8"/><circle cx="37.1" cy="29.2" r=".85" fill="#0b0b0f" opacity=".8"/><circle cx="27.3" cy="28.4" r=".6" fill="#fff"/><circle cx="37.9" cy="28.4" r=".6" fill="#fff"/><path d="M23.1 29.2Q26.5 25.8 29.9 29.2M34.1 29.2Q37.5 25.8 40.9 29.2" stroke="#1f1f24" stroke-opacity=".8" stroke-width="1" fill="none" stroke-linecap="round"/><path d="M24 31Q26.5 32.3 29 31M35 31Q37.5 32.3 40 31" stroke="${skd}" stroke-opacity=".55" stroke-width=".6" fill="none" stroke-linecap="round"/></g>`;
+  return `${defs}<rect width="64" height="64" rx="8" fill="${bg}"/><rect width="64" height="64" rx="8" fill="url(#${uid}v)"/>${back}<path d="${body}" fill="${sh}"/><path d="${body}" fill="url(#${uid}b)"/><path d="M13 64L20 51L27 49L32 55L37 49L44 51L51 64" fill="${sh}" stroke="#fff" stroke-opacity=".22" stroke-width="1.4"/>${kt?`<g clip-path="url(#${uid}c)">${kt}</g>`:''}<rect x="27" y="38" width="10" height="12" rx="3" fill="${sk}"/><ellipse cx="32" cy="${(cy+ry+1.6).toFixed(1)}" rx="4.8" ry="3" fill="${skd}" opacity=".5"/><path d="M25 47L32 54L39 47L36 45H28Z" fill="#f8fafc"/><path d="M25 47L32 54L39 47" fill="none" stroke="${shd}" stroke-opacity=".35" stroke-width=".7"/><path d="M29 49L32 52L35 49" fill="${sh}"/>${crest}<ellipse cx="${(32-rx+.3).toFixed(1)}" cy="30.5" rx="3" ry="3.7" fill="${sk}"/><ellipse cx="${(32+rx-.3).toFixed(1)}" cy="30.5" rx="3" ry="3.7" fill="${sk}"/><path d="M${(32-rx-.6).toFixed(1)} 29Q${(32-rx+1).toFixed(1)} 31 ${(32-rx-.4).toFixed(1)} 33M${(32+rx+.6).toFixed(1)} 29Q${(32+rx-1).toFixed(1)} 31 ${(32+rx+.4).toFixed(1)} 33" stroke="${skd}" stroke-opacity=".7" fill="none" stroke-width=".9" stroke-linecap="round"/><ellipse cx="32" cy="${cy}" rx="${rx}" ry="${ry}" fill="url(#${uid}h)"/><ellipse cx="26" cy="20.5" rx="5" ry="2.8" fill="#fff" opacity=".1"/>${hair}${eyes}<path d="${bd}" stroke="${bc}" stroke-width="${bw}" stroke-linecap="round" fill="none"/><path d="${nd}" stroke="#000" stroke-opacity=".28" fill="none" stroke-width="1.1" stroke-linecap="round"/><ellipse cx="32" cy="33.4" rx="${nx}" ry="1" fill="${skl}" opacity=".5"/><ellipse cx="30.5" cy="34.6" rx=".7" ry=".45" fill="${skd}" opacity=".65"/><ellipse cx="33.5" cy="34.6" rx=".7" ry=".45" fill="${skd}" opacity=".65"/><ellipse cx="24" cy="34" rx="2.7" ry="1.2" fill="#fb7185" opacity=".16"/><ellipse cx="40" cy="34" rx="2.7" ry="1.2" fill="#fb7185" opacity=".16"/>${beard}${mo}${ac}<path d="M14 61H50" stroke="#fff" stroke-opacity=".18" stroke-width="1.5"/>`;
+}
+
+function avatarInner(c,pos){
+  c={...AV_DEFAULT,...(c||{})};const n=(v,m,d)=>{v=parseInt(v,10);return v>=0&&v<m?v:d};
+  return AVX({sk:AV_SK[n(c.avatarSkin,8,2)],hc:AV_HR[n(c.avatarHairColor,24,0)],st:n(c.avatarHair,46,0),bt:n(c.avatarBeard,12,0),sh:/^#[0-9a-f]{6}$/i.test(String(c.avatarJersey))?c.avatarJersey:(AV_SH[pos]||'#64748b'),bg:AV_BG[n(c.avatarBg,14,0)],mouth:n(c.avatarMouth,6,0),face:n(c.avatarFace,6,0),ec:AV_EC[n(c.avatarEyes,10,0)],brow:n(c.avatarBrow,4,0),nose:n(c.avatarNose,3,0),acc:n(c.avatarAcc,14,0),kit:n(c.avatarKit,12,0)});
+}
+const avatarSvg=(c=avatarConfig())=>`<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 64 64">${avatarInner(c,$('pos').value)}</svg>`;
+function avatarCard(c,pos,ovr,s,frame){const o=Math.round(Number(ovr)||30),t=o>=90?5:o>=80?4:o>=70?3:o>=60?2:1,f=FRAMES.includes(frame)&&frame?` data-f="${frame}"`:'';return `<span class="hs20-face" data-t="${t}"${f} style="--s:${s}px"><svg viewBox="0 0 64 64">${avatarInner(c,pos)}</svg><i>${AV_PS[pos]||''}</i><b>${o}</b></span>`;}
+function renderAvatar(){$('preview').innerHTML=avatarCard(avatarConfig(),$('pos').value,$('ovr').value,118,$('cardFrame').value);}
+avatarFields.forEach(id=>$(id).addEventListener('change',renderAvatar));
+$('cardFrame').addEventListener('change',renderAvatar);
+['pos','ovr'].forEach(id=>$(id).addEventListener('input',renderAvatar));
+window.randomAvatar=function(){for(const id of avatarFields){const o=[...$(id).options];$(id).value=o[Math.floor(Math.random()*o.length)].value;}renderAvatar();};
+function toggleAuctionFields(){
+  const auction=$('saleMode').value==='auction';
+  $('auctionFields').classList.toggle('hidden',!auction);
+  $('priceLabel').textContent=auction?'Açık artırma başlangıç fiyatı (₺)':'Mağaza satış tutarı (₺)';
+}
+$('saleMode').addEventListener('change',toggleAuctionFields);
+window.resetForm=function(){
+  $('playerForm').reset();$('editId').value='';$('ovr').value=75;$('potential').value=85;$('age').value=20;$('price').value=1000000;
+  $('saleMode').value='fixed';$('auctionMinIncrement').value=10000;toggleAuctionFields();
+  $('formTitle').textContent='➕ Özel oyuncu oluştur';$('nationality').value='';$('cardFrame').value='';
+  for(const id of avatarFields)$(id).value=AV_DEFAULT[id];
+  setTraits([]);renderAvatar();
+};
+const avatarDataUrl=()=>'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(avatarSvg());
+const withTimeout=(p,ms,label)=>Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(new Error(label+' zaman aşımına uğradı. İnternet bağlantısını ve Firestore kurallarını kontrol et.')),ms))]);
+
+window.savePlayer=async function(ev){
+  ev.preventDefault();if(!currentAdmin){status('Yönetici oturumu bulunamadı. Yeniden giriş yap.','saveStatus',true);return;}
+  const playerName=$('name').value.trim();if(!playerName){status('Oyuncu adı zorunlu.','saveStatus',true);return;}
+  const btn=$('playerForm').querySelector('button[type="submit"]');btn.disabled=true;btn.textContent='Kaydediliyor…';
+  try{
+    const id=$('editId').value||fsMod.doc(fsMod.collection(db,'hsSpecialShopPlayers')).id;
+    const old=products.find(p=>p.id===id);
+    const ovr=Math.max(30,Math.min(106,Number($('ovr').value)||30));
+    const potential=Math.max(ovr,Math.min(110,Number($('potential').value)||ovr));
+    const cardFrame=FRAMES.includes($('cardFrame').value)?$('cardFrame').value:'';
+    const price=Math.max(0,Math.floor(Number($('price').value)||0));
+    const saleMode=$('saleMode').value==='auction'?'auction':'fixed';
+    const now=Date.now();
+    if(price<1)return status('Satış veya başlangıç fiyatı en az 1 ₺ olmalı.','saveStatus',true);
+    const product={name:playerName,pos:$('pos').value,ovr,potential,age:Math.max(16,Math.min(80,Number($('age').value)||18)),nationality:$('nationality').value.trim(),rarity:$('rarity').value,price,imageUrl:avatarDataUrl(),avatarConfig:avatarConfig(),cardFrame,traits:getTraits().slice(0,6),createdAt:old?.createdAt||now,updatedAt:now,createdBy:currentAdmin.uid};
+    if(saleMode==='auction'){
+      const minIncrement=Math.max(1,Math.floor(Number($('auctionMinIncrement').value)||10000));
+      product.status='auction';product.auctionEnabled=true;
+      product.auctionStartingPrice=price;product.auctionMinIncrement=minIncrement;
+      if(old?.status==='auction'){
+        // Düzenleme sırasında devam eden ihaleyi ve mevcut teklifleri sıfırlama.
+        product.auctionCurrentBid=Math.max(0,Math.floor(Number(old.auctionCurrentBid)||0));
+        product.auctionHighestBidderUid=String(old.auctionHighestBidderUid||'');
+        product.auctionHighestBidderName=String(old.auctionHighestBidderName||'');
+        product.auctionHighestBidderTeamName=String(old.auctionHighestBidderTeamName||'');
+        product.auctionBidCount=Math.max(0,Math.floor(Number(old.auctionBidCount)||0));
+        product.auctionEndsAt=Number(old.auctionEndsAt)||now+4*60*60*1000;
+        product.auctionExtendedAt=old.auctionExtendedAt||null;
+      }else{
+        product.auctionCurrentBid=0;product.auctionHighestBidderUid='';
+        product.auctionHighestBidderName='';product.auctionHighestBidderTeamName='';
+        product.auctionBidCount=0;product.auctionEndsAt=now+4*60*60*1000;
+        product.auctionExtendedAt=null;product.auctionCreatedAt=now;
+      }
+      product.auctionDurationHours=4;
+    }else{
+      product.status=old?.status==='sold'?'sold':old?.status==='freeAgent'?'freeAgent':'available';
+      product.auctionEnabled=false;
+    }
+    status('Firestore\'a yazılıyor…','saveStatus');
+    await withTimeout(fsMod.setDoc(fsMod.doc(db,'hsSpecialShopPlayers',id),product,{merge:true}),20000,'Kayıt işlemi');
+    await loadAll();resetForm();status('✓ '+product.name+' kaydedildi.','saveStatus');
+  }catch(e){console.error(e);status('KAYIT HATASI: '+(e.code?e.code+' — ':'')+(e.message||'Bilinmeyen hata'),'saveStatus',true);}
+  finally{btn.disabled=false;btn.textContent='Kaydet / mağazaya koy';}
+};
+function itemCard(p){
+  const st=p.status==='sold'?'Satıldı':p.status==='freeAgent'?'Serbest':p.status==='auction'?'🔨 Açık artırmada':'Satışta';
+  const cls=p.status==='sold'?'sold':p.status==='freeAgent'?'free':p.status==='auction'?'auction-pill':'';
+  const tr=(p.traits&&p.traits.length)?`<div class="trait-badges">${p.traits.map(t=>`<span class="pill">${esc(traitName(t))}</span>`).join('')}</div>`:'';
+  const auctionInfo=p.status==='auction'?`<small>Başlangıç: ${money(p.auctionStartingPrice||p.price)} · Güncel teklif: <b>${money(p.auctionCurrentBid||0)}</b></small><small>Teklif veren: ${esc(p.auctionHighestBidderTeamName||p.auctionHighestBidderName||'Henüz teklif yok')} · ${Number(p.auctionBidCount)||0} teklif</small><small>Bitiş: ${p.auctionExtendedAt&&p.auctionExtendedAt.toDate?p.auctionExtendedAt.toDate().toLocaleString('tr-TR')+' (+10 dk)':new Date(Number(p.auctionEndsAt)||0).toLocaleString('tr-TR')}</small>`:'';
+  return `<article class="player"><div style="padding:6px">${avatarCard(p.avatarConfig||AV_DEFAULT,p.pos,p.ovr,92,p.cardFrame)}</div><div class="info"><b>${esc(p.name)}</b><small>${esc(p.pos)} · OVR ${Number(p.ovr)||0} · POT ${Number(p.potential)||0}</small><small>${Number(p.age)||18} yaş · ${esc(p.nationality||'Ülke yok')} · ${esc(p.rarity||'Özel')}</small><span class="pill ${cls}">${st}</span>${tr}<div class="price">${money(p.price)}</div>${auctionInfo}${p.status==='sold'?`<small>Alıcı: ${esc(p.soldTeamName||p.soldTo||'Bilinmiyor')} · ${p.soldPrice?money(p.soldPrice):''}</small>`:''}</div><div class="actions"><button onclick="editPlayer('${esc(p.id)}')">Düzenle</button>${p.status==='auction'?`<button class="warn" onclick="setPlayerStatus('${esc(p.id)}','available')">İhaleyi iptal et</button>`:p.status!=='freeAgent'?`<button class="warn" onclick="setPlayerStatus('${esc(p.id)}','freeAgent')">Serbestlere al</button>`:`<button onclick="setPlayerStatus('${esc(p.id)}','available')">Mağazaya koy</button>`}<button class="danger" onclick="deletePlayer('${esc(p.id)}')">Sil</button></div></article>`;
+}
+window.editPlayer=function(id){
+  const p=products.find(x=>x.id===id);if(!p)return;
+  $('editId').value=p.id;$('name').value=p.name||'';$('pos').value=p.pos||'MID';
+  $('ovr').value=p.ovr||30;$('potential').value=p.potential||p.ovr||30;$('age').value=p.age||18;
+  populateCountries(p.nationality||'');$('rarity').value=p.rarity||'Özel';$('price').value=p.status==='auction'?(p.auctionStartingPrice||p.price||0):(p.price||0);
+  $('saleMode').value=p.status==='auction'?'auction':'fixed';$('auctionMinIncrement').value=p.auctionMinIncrement||10000;toggleAuctionFields();
+  $('cardFrame').value=FRAMES.includes(p.cardFrame)?p.cardFrame:'';
+  const ac=p.avatarConfig||{};
+  for(const k of avatarFields){$(k).value=AV_DEFAULT[k];if(ac[k]!==undefined&&[...$(k).options].some(o=>o.value===String(ac[k])))$(k).value=String(ac[k]);}
+  setTraits(p.traits);renderAvatar();
+  $('formTitle').textContent='✏️ '+p.name+' düzenle';
+  window.scrollTo({top:0,behavior:'smooth'});
+};
+window.setPlayerStatus=async function(id,newStatus){
+  if(!['available','freeAgent'].includes(newStatus))return;
+  try{await fsMod.updateDoc(fsMod.doc(db,'hsSpecialShopPlayers',id),{status:newStatus,updatedAt:Date.now(),...(newStatus==='available'?{soldTo:fsMod.deleteField(),soldTeamName:fsMod.deleteField(),soldAt:fsMod.deleteField()}:{})});await loadAll();}
+  catch(e){alert(e.message||'Durum güncellenemedi.');}
+};
+window.deletePlayer=async function(id){
+  if(!confirm('Bu oyuncuyu mağaza kaydından kalıcı olarak silmek istiyor musun?'))return;
+  try{await fsMod.deleteDoc(fsMod.doc(db,'hsSpecialShopPlayers',id));await loadAll();}
+  catch(e){alert(e.message||'Oyuncu silinemedi.');}
+};
+async function loadAll(){
+  if(!currentAdmin)return;
+  try{
+    const snap=await fsMod.getDocs(fsMod.query(fsMod.collection(db,'hsSpecialShopPlayers'),fsMod.limit(250)));
+    products=snap.docs.map(d=>({...d.data(),id:d.id})).sort((a,b)=>(Number(b.updatedAt)||0)-(Number(a.updatedAt)||0));
+    $('shopItems').innerHTML=products.length?products.map(itemCard).join(''):'<div class="empty">Henüz özel oyuncu oluşturulmadı.</div>';
+    const free=products.filter(p=>p.status==='freeAgent'),sold=products.filter(p=>p.status==='sold');
+    $('freeItems').innerHTML=free.length?free.map(itemCard).join(''):'<div class="empty">Özel mağaza kaynaklı serbest oyuncu yok.</div>';
+    $('soldItems').innerHTML=sold.length?sold.map(itemCard).join(''):'<div class="empty">Henüz mağaza satışı yok.</div>';
+    await loadGlobalFreeAgents();
+  }catch(e){console.error(e);status('Veriler yüklenemedi: '+e.message,'saveStatus',true);}
+}
+async function loadGlobalFreeAgents(){
+  try{
+    const snap=await fsMod.getDocs(fsMod.query(fsMod.collection(db,'teamAssignments'),fsMod.where('game','==','halisaha'),fsMod.limit(500)));
+    globalFree=[];
+    for(const d of snap.docs){const row=d.data();for(const p of Array.isArray(row.regenPlayers)?row.regenPlayers:[]){if(p&&p.freeAgent)globalFree.push({ownerUid:d.id,ownerName:row.pitchName||row.username||'Takım',player:p});}}
+    $('freeItems').insertAdjacentHTML('beforeend',globalFree.map(x=>`<article class="player"><div style="display:grid;place-items:center;font-size:30px">⚽</div><div class="info"><b>${esc(x.player.name)}</b><small>${esc(x.ownerName)} · ${esc(x.player.pos)} · OVR ${Number(x.player.ovr)||0} · ${Number(x.player.age)||18} yaş</small><span class="pill free">Genel serbest oyuncu</span></div><div class="actions"><button class="danger" onclick="removeGlobalFree('${esc(x.ownerUid)}','${esc(x.player.id)}')">Serbest havuzundan sil</button><button class="warn" onclick="copyGlobalFreeToShop('${esc(x.ownerUid)}','${esc(x.player.id)}')">Özel mağazaya taşı</button></div></article>`).join(''));
+  }catch(e){console.warn('Genel serbest oyuncu listesi okunamadı:',e);}
+}
+window.removeGlobalFree=async function(ownerUid,playerId){
+  if(!confirm('Bu oyuncu tüm kulüplerin transfer havuzundan kaldırılsın mı?'))return;
+  try{
+    const ref=fsMod.doc(db,'teamAssignments',ownerUid),snap=await fsMod.getDoc(ref);if(!snap.exists())return;
+    const d=snap.data(),regen=(d.regenPlayers||[]).filter(p=>String(p.id)!==String(playerId));
+    const transfer=(d.transferOwnedPlayers||[]).filter(p=>String(p.id)!==String(playerId));
+    await fsMod.setDoc(ref,{regenPlayers:regen,transferOwnedPlayers:transfer,soldPlayerIds:[...new Set([...(d.soldPlayerIds||[]).map(String),String(playerId)])],regenPlayersUpdatedAt:Date.now()},{merge:true});
+    await loadAll();
+  }catch(e){alert(e.message||'Serbest oyuncu kaldırılamadı.');}
+};
+window.copyGlobalFreeToShop=async function(ownerUid,playerId){
+  try{
+    const ref=fsMod.doc(db,'teamAssignments',ownerUid),snap=await fsMod.getDoc(ref);if(!snap.exists())return;
+    const d=snap.data(),p=(d.regenPlayers||[]).find(x=>String(x.id)===String(playerId));if(!p)return;
+    const id=fsMod.doc(fsMod.collection(db,'hsSpecialShopPlayers')).id;
+    const {id:sourcePlayerId,...cleanPlayer}=p;
+    await fsMod.setDoc(fsMod.doc(db,'hsSpecialShopPlayers',id),{...cleanPlayer,sourcePlayerId:String(sourcePlayerId||playerId),ownerUid:'',freeAgent:true,status:'freeAgent',price:0,createdAt:Date.now(),updatedAt:Date.now(),sourceOwnerUid:ownerUid});
+    const regen=(d.regenPlayers||[]).filter(x=>String(x.id)!==String(playerId));
+    await fsMod.setDoc(ref,{regenPlayers:regen,soldPlayerIds:[...new Set([...(d.soldPlayerIds||[]).map(String),String(playerId)])],regenPlayersUpdatedAt:Date.now()},{merge:true});
+    await loadAll();alert('Oyuncu özel serbest oyuncu havuzuna taşındı.');
+  }catch(e){alert(e.message||'Oyuncu taşınamadı.');}
+};
+window.loadAll=loadAll;
+
+/* ===== Hediye kodları ===== */
+window.randomGiftCode=function(){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<8;i++)s+=c[Math.floor(Math.random()*c.length)];$('gcCode').value=s;};
+window.saveGiftCode=async function(){
+  if(!currentAdmin)return status('Oturum yok. Yeniden giriş yap.','giftStatus',true);
+  const code=$('gcCode').value.trim().toUpperCase().replace(/\s+/g,'');
+  const amount=Math.floor(Number($('gcAmount').value)||0),max=Math.floor(Number($('gcMax').value)||0);
+  if(!/^[A-Z0-9_-]{3,32}$/.test(code))return status('Kod 3-32 karakter olmalı (harf, rakam, - veya _).','giftStatus',true);
+  if(amount<1)return status('Ödül miktarı en az 1 olmalı.','giftStatus',true);
+  if(max<1)return status('Kullanım sayısı en az 1 olmalı.','giftStatus',true);
+  const ref=fsMod.doc(db,'hsGiftCodes',code);
+  try{
+    const ex=await fsMod.getDoc(ref);
+    if(ex.exists()&&!confirm(code+' zaten var. Üzerine yazılsın mı? (Kullanım sayacı korunur)'))return;
+    const exp=$('gcExp').value?new Date($('gcExp').value+'T23:59:59').getTime():null;
+    const old=ex.exists()?ex.data():null;
+    const data={code,reward:{type:'money',amount},maxUses:max,usedCount:old?(Number(old.usedCount)||0):0,active:true,createdAt:old?(old.createdAt||Date.now()):Date.now(),updatedAt:Date.now(),createdBy:currentAdmin.uid};
+    if(exp)data.expiresAt=exp;
+    await fsMod.setDoc(ref,data);
+    status('✓ '+code+' oluşturuldu: '+money(amount)+' × '+max+' kişi.','giftStatus');
+    loadGiftCodes();
+  }catch(e){
+    console.error(e);
+    const detail=(e.code==='permission-denied')
+      ? 'Firebase izni reddetti. hsAdmins/{UID} belgenizde active=true olduğunu ve Firestore hediye kodu kurallarını kontrol edin.'
+      : ((e.code||'')+' '+(e.message||''));
+    status('HATA: '+detail,'giftStatus',true);
+  }
+};
+async function loadGiftCodes(){
+  if(!currentAdmin)return;
+  try{
+    const snap=await fsMod.getDocs(fsMod.query(fsMod.collection(db,'hsGiftCodes'),fsMod.limit(300)));
+    const rows=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(Number(b.createdAt)||0)-(Number(a.createdAt)||0));
+    $('giftList').innerHTML=rows.length?rows.map(r=>{
+      const used=Number(r.usedCount)||0,max=Number(r.maxUses)||0,pct=max?Math.min(100,used/max*100):0;
+      const state=r.active===false?'Kapalı':used>=max?'Doldu':(r.expiresAt&&Date.now()>r.expiresAt)?'Süresi doldu':'Aktif';
+      return `<div class="gift-row"><div><b>${esc(r.id)}</b> <span class="pill ${state==='Aktif'?'free':'sold'}">${state}</span><small>${money(r.reward&&r.reward.amount)} · ${used}/${max} kullanıldı${r.expiresAt?' · son: '+new Date(r.expiresAt).toLocaleDateString('tr-TR'):''}</small><div class="gift-bar"><i style="width:${pct}%"></i></div></div><div class="row"><button type="button" onclick="toggleGiftCode('${esc(r.id)}',${r.active===false?'true':'false'})">${r.active===false?'Aç':'Kapat'}</button><button type="button" class="danger" onclick="deleteGiftCode('${esc(r.id)}')">Sil</button></div></div>`;
+    }).join(''):'<div class="empty">Henüz hediye kodu yok.</div>';
+  }catch(e){
+    console.error(e);
+    const detail=e.code==='permission-denied'
+      ? 'Firebase izni reddetti. Yönetici hesabının hsAdmins/{UID} kaydını ve Firestore listeleme kurallarını kontrol edin.'
+      : (e.code||e.message);
+    $('giftList').innerHTML='<div class="empty">Kodlar okunamadı: '+esc(detail)+'</div>';
+  }
+}
+window.loadGiftCodes=loadGiftCodes;
+window.toggleGiftCode=async function(id,on){
+  try{await fsMod.updateDoc(fsMod.doc(db,'hsGiftCodes',id),{active:!!on,updatedAt:Date.now()});loadGiftCodes();}
+  catch(e){alert(e.message||'İşlem başarısız.');}
+};
+window.deleteGiftCode=async function(id){
+  if(!confirm(id+' kodu silinsin mi?'))return;
+  try{await fsMod.deleteDoc(fsMod.doc(db,'hsGiftCodes',id));loadGiftCodes();}
+  catch(e){alert(e.message||'Kod silinemedi.');}
+};
+
+renderAvatar();
+authMod.onAuthStateChanged(auth,async user=>{
+  if(!user||currentAdmin)return;
+  try{
+    const snap=await fsMod.getDoc(fsMod.doc(db,'hsAdmins',user.uid));
+    if(snap.exists()&&snap.data().active===true)await enterAdmin(user,'oturum açık');
+    else await authMod.signOut(auth);
+  }catch(e){console.warn(e);}
+});
+</script>
+
+<style id="hs-avatar-card-polish-20261027">
+@keyframes hsAvatarPop{0%{opacity:0;transform:translateY(9px) scale(.86) rotate(-3deg);filter:brightness(1.5)}65%{opacity:1;transform:translateY(-2px) scale(1.035) rotate(1deg)}100%{opacity:1;transform:translateY(0) scale(1) rotate(0);filter:brightness(1)}}
+@keyframes hsCardReveal{0%{opacity:0;transform:translateY(12px) scale(.96)}70%{opacity:1;transform:translateY(-2px) scale(1.008)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes hsCardSweep{0%{transform:translateX(-140%) skewX(-18deg);opacity:0}15%{opacity:.65}70%,100%{transform:translateX(240%) skewX(-18deg);opacity:0}}
+@keyframes hsCardAura{0%,100%{box-shadow:0 5px 15px rgba(0,0,0,.10)}50%{box-shadow:0 9px 25px rgba(34,197,94,.2)}}
+.hs20-face{isolation:isolate;overflow:visible;transition:transform .22s ease,filter .22s ease;filter:drop-shadow(0 3px 5px rgba(0,0,0,.18))}
+.hs20-face:hover{transform:translateY(-3px) scale(1.055);filter:drop-shadow(0 7px 9px rgba(0,0,0,.3))}
+.preview .hs20-face{animation:hsAvatarPop .48s cubic-bezier(.2,.8,.25,1) both}
+.hs20-mcard,.player{position:relative;isolation:isolate;overflow:hidden;animation:hsCardReveal .42s ease both;transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
+.hs20-mcard::after,.player::after{content:"";position:absolute;z-index:0;top:-20%;bottom:-20%;left:0;width:32%;pointer-events:none;background:linear-gradient(105deg,transparent,rgba(255,255,255,.28),transparent);transform:translateX(-150%) skewX(-18deg);opacity:0}
+.hs20-mcard:hover,.player:hover{transform:translateY(-3px);box-shadow:0 12px 28px rgba(15,60,35,.16)}
+.hs20-mcard:hover::after,.player:hover::after{animation:hsCardSweep .85s ease}
+.hs20-mcard>* ,.player>*{position:relative;z-index:1}
+.hs20-mcard .hs20-face[data-f],.player .hs20-face[data-f]{filter:drop-shadow(0 0 7px color-mix(in srgb,var(--g,rgba(255,255,255,.35)) 75%,transparent))}
+.hs20-face[data-f]::after{mix-blend-mode:screen}
+@media(prefers-reduced-motion:reduce){.preview .hs20-face,.hs20-mcard,.player,.hs20-mcard::after,.player::after{animation:none!important;transition:none!important}}
+</style>
+
+</body></html>
