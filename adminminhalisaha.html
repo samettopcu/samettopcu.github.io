@@ -433,10 +433,11 @@ window.loadEconomyAudit=async function(){
   try{
     const ref=fsMod.collection(db,'users',uid,'hsEconomyLogs');
     const [snap,userSnap]=await Promise.all([
-      fsMod.getDocs(fsMod.query(ref,fsMod.orderBy('createdAt','desc'),fsMod.limit(100))),
+      fsMod.getDocs(fsMod.query(ref,fsMod.limit(500))),
       fsMod.getDoc(fsMod.doc(db,'users',uid))
     ]);
-    const rows=snap.docs.map(d=>({id:d.id,...d.data()}));
+    const logTs=r=>r.createdAt&&typeof r.createdAt.toMillis==='function'?r.createdAt.toMillis():(Number(r.clientAt)||0);
+    const rows=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>logTs(b)-logTs(a)).slice(0,100);
     const cloudData=userSnap.exists()?userSnap.data():{};
     const cloudSave=cloudData.hsSave&&typeof cloudData.hsSave==='object'?cloudData.hsSave:{};
     const cloudBalance=Number(cloudSave.para);
@@ -451,7 +452,7 @@ window.loadEconomyAudit=async function(){
     }
     if(!rows.length){box.innerHTML='<div class="empty">Bu oyuncu için henüz işlem kaydı yok. Yeni kayıtlar oyun içindeki sonraki bakiye değişikliklerinde oluşur.</div>';status('Kayıt bulunamadı.','economyAuditStatus');return;}
     box.innerHTML=rows.map(r=>{
-      const delta=Number(r.delta)||0,flag=!!r.review||Math.abs(delta)>=50000000;
+      const delta=Number(r.delta)||0,flag=!!r.review||Math.abs(delta)>=ECONOMY_FLAG_LIMIT;
       const when=r.createdAt&&typeof r.createdAt.toDate==='function'?r.createdAt.toDate().toLocaleString('tr-TR'):new Date(Number(r.clientAt)||0).toLocaleString('tr-TR');
       return `<div class="gift-row" style="align-items:flex-start">
         <div style="min-width:220px;flex:1">
@@ -470,6 +471,7 @@ window.loadEconomyAudit=async function(){
     status('Ekonomi kayıtları okunamadı. Firestore Rules içinde users/{uid}/hsEconomyLogs için admin okuma izni olduğundan emin ol.','economyAuditStatus',true);
   }
 };
+const ECONOMY_FLAG_LIMIT=50000000; // bu değerden büyük hareketler 'İnceleme gerekli' olur
 function fmtMoney(v){return Math.round(Number(v)||0).toLocaleString('tr-TR');}
 
 
