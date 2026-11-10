@@ -93,7 +93,7 @@
   {
    "id": "team1",
    "name": "Asım Topcu",
-   "photo": "https://media.licdn.com/dms/image/v2/D4D03AQHVILQnJE7VUQ/profile-displayphoto-shrink_200_200/B4DZOS.qp8HQAg-/0/1733337722262?e=1795651200&v=beta&t=ukaA94SHYtkkns1SzCgnxonl7oA7X5N7LSS3lF0I3sQ",
+   "photo": "asim.jpg",
    "link": "https://www.linkedin.com/in/asimtopcu",
    "role": {
     "tr": "Kurucu & Geliştirici",
@@ -109,5 +109,5 @@
    }
   }
  ],
- "updated": "2026-11-10T05:17:55.861Z"
+ "updated": "2026-11-10T05:11:14.372Z"
 }
