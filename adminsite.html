@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#07080b">
+<title>90Minute Studio — Yönetim Paneli</title>
+<style>
+:root{--bg:#07080b;--panel:#101218;--panel2:#0c0e13;--white:#f6f6f8;--muted:#a4a6b0;--red:#ff242d;--line:rgba(255,255,255,.12)}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--white);font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;overflow-x:hidden;min-height:100vh}
+button,input,select,textarea{font:inherit;color:inherit}
+header.top{position:sticky;top:0;z-index:20;background:rgba(7,8,11,.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.wrap{width:min(1000px,calc(100% - 28px));margin:auto}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:62px;flex-wrap:wrap;padding:8px 0}
+.logo{font-weight:900;letter-spacing:.06em;font-size:14px}.logo span{color:var(--red)}
+.chip{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:5px 10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:12px;padding:10px 16px;font-weight:800;font-size:13px;cursor:pointer;transition:.2s;text-decoration:none}
+.btn:hover{border-color:var(--red)}.btn.red{background:linear-gradient(135deg,var(--red),#d90f23);border-color:transparent}
+.btn.sm{padding:7px 11px;font-size:12px;border-radius:10px}.btn.danger:hover{background:#4a0f14}
+.tabs{display:flex;gap:6px;margin:18px 0;flex-wrap:wrap}
+.tabbtn{border:1px solid var(--line);background:transparent;border-radius:99px;padding:9px 16px;font-weight:800;font-size:13px;cursor:pointer;color:var(--muted)}
+.tabbtn.on{background:var(--red);border-color:var(--red);color:#fff}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}.bar h2{margin:0;font-size:22px;letter-spacing:-.03em}
+.list{display:grid;gap:10px}
+.row{display:flex;align-items:center;gap:14px;padding:12px;background:var(--panel);border:1px solid var(--line);border-radius:16px}
+.thumb{width:76px;height:56px;border-radius:10px;background:#1a1d26;flex:none;overflow:hidden;display:grid;place-items:center;font-size:22px}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.rt{flex:1;min-width:0}.rt b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rt small{color:var(--muted)}
+.ra{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.empty{color:var(--muted);padding:26px;text-align:center;border:1px dashed var(--line);border-radius:16px}
+.note{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:12px}
+.note h3{margin:0 0 8px}.note ol{margin:8px 0 0;padding-left:20px;color:#c9cbd3}.note li{margin:4px 0}
+.banner{background:rgba(255,153,51,.08);border:1px solid rgba(255,153,51,.3);color:#ffc17e;border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:13px;display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.ov{position:fixed;inset:0;z-index:50;background:rgba(3,4,6,.8);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:14px}
+.ov.open{display:flex}
+.box{width:min(640px,100%);max-height:calc(100vh - 28px);max-height:calc(100dvh - 28px);display:flex;flex-direction:column;background:var(--panel);border:1px solid rgba(255,36,45,.35);border-radius:20px;overflow:hidden}
+.mh{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid var(--line)}.mh h3{margin:0}
+.x{border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:50%;width:34px;height:34px;cursor:pointer}
+.tabs2{display:flex;gap:6px;align-items:center;padding:10px 18px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.lt{border:1px solid var(--line);background:transparent;border-radius:8px;padding:5px 12px;font-weight:800;font-size:12px;cursor:pointer;color:var(--muted)}.lt.on{background:#fff;color:#000;border-color:#fff}
+.hint{font-size:11px;color:var(--muted);margin-left:6px}
+.mb{padding:18px;overflow:auto;display:grid;gap:14px;-webkit-overflow-scrolling:touch}
+.mf{display:flex;gap:10px;justify-content:flex-end;padding:14px 18px;border-top:1px solid var(--line)}
+.f{display:grid;gap:6px}.f>span{font-size:12px;font-weight:800;letter-spacing:.04em;color:#c9cbd3}
+input[type=text],input:not([type]),select,textarea{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--red)}
+textarea{resize:vertical;min-height:70px}
+.lg{display:none}.lg.on{display:block}
+.imgrow{display:flex;gap:12px;align-items:flex-start}
+.prev{width:110px;height:80px;border-radius:12px;background:#1a1d26;overflow:hidden;flex:none;display:grid;place-items:center;color:var(--muted);font-size:11px}
+.prev img{width:100%;height:100%;object-fit:cover}
+.imgctl{flex:1;display:grid;gap:8px;min-width:0}.imgctl small{color:var(--muted);font-size:11px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+@media(max-width:560px){.row{flex-wrap:wrap}.ra{width:100%;justify-content:flex-start}.imgrow{flex-direction:column}.prev{width:100%;height:130px}.mf .btn{flex:1}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div class="logo">90<span>MINUTE</span> STUDIO · YÖNETİM</div>
+  <div class="btns"><span class="chip" id="state">hazır</span><button class="btn sm" id="bPrev" type="button">Önizle ↗</button><button class="btn sm red" id="bDl" type="button">content.json indir</button></div>
+</div></header>
+<div class="wrap">
+  <div class="tabs" id="tabs">
+    <button class="tabbtn" data-t="events" type="button">Etkinlikler</button>
+    <button class="tabbtn" data-t="games" type="button">Oyunlar / Projeler</button>
+    <button class="tabbtn" data-t="team" type="button">Ekip</button>
+    <button class="tabbtn" data-t="publish" type="button">Yayınla</button>
+  </div>
+  <div class="banner" id="banner" hidden><span id="bannerTxt"></span><button class="btn sm" id="bServer" type="button">Sunucudaki sürümü yükle</button></div>
+  <section class="pane" id="p-events"><div class="bar"><h2>Etkinlikler</h2><button class="btn red" data-add="events" type="button">+ Yeni etkinlik</button></div><div class="list" id="l-events"></div></section>
+  <section class="pane" id="p-games"><div class="bar"><h2>Oyunlar / Projeler</h2><button class="btn red" data-add="games" type="button">+ Yeni oyun / proje</button></div><div class="list" id="l-games"></div></section>
+  <section class="pane" id="p-team"><div class="bar"><h2>Ekip</h2><button class="btn red" data-add="team" type="button">+ Yeni kişi</button></div><div class="list" id="l-team"></div></section>
+  <section class="pane" id="p-publish">
+    <div class="note"><h3>Yayınlama</h3>
+      <p style="margin:0;color:#c9cbd3">Burada yaptığın değişiklikler bu tarayıcıda <b>taslak</b> olarak saklanır. Sitede görünmesi için dosyayı sunucuya yüklemelisin:</p>
+      <ol><li><b>content.json indir</b> butonuna bas.</li><li>İndirdiğin <code>content.json</code> dosyasını sunucuda <code>index.html</code>'in yanına yükle (eskisinin üzerine yaz).</li><li>Görselleri dosya adıyla eklediysen (ör. <code>etkinlik2.png</code>) o görselleri de aynı klasöre yükle. "Dosya seç" ile eklediklerin dosyanın içine gömülür, ayrıca yüklemen gerekmez.</li><li>Siteyi yenile (gerekirse Ctrl+F5).</li></ol></div>
+    <div class="note"><h3>Durum</h3><div id="stat" style="color:#c9cbd3"></div></div>
+    <div class="btns"><button class="btn red" id="bDl2" type="button">content.json indir</button><label class="btn">content.json içe aktar<input type="file" id="bImp" accept="application/json,.json" hidden></label><button class="btn danger" id="bReset" type="button">Varsayılana sıfırla</button></div>
+  </section>
+</div>
+<div class="ov" id="ed"><div class="box" id="edBox"></div></div>
+<script>
+const KEY="mm_admin_draft",LANGS=["tr","en","fr","ja"],LN={tr:"TR",en:"EN",fr:"FR",ja:"JA"};
+const DEF={"events":[{"id":"event1","title":{"tr":"Topluluk Etkinlikleri","en":"Community Events","fr":"Événements communautaires","ja":"コミュニティイベント"},"summary":{"tr":"Oyuncularımızı bir araya getiren etkinlik ve organizasyon duyuruları burada paylaşılacak.","en":"Announcements for events and activities that bring our players together will appear here.","fr":"Les annonces d'événements qui réunissent nos joueurs seront publiées ici.","ja":"プレイヤーが集まるイベントのお知らせをここで公開します。"},"body":{"tr":"Topluluk etkinlikleri, 90Minute Studio'nun oyuncularla bir araya geldiği buluşmalardır. Amacımız oyuncuların fikirlerini dinlemek, geri bildirimlerini almak ve birlikte eğlenmektir.\n\nEtkinlik tarihleri, yerleri ve katılım bilgileri belli olduğunda bu sayfada paylaşılacak. Gelişmelerden haberdar olmak için Instagram hesabımızı takip edebilirsin.","en":"Community events are gatherings where 90Minute Studio meets its players. We want to hear your ideas, collect feedback, and have fun together.\n\nDates, locations, and participation details will be shared on this page once confirmed. Follow our Instagram account to stay updated.","fr":"Les événements communautaires sont des rencontres où 90Minute Studio retrouve ses joueurs. Nous voulons écouter vos idées, recueillir vos retours et nous amuser ensemble.\n\nLes dates, lieux et modalités de participation seront publiés sur cette page dès qu'ils seront confirmés. Suivez notre compte Instagram pour rester informé.","ja":"コミュニティイベントは、90Minute Studioがプレイヤーと直接会える場です。皆さんのアイデアを聞き、フィードバックを受け取り、一緒に楽しみたいと考えています。\n\n日程・場所・参加方法が決まり次第、このページでお知らせします。最新情報はInstagramをご覧ください。"},"date":"","img":"","em":"🏆","g":"linear-gradient(135deg,#3a0f14,#0b0d12)"},{"id":"event2","title":{"tr":"Özel Duyurular","en":"Special Announcements","fr":"Annonces spéciales","ja":"特別なお知らせ"},"summary":{"tr":"Turnuvalar, lansmanlar ve stüdyo organizasyonları için duyurular.","en":"News about tournaments, launches, and studio activities.","fr":"Actualités sur les tournois, les lancements et les activités du studio.","ja":"大会やリリース、スタジオ活動に関するお知らせ。"},"body":{"tr":"Turnuvalar, lansmanlar ve stüdyo organizasyonlarıyla ilgili tüm özel duyurular bu başlık altında yer alacak.\n\nYeni oyun çıkışları ve önemli gelişmeler için bu sayfayı takip et.","en":"All special announcements about tournaments, launches, and studio activities will appear under this section.\n\nKeep an eye on this page for new game releases and important updates.","fr":"Toutes les annonces spéciales concernant les tournois, les lancements et les activités du studio apparaîtront ici.\n\nSuivez cette page pour les sorties de jeux et les actualités importantes.","ja":"大会、リリース、スタジオ活動に関する特別なお知らせは、すべてここに掲載します。\n\n新作リリースや重要なお知らせは、このページをご確認ください。"},"date":"","img":"","em":"📣","g":"linear-gradient(135deg,#3a1d0a,#0b0d12)"}],"games":[{"id":"mincup","status":"live","platform":"ANDROID","symbol":"⚽","watermark":"90","theme":"red","img":"resm1.png","title":"By Mincup Halısaha","desc":{"tr":"Halı saha ve futbol yönetimi dünyasına adım at. Takımını oluştur, kulübünü yönet ve kendi futbol hikâyeni yaz.","en":"Step into the world of five-a-side football management. Build your team, manage your club, and write your own football story.","fr":"Plongez dans l'univers du football à cinq. Construisez votre équipe, gérez votre club et écrivez votre propre histoire.","ja":"フットサルの世界へ。チームを作り、クラブを運営し、あなただけのサッカーストーリーを描こう。"},"store":"https://play.google.com/store/apps/details?id=com.minute.halisaha","play":"m.html"},{"id":"gece","status":"dev","platform":"PC / MOBILE","symbol":"🌙","watermark":"NIGHT","theme":"warm","img":"","title":"Gece Dönercisi","desc":{"tr":"Gece başlayan bir çalışma hikâyesi. Kendi dönerci işletmeni yönetmeye uzanan simülasyon projesi.","en":"A story that begins at night. A simulation project about running your own late-night döner shop.","fr":"Une histoire qui commence la nuit. Un jeu de simulation où vous gérez votre propre kebab de nuit.","ja":"夜に始まる物語。深夜のケバブ店を経営するシミュレーションゲーム。"},"store":"","play":""}],"team":[{"id":"team1","name":"Asım Topcu","photo":"asim.jpg","link":"https://www.linkedin.com/in/asimtopcu","role":{"tr":"Kurucu & Geliştirici","en":"Founder & Developer","fr":"Fondateur & développeur","ja":"創設者・開発者"},"bio":{"tr":"","en":"","fr":"","ja":""}}]};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>"i"+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+const tx=o=>o&&typeof o==="object"?(o.tr||o.en||o.fr||o.ja||""):(o||"");
+const clone=o=>JSON.parse(JSON.stringify(o));
+let S,tab="events",ED=null;
+const SCH={
+ events:{label:"etkinlik",title:i=>tx(i.title),sub:i=>i.date||"tarih etiketi yok",thumb:i=>i.img||"etkinlik.png",emoji:i=>i.em||"🏆",
+  blank:()=>({id:uid(),title:{},summary:{},body:{},date:"",img:"",em:"🏆"}),
+  fields:[{k:"title",t:"lang",l:"Başlık *"},{k:"summary",t:"langarea",l:"Kısa özet (kartta görünür)",rows:3},{k:"body",t:"langarea",l:"Detay yazısı (paragraflar arasına boş satır bırak)",rows:8},
+   {k:"date",t:"text",l:"Tarih / etiket (boşsa YAKINDA yazar)",ph:"örn. 15 Aralık 2026"},{k:"img",t:"image",l:"Kapak görseli (boşsa etkinlik.png kullanılır)",max:1400},{k:"em",t:"text",l:"Emoji (görsel yüklenmezse görünür)"}]},
+ games:{label:"oyun / proje",title:i=>i.title,sub:i=>(i.status==="dev"?"Geliştiriliyor":"Yayında")+(i.platform?" · "+i.platform:""),thumb:i=>i.img,emoji:i=>i.symbol||"🎮",
+  blank:()=>({id:uid(),status:"dev",platform:"",symbol:"🎮",watermark:"",theme:"red",img:"",title:"",desc:{},store:"",play:""}),
+  fields:[{k:"title",t:"text",l:"Oyun / proje adı *"},{k:"status",t:"select",l:"Durum",o:[["live","Yayında"],["dev","Geliştiriliyor"]]},{k:"platform",t:"text",l:"Platform etiketi",ph:"ANDROID, PC / MOBILE ..."},
+   {k:"desc",t:"langarea",l:"Açıklama",rows:4},{k:"img",t:"image",l:"Kapak görseli",max:1400},{k:"symbol",t:"text",l:"Emoji (görsel yoksa görünür)"},{k:"watermark",t:"text",l:"Arka plan yazısı (büyük silik yazı)",ph:"90, NIGHT ..."},
+   {k:"theme",t:"select",l:"Renk teması",o:[["red","Kırmızı"],["warm","Turuncu"]]},{k:"store",t:"text",l:"Google Play / mağaza linki (boş olabilir)",ph:"https://..."},{k:"play",t:"text",l:"Oyunu oyna linki (boş olabilir)",ph:"m.html"}]},
+ team:{label:"kişi",title:i=>i.name,sub:i=>tx(i.role),thumb:i=>i.photo,emoji:i=>"👤",
+  blank:()=>({id:uid(),name:"",photo:"",link:"",role:{},bio:{}}),
+  fields:[{k:"name",t:"text",l:"Ad Soyad *"},{k:"role",t:"lang",l:"Görev / unvan"},{k:"bio",t:"langarea",l:"Kısa tanıtım (boş olabilir)",rows:3},{k:"photo",t:"image",l:"Fotoğraf (boşsa baş harfler görünür)",max:600},{k:"link",t:"text",l:"Profil linki (LinkedIn, Instagram...)",ph:"https://..."}]}
+};
+const norm=j=>{const o={};["events","games","team"].forEach(k=>o[k]=Array.isArray(j&&j[k])?clone(j[k]):clone(DEF[k]));return o};
+function save(msg){try{localStorage.setItem(KEY,JSON.stringify(S));$("state").textContent=msg||"taslak kaydedildi"}catch(e){$("state").textContent="⚠ taslak saklanamadı (görseller çok büyük?)"}}
+async function init(){
+  let server=null;try{const r=await fetch("content.json?v="+Date.now(),{cache:"no-store"});if(r.ok)server=await r.json()}catch(e){}
+  let draft=null;try{draft=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+  if(draft){S=norm(draft);$("banner").hidden=false;$("bannerTxt").textContent="Bu tarayıcıdaki kaydedilmiş taslakla devam ediyorsun."}
+  else{S=norm(server||DEF);if(!server)$("state").textContent="content.json bulunamadı — varsayılan içerik"}
+  window.__server=server;
+  render();
+}
+$("bServer").onclick=async()=>{if(!confirm("Taslak silinip sunucudaki sürüm yüklensin mi?"))return;let sv=null;try{const r=await fetch("content.json?v="+Date.now(),{cache:"no-store"});if(r.ok)sv=await r.json()}catch(e){}
+  if(!sv){alert("Sunucuda content.json bulunamadı (ya da dosyayı sunucudan değil bilgisayardan açtın).");return}
+  S=norm(sv);try{localStorage.removeItem(KEY)}catch(e){}$("banner").hidden=true;$("state").textContent="sunucu sürümü yüklendi";render()};
+function render(){
+  document.querySelectorAll(".tabbtn").forEach(b=>b.classList.toggle("on",b.dataset.t===tab));
+  document.querySelectorAll(".pane").forEach(p=>p.hidden=p.id!=="p-"+tab);
+  if(tab==="publish"){renderPub();return}
+  const sc=SCH[tab],arr=S[tab];
+  $("l-"+tab).innerHTML=arr.length?arr.map((it,i)=>{const th=sc.thumb(it);
+    return `<div class="row"><div class="thumb">${th?`<img src="${esc(th)}" alt="" onerror="this.outerHTML='${sc.emoji(it)}'">`:sc.emoji(it)}</div><div class="rt"><b>${esc(sc.title(it)||"(adsız)")}</b><small>${esc(sc.sub(it))}</small></div><div class="ra"><button class="btn sm" data-mv="-1" data-i="${i}" type="button">↑</button><button class="btn sm" data-mv="1" data-i="${i}" type="button">↓</button><button class="btn sm" data-edit="${i}" type="button">Düzenle</button><button class="btn sm danger" data-del="${i}" type="button">Sil</button></div></div>`}).join(""):`<div class="empty">Henüz kayıt yok. Sağ üstten ekleyebilirsin.</div>`;
+}
+function renderPub(){
+  const str=JSON.stringify(S),kb=Math.round(str.length/1024),emb=(str.match(/"data:image/g)||[]).length;
+  $("stat").innerHTML=`Etkinlik: <b>${S.events.length}</b> · Oyun/proje: <b>${S.games.length}</b> · Ekip: <b>${S.team.length}</b><br>Dosya boyutu: <b>${kb} KB</b>, gömülü görsel: <b>${emb}</b>${kb>2000?'<br><span style="color:#ffc17e">⚠ Dosya büyük; görselleri sunucuya yükleyip yalnızca dosya adını yazmak siteyi hızlandırır.</span>':""}`;
+}
+document.addEventListener("click",e=>{
+  const t=e.target.closest("button,[data-add]");if(!t)return;
+  if(t.dataset.t){tab=t.dataset.t;render();return}
+  if(t.dataset.add){openEd(t.dataset.add,-1);return}
+  if(t.dataset.edit!==undefined){openEd(tab,+t.dataset.edit);return}
+  if(t.dataset.del!==undefined){const i=+t.dataset.del;if(confirm("Silinsin mi? \""+(SCH[tab].title(S[tab][i])||"kayıt")+"\"")){S[tab].splice(i,1);save();render()}return}
+  if(t.dataset.mv){const i=+t.dataset.i,j=i+ +t.dataset.mv,a=S[tab];if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];save();render();return}
+});
+function fieldHtml(f,it){
+  const v=it[f.k];
+  if(f.t==="text")return `<label class="f"><span>${f.l}</span><input type="text" data-k="${f.k}" value="${esc(v||"")}" placeholder="${esc(f.ph||"")}"></label>`;
+  if(f.t==="select")return `<label class="f"><span>${f.l}</span><select data-k="${f.k}">${f.o.map(([a,b])=>`<option value="${a}"${v===a?" selected":""}>${b}</option>`).join("")}</select></label>`;
+  if(f.t==="lang"||f.t==="langarea")return `<div class="f"><span>${f.l}</span>${LANGS.map(l=>{const val=(v&&v[l])||"",c="lg"+(l===(ED?ED.lang:"tr")?" on":"");return f.t==="lang"?`<input type="text" class="${c}" data-k="${f.k}" data-l="${l}" value="${esc(val)}" placeholder="${LN[l]}">`:`<textarea class="${c}" data-k="${f.k}" data-l="${l}" rows="${f.rows||3}" placeholder="${LN[l]}">${esc(val)}</textarea>`}).join("")}</div>`;
+  if(f.t==="image"){const emb=typeof v==="string"&&v.startsWith("data:");
+    return `<div class="f imgf" data-k="${f.k}" data-max="${f.max||1200}"><span>${f.l}</span><div class="imgrow"><div class="prev">${v?`<img src="${emb?"":esc(v)}" alt="">`:"görsel yok"}</div><div class="imgctl"><input type="text" class="ipath" placeholder="${emb?"Gömülü görsel kullanılıyor":"sunucudaki dosya adı, örn. etkinlik2.png"}" value="${emb?"":esc(v||"")}"><div class="btns"><label class="btn sm">Dosya seç<input type="file" accept="image/*" hidden></label><button class="btn sm" type="button" data-clr>Temizle</button></div><small>Dosya seçersen küçültülüp içeriğe gömülür. Dosya adı yazarsan görseli sunucuya sen yüklersin.</small></div></div></div>`}
+  return "";
+}
+function openEd(kind,idx){
+  const sc=SCH[kind],isNew=idx<0,it=isNew?sc.blank():clone(S[kind][idx]);
+  ED={kind,idx,it,lang:"tr"};
+  $("edBox").innerHTML=`<div class="mh"><h3>${isNew?"Yeni":"Düzenle"}: ${sc.label}</h3><button class="x" data-close type="button">✕</button></div><div class="tabs2">${LANGS.map(l=>`<button type="button" class="lt${l==="tr"?" on":""}" data-lt="${l}">${LN[l]}</button>`).join("")}<span class="hint">Metin alanlarının dili (boş bıraktığın dilde TR/EN gösterilir)</span></div><div class="mb">${sc.fields.map(f=>fieldHtml(f,it)).join("")}</div><div class="mf"><button class="btn" data-close type="button">Vazgeç</button><button class="btn red" data-save type="button">Kaydet</button></div>`;
+  $("ed").classList.add("open");
+  $("edBox").querySelectorAll(".imgf").forEach(w=>{if(typeof it[w.dataset.k]==="string"&&it[w.dataset.k].startsWith("data:")){w.dataset.d=it[w.dataset.k];w.querySelector(".prev").innerHTML=`<img alt="">`;w.querySelector(".prev img").src=w.dataset.d}});
+}
+function closeEd(){$("ed").classList.remove("open");ED=null}
+$("edBox").addEventListener("click",e=>{
+  const t=e.target.closest("button");if(!t)return;
+  if(t.hasAttribute("data-close")){closeEd();return}
+  if(t.dataset.lt){ED.lang=t.dataset.lt;$("edBox").querySelectorAll(".lt").forEach(b=>b.classList.toggle("on",b===t));$("edBox").querySelectorAll(".lg").forEach(x=>x.classList.toggle("on",x.dataset.l===ED.lang));return}
+  if(t.hasAttribute("data-clr")){const w=t.closest(".imgf");delete w.dataset.d;const p=w.querySelector(".ipath");p.value="";p.placeholder="sunucudaki dosya adı, örn. etkinlik2.png";w.querySelector(".prev").textContent="görsel yok";return}
+  if(t.hasAttribute("data-save"))saveEd();
+});
+$("ed").addEventListener("click",e=>{if(e.target===$("ed"))closeEd()});
+$("edBox").addEventListener("change",async e=>{
+  const inp=e.target;if(inp.type!=="file"||!inp.files[0])return;
+  const w=inp.closest(".imgf");
+  try{const d=await fileToData(inp.files[0],+w.dataset.max);w.dataset.d=d;const p=w.querySelector(".ipath");p.value="";p.placeholder="Gömülü görsel kullanılıyor";w.querySelector(".prev").innerHTML=`<img alt="">`;w.querySelector(".prev img").src=d}
+  catch(err){alert("Görsel okunamadı.")}
+  inp.value="";
+});
+$("edBox").addEventListener("input",e=>{const p=e.target.closest(".ipath");if(!p)return;const w=p.closest(".imgf");delete w.dataset.d;const v=p.value.trim();w.querySelector(".prev").innerHTML=v?`<img alt="">`:"görsel yok";if(v){const im=w.querySelector(".prev img");im.onerror=()=>im.remove();im.src=v}});
+function fileToData(file,max){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{let w=im.width,h=im.height;const s=Math.min(1,max/Math.max(w,h));w=Math.round(w*s);h=Math.round(h*s);const c=document.createElement("canvas");c.width=w;c.height=h;const x=c.getContext("2d");x.fillStyle="#0b0d12";x.fillRect(0,0,w,h);x.drawImage(im,0,0,w,h);res(c.toDataURL("image/jpeg",.84))};im.onerror=rej;im.src=fr.result};fr.onerror=rej;fr.readAsDataURL(file)})}
+function saveEd(){
+  const o={...ED.it};
+  $("edBox").querySelectorAll("[data-k]").forEach(el=>{
+    const k=el.dataset.k;
+    if(el.classList.contains("imgf")){o[k]=el.dataset.d||el.querySelector(".ipath").value.trim();return}
+    if(el.dataset.l){if(!o[k]||typeof o[k]!=="object")o[k]={};o[k][el.dataset.l]=el.value.trim();return}
+    o[k]=el.value.trim();
+  });
+  const need={events:()=>tx(o.title),games:()=>o.title,team:()=>o.name}[ED.kind]();
+  if(!need){alert("Başlık / ad boş olamaz.");return}
+  if(ED.idx<0)S[ED.kind].push(o);else S[ED.kind][ED.idx]=o;
+  closeEd();save();render();
+}
+function download(){const b=new Blob([JSON.stringify({...S,updated:new Date().toISOString()},null,1)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="content.json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),3000);$("state").textContent="content.json indirildi — sunucuya yükle"}
+$("bDl").onclick=download;$("bDl2").onclick=download;
+$("bPrev").onclick=()=>{save();window.open("index.html?preview=1","_blank")};
+$("bImp").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{S=norm(JSON.parse(r.result));save("içe aktarıldı (taslak)");render()}catch(err){alert("Geçerli bir content.json değil.")}};r.readAsText(f);e.target.value=""};
+$("bReset").onclick=()=>{if(confirm("Tüm içerik varsayılana dönsün mü? (Mevcut taslak silinir)")){S=norm(DEF);save("sıfırlandı (taslak)");render()}};
+init();
+</script>
+</body>
+</html>
