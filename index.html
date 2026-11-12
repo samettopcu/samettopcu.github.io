@@ -225,6 +225,23 @@ body{max-width:100%;touch-action:pan-y pinch-zoom}
 .ev-reward-big div{font-size:17px;line-height:1.7;color:#e4f7d6;white-space:pre-line}
 .ev-empty{color:var(--muted);margin:0;padding:6px;font-size:14px}
 @media(max-width:650px){.ep-cover{min-height:210px}.ep-cover-in{padding:20px}.events-panel .events-grid{padding:14px;gap:14px;grid-template-columns:1fr}}
+
+/* ===== Steam tarzı oyun penceresi ===== */
+.modal-box{width:min(880px,100%)!important;max-height:94vh;max-height:94dvh;scroll-behavior:smooth}
+.modal-box::-webkit-scrollbar{width:8px}.modal-box::-webkit-scrollbar-thumb{background:rgba(255,255,255,.16);border-radius:9px}
+.modal-x{position:sticky!important;top:12px;float:right;margin:12px 12px -50px 0;right:auto!important}
+.modal-box .game-visual{height:340px}
+.gm-sec{margin-top:34px;padding-top:26px;border-top:1px solid var(--line)}
+.gm-sec>h4{margin:0 0 18px;font-size:12px;letter-spacing:.18em;font-weight:900;color:#ff666d}
+.gm-block{background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-bottom:16px}
+.gm-block img{display:block;width:100%;height:auto;max-height:520px;object-fit:cover;background:#0b0d12;cursor:zoom-in}
+.gm-bt{padding:20px 22px 22px}
+.gm-date{display:inline-block;font-size:11px;font-weight:900;letter-spacing:.1em;color:#ffc17e;background:rgba(255,153,51,.1);border:1px solid rgba(255,153,51,.28);border-radius:99px;padding:4px 10px;margin-bottom:10px}
+.gm-bt h5{margin:0 0 8px;font-size:21px;letter-spacing:-.03em}
+.gm-bt p{margin:0 0 10px;color:#c9cbd3;font-size:14.5px;line-height:1.65}.gm-bt p:last-child{margin:0}
+.gm-block.imgonly .gm-bt{display:none}
+.lightbox{position:fixed;inset:0;z-index:150;background:rgba(0,0,0,.92);display:none;place-items:center;padding:20px;cursor:zoom-out}.lightbox.open{display:grid}.lightbox img{max-width:100%;max-height:100%;border-radius:12px}
+@media(max-width:650px){.modal-box .game-visual{height:220px}.gm-bt{padding:16px}.gm-bt h5{font-size:18px}}
 </style>
 </head>
 <body>
@@ -313,11 +330,13 @@ body{max-width:100%;touch-action:pan-y pinch-zoom}
   <div class="ev-hero" id="evHero"></div>
   <div class="ev-body"><span class="ev-date" id="evDate"></span><h2 class="ev-title" id="evTitle"></h2><div class="ev-reward-big" id="evReward" hidden></div><div id="evText"></div><a class="btn btn-red" href="mailto:90minstudio@gmail.com" id="evCta"></a></div>
 </div></div>
+<div class="lightbox" id="lightbox"><img alt=""></div>
 <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true"><div class="modal-box">
   <button class="modal-x" id="modalX" type="button" aria-label="Close">✕</button>
   <div class="game-visual" id="mVisual"></div>
   <div class="modal-body"><span class="status" id="mStatus"></span><h3 id="mTitle"></h3><p id="mDesc"></p>
-  <div class="modal-actions" id="mActions"><button class="btn btn-outline" id="mClose" type="button"></button></div></div>
+  <div class="modal-actions" id="mActions"><button class="btn btn-outline" id="mClose" type="button"></button></div>
+  <div class="gm-sec" id="mBlocksWrap" hidden><h4 id="mBlocksH"></h4><div id="mBlocks"></div></div></div>
 </div></div>
 <script>
 const DEF={"events":[{"id":"event1","title":{"tr":"Topluluk Etkinlikleri","en":"Community Events","fr":"Événements communautaires","ja":"コミュニティイベント"},"summary":{"tr":"Oyuncularımızı bir araya getiren etkinlik ve organizasyon duyuruları burada paylaşılacak.","en":"Announcements for events and activities that bring our players together will appear here.","fr":"Les annonces d'événements qui réunissent nos joueurs seront publiées ici.","ja":"プレイヤーが集まるイベントのお知らせをここで公開します。"},"body":{"tr":"Topluluk etkinlikleri, 90Minute Studio'nun oyuncularla bir araya geldiği buluşmalardır. Amacımız oyuncuların fikirlerini dinlemek, geri bildirimlerini almak ve birlikte eğlenmektir.\n\nEtkinlik tarihleri, yerleri ve katılım bilgileri belli olduğunda bu sayfada paylaşılacak. Gelişmelerden haberdar olmak için Instagram hesabımızı takip edebilirsin.","en":"Community events are gatherings where 90Minute Studio meets its players. We want to hear your ideas, collect feedback, and have fun together.\n\nDates, locations, and participation details will be shared on this page once confirmed. Follow our Instagram account to stay updated.","fr":"Les événements communautaires sont des rencontres où 90Minute Studio retrouve ses joueurs. Nous voulons écouter vos idées, recueillir vos retours et nous amuser ensemble.\n\nLes dates, lieux et modalités de participation seront publiés sur cette page dès qu'ils seront confirmés. Suivez notre compte Instagram pour rester informé.","ja":"コミュニティイベントは、90Minute Studioがプレイヤーと直接会える場です。皆さんのアイデアを聞き、フィードバックを受け取り、一緒に楽しみたいと考えています。\n\n日程・場所・参加方法が決まり次第、このページでお知らせします。最新情報はInstagramをご覧ください。"},"date":"","img":"","em":"🏆","g":"linear-gradient(135deg,#3a0f14,#0b0d12)"},{"id":"event2","title":{"tr":"Özel Duyurular","en":"Special Announcements","fr":"Annonces spéciales","ja":"特別なお知らせ"},"summary":{"tr":"Turnuvalar, lansmanlar ve stüdyo organizasyonları için duyurular.","en":"News about tournaments, launches, and studio activities.","fr":"Actualités sur les tournois, les lancements et les activités du studio.","ja":"大会やリリース、スタジオ活動に関するお知らせ。"},"body":{"tr":"Turnuvalar, lansmanlar ve stüdyo organizasyonlarıyla ilgili tüm özel duyurular bu başlık altında yer alacak.\n\nYeni oyun çıkışları ve önemli gelişmeler için bu sayfayı takip et.","en":"All special announcements about tournaments, launches, and studio activities will appear under this section.\n\nKeep an eye on this page for new game releases and important updates.","fr":"Toutes les annonces spéciales concernant les tournois, les lancements et les activités du studio apparaîtront ici.\n\nSuivez cette page pour les sorties de jeux et les actualités importantes.","ja":"大会、リリース、スタジオ活動に関する特別なお知らせは、すべてここに掲載します。\n\n新作リリースや重要なお知らせは、このページをご確認ください。"},"date":"","img":"","em":"📣","g":"linear-gradient(135deg,#3a1d0a,#0b0d12)"}],"games":[{"id":"mincup","status":"live","platform":"ANDROID","symbol":"⚽","watermark":"90","theme":"red","img":"resm1.png","title":"By Mincup Halısaha","desc":{"tr":"Halı saha ve futbol yönetimi dünyasına adım at. Takımını oluştur, kulübünü yönet ve kendi futbol hikâyeni yaz.","en":"Step into the world of five-a-side football management. Build your team, manage your club, and write your own football story.","fr":"Plongez dans l'univers du football à cinq. Construisez votre équipe, gérez votre club et écrivez votre propre histoire.","ja":"フットサルの世界へ。チームを作り、クラブを運営し、あなただけのサッカーストーリーを描こう。"},"store":"https://play.google.com/store/apps/details?id=com.minute.halisaha","play":"m.html"},{"id":"gece","status":"dev","platform":"PC / MOBILE","symbol":"🌙","watermark":"NIGHT","theme":"warm","img":"","title":"Gece Dönercisi","desc":{"tr":"Gece başlayan bir çalışma hikâyesi. Kendi dönerci işletmeni yönetmeye uzanan simülasyon projesi.","en":"A story that begins at night. A simulation project about running your own late-night döner shop.","fr":"Une histoire qui commence la nuit. Un jeu de simulation où vous gérez votre propre kebab de nuit.","ja":"夜に始まる物語。深夜のケバブ店を経営するシミュレーションゲーム。"},"store":"","play":""}],"team":[{"id":"team1","name":"Asım Topcu","photo":"asim.jpg","link":"https://www.linkedin.com/in/asimtopcu","role":{"tr":"Kurucu & Geliştirici","en":"Founder & Developer","fr":"Fondateur & développeur","ja":"創設者・開発者"},"bio":{"tr":"","en":"","fr":"","ja":""}}]};
@@ -474,10 +493,24 @@ function openGame(card){
   if(L.play)add("btn-play","🎮 "+t.playNow,L.play,false);
   if(!L.store&&!L.play)add("btn-red",t.contactBtn,"mailto:90minstudio@gmail.com?subject="+encodeURIComponent(title),false);
   document.getElementById("mClose").textContent=t.closeBtn;
+
+  /* oyun notları (blok blok, görselli) */
+  const gm=(C.games||[]).find(x=>x.id===id)||{},bl=(gm.blocks||[]).filter(b=>b&&(b.img||b.date||tx(b.title,currentLang)||tx(b.text,currentLang)));
+  const NH={tr:"GELİŞTİRME NOTLARI",en:"DEVELOPMENT NOTES",fr:"NOTES DE DÉVELOPPEMENT",ja:"開発ノート"};
+  document.getElementById("mBlocksH").textContent=NH[currentLang]||NH.en;
+  document.getElementById("mBlocksWrap").hidden=!bl.length;
+  document.getElementById("mBlocks").innerHTML=bl.map(b=>{const ti=tx(b.title,currentLang),te=tx(b.text,currentLang),has=b.date||ti||te;
+    return `<article class="gm-block${has?"":" imgonly"}">${b.img?`<img src="${esc(b.img)}" alt="${esc(ti)}" loading="lazy" onerror="this.remove()">`:""}${has?`<div class="gm-bt">${b.date?`<span class="gm-date">${esc(b.date)}</span>`:""}${ti?`<h5>${esc(ti)}</h5>`:""}${String(te).split(/\n\s*\n/).filter(Boolean).map(p=>`<p>${esc(p).replace(/\n/g,"<br>")}</p>`).join("")}</div>`:""}</article>`}).join("");
+  modal.querySelector(".modal-box").scrollTop=0;
   modal.classList.add("open");modal.setAttribute("aria-hidden","false");document.body.style.overflow="hidden";
 }
 function closeGame(){modal.classList.remove("open");modal.setAttribute("aria-hidden","true");document.body.style.overflow=""}
 
+
+const lightbox=document.getElementById("lightbox");
+document.getElementById("mBlocks").addEventListener("click",e=>{const im=e.target.closest(".gm-block img");if(im){lightbox.querySelector("img").src=im.src;lightbox.classList.add("open")}});
+lightbox.addEventListener("click",()=>lightbox.classList.remove("open"));
+addEventListener("keydown",e=>{if(e.key==="Escape"&&lightbox.classList.contains("open")){lightbox.classList.remove("open");e.stopImmediatePropagation()}},true);
 document.getElementById("modalX").addEventListener("click",closeGame);document.getElementById("mClose").addEventListener("click",closeGame);
 modal.addEventListener("click",e=>{if(e.target===modal)closeGame()});addEventListener("keydown",e=>{if(e.key==="Escape"){if(modal.classList.contains("open"))closeGame();else if(evPage.classList.contains("open"))location.hash="#events"}});
 document.getElementById("year").textContent=new Date().getFullYear();

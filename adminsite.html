@@ -54,6 +54,9 @@ textarea{resize:vertical;min-height:70px}
 .imgctl{flex:1;display:grid;gap:8px;min-width:0}.imgctl small{color:var(--muted);font-size:11px}
 .btns{display:flex;gap:8px;flex-wrap:wrap}
 @media(max-width:560px){.row{flex-wrap:wrap}.ra{width:100%;justify-content:flex-start}.imgrow{flex-direction:column}.prev{width:100%;height:130px}.mf .btn{flex:1}}
+.bl{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:12px;margin-bottom:10px}
+.blh{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.bls:empty:before{content:"Henüz blok yok. Aşağıdan ekle.";display:block;color:var(--muted);font-size:13px;padding:10px 0}
 </style>
 </head>
 <body>
@@ -95,11 +98,11 @@ const SCH={
   blank:()=>({id:uid(),title:{},summary:{},body:{},reward:{},date:"",img:"",em:"🏆"}),
   fields:[{k:"title",t:"lang",l:"Başlık *"},{k:"summary",t:"langarea",l:"Kısa özet (kartta görünür)",rows:3},{k:"reward",t:"langarea",l:"🎁 Etkinlik ödülü (kartta ve detay sayfasında yeşil kutuda görünür, boşsa görünmez)",rows:3},{k:"body",t:"langarea",l:"Detay yazısı (paragraflar arasına boş satır bırak)",rows:8},
    {k:"date",t:"text",l:"Tarih / etiket (boşsa hiçbir şey görünmez)",ph:"örn. 15 Aralık 2026"},{k:"img",t:"image",l:"Kapak görseli (boşsa etkinlik.png kullanılır)",max:1400},{k:"em",t:"text",l:"Emoji (görsel yüklenmezse görünür)"}]},
- games:{label:"oyun / proje",title:i=>i.title,sub:i=>(i.status==="dev"?"Geliştiriliyor":"Yayında")+(i.platform?" · "+i.platform:""),thumb:i=>i.img,emoji:i=>i.symbol||"🎮",
-  blank:()=>({id:uid(),status:"dev",platform:"",symbol:"🎮",watermark:"",theme:"red",img:"",title:"",desc:{},store:"",play:""}),
+ games:{label:"oyun / proje",title:i=>i.title,sub:i=>(i.status==="dev"?"Geliştiriliyor":"Yayında")+(i.platform?" · "+i.platform:"")+((i.blocks||[]).length?" · "+i.blocks.length+" blok":""),thumb:i=>i.img,emoji:i=>i.symbol||"🎮",
+  blank:()=>({id:uid(),status:"dev",platform:"",symbol:"🎮",watermark:"",theme:"red",img:"",title:"",desc:{},store:"",play:"",blocks:[]}),
   fields:[{k:"title",t:"text",l:"Oyun / proje adı *"},{k:"status",t:"select",l:"Durum",o:[["live","Yayında"],["dev","Geliştiriliyor"]]},{k:"platform",t:"text",l:"Platform etiketi",ph:"ANDROID, PC / MOBILE ..."},
    {k:"desc",t:"langarea",l:"Açıklama",rows:4},{k:"img",t:"image",l:"Kapak görseli",max:1400},{k:"symbol",t:"text",l:"Emoji (görsel yoksa görünür)"},{k:"watermark",t:"text",l:"Arka plan yazısı (büyük silik yazı)",ph:"90, NIGHT ..."},
-   {k:"theme",t:"select",l:"Renk teması",o:[["red","Kırmızı"],["warm","Turuncu"]]},{k:"store",t:"text",l:"Google Play / mağaza linki (boş olabilir)",ph:"https://..."},{k:"play",t:"text",l:"Oyunu oyna linki (boş olabilir)",ph:"m.html"}]},
+   {k:"theme",t:"select",l:"Renk teması",o:[["red","Kırmızı"],["warm","Turuncu"]]},{k:"store",t:"text",l:"Google Play / mağaza linki (boş olabilir)",ph:"https://..."},{k:"play",t:"text",l:"Oyunu oyna linki (boş olabilir)",ph:"m.html"},{k:"blocks",t:"blocks",l:"📝 Oyun sayfası blokları (oyuna tıklayınca açılan pencerede alt alta görünür: görsel + başlık + yazı)"}]},
  team:{label:"kişi",title:i=>i.name,sub:i=>tx(i.role),thumb:i=>i.photo,emoji:i=>"👤",
   blank:()=>({id:uid(),name:"",photo:"",link:"",role:{},bio:{}}),
   fields:[{k:"name",t:"text",l:"Ad Soyad *"},{k:"role",t:"lang",l:"Görev / unvan"},{k:"bio",t:"langarea",l:"Kısa tanıtım (boş olabilir)",rows:3},{k:"photo",t:"image",l:"Fotoğraf (boşsa baş harfler görünür)",max:600},{k:"link",t:"text",l:"Profil linki (LinkedIn, Instagram...)",ph:"https://..."}]}
@@ -144,8 +147,23 @@ function fieldHtml(f,it){
   if(f.t==="lang"||f.t==="langarea")return `<div class="f"><span>${f.l}</span>${LANGS.map(l=>{const val=(v&&v[l])||"",c="lg"+(l===(ED?ED.lang:"tr")?" on":"");return f.t==="lang"?`<input type="text" class="${c}" data-k="${f.k}" data-l="${l}" value="${esc(val)}" placeholder="${LN[l]}">`:`<textarea class="${c}" data-k="${f.k}" data-l="${l}" rows="${f.rows||3}" placeholder="${LN[l]}">${esc(val)}</textarea>`}).join("")}</div>`;
   if(f.t==="image"){const emb=typeof v==="string"&&v.startsWith("data:");
     return `<div class="f imgf" data-k="${f.k}" data-max="${f.max||1200}"><span>${f.l}</span><div class="imgrow"><div class="prev">${v?`<img src="${emb?"":esc(v)}" alt="">`:"görsel yok"}</div><div class="imgctl"><input type="text" class="ipath" placeholder="${emb?"Gömülü görsel kullanılıyor":"sunucudaki dosya adı, örn. etkinlik2.png"}" value="${emb?"":esc(v||"")}"><div class="btns"><label class="btn sm">Dosya seç<input type="file" accept="image/*" hidden></label><button class="btn sm" type="button" data-clr>Temizle</button></div><small>Dosya seçersen küçültülüp içeriğe gömülür. Dosya adı yazarsan görseli sunucuya sen yüklersin.</small></div></div></div>`}
+  if(f.t==="blocks")return `<div class="f"><span>${f.l}</span><div class="bls">${(it.blocks||[]).map(blHtml).join("")}</div><button class="btn" type="button" data-addbl>+ Blok ekle</button></div>`;
   return "";
 }
+function blHtml(b){
+  b=b||{};const v=b.img||"",emb=v.startsWith("data:"),on=l=>l===(ED?ED.lang:"tr")?" on":"";
+  return `<div class="bl"><div class="blh"><b>Blok</b><div class="btns"><button class="btn sm" type="button" data-blmv="-1">↑</button><button class="btn sm" type="button" data-blmv="1">↓</button><button class="btn sm danger" type="button" data-bldel>Sil</button></div></div>
+<label class="f"><span>Etiket / tarih (boş olabilir)</span><input type="text" class="bdate" value="${esc(b.date||"")}" placeholder="örn. Güncelleme 0.2 · 12 Kasım"></label>
+<div class="f"><span>Başlık</span>${LANGS.map(l=>`<input type="text" class="lg${on(l)}" data-bl="title" data-l="${l}" value="${esc((b.title&&b.title[l])||"")}" placeholder="${LN[l]}">`).join("")}</div>
+<div class="f"><span>Yazı (paragraflar arasına boş satır bırak)</span>${LANGS.map(l=>`<textarea class="lg${on(l)}" data-bl="text" data-l="${l}" rows="5" placeholder="${LN[l]}">${esc((b.text&&b.text[l])||"")}</textarea>`).join("")}</div>
+<div class="f imgf" data-max="1400"${emb?` data-d="${esc(v)}"`:""}><span>Görsel (boş olabilir)</span><div class="imgrow"><div class="prev">${v?`<img src="${esc(v)}" alt="">`:"görsel yok"}</div><div class="imgctl"><input type="text" class="ipath" placeholder="${emb?"Gömülü görsel kullanılıyor":"sunucudaki dosya adı, örn. not1.png"}" value="${emb?"":esc(v)}"><div class="btns"><label class="btn sm">Dosya seç<input type="file" accept="image/*" hidden></label><button class="btn sm" type="button" data-clr>Temizle</button></div></div></div></div></div>`;
+}
+function collectBlocks(){
+  return [...$("edBox").querySelectorAll(".bl")].map(el=>{const b={title:{},text:{}};b.date=el.querySelector(".bdate").value.trim();
+    el.querySelectorAll("[data-bl]").forEach(x=>{b[x.dataset.bl][x.dataset.l]=x.value.trim()});
+    const w=el.querySelector(".imgf");b.img=w.dataset.d||w.querySelector(".ipath").value.trim();return b});
+}
+function renderBls(arr){$("edBox").querySelector(".bls").innerHTML=arr.map(blHtml).join("")}
 function openEd(kind,idx){
   const sc=SCH[kind],isNew=idx<0,it=isNew?sc.blank():clone(S[kind][idx]);
   ED={kind,idx,it,lang:"tr"};
@@ -156,6 +174,9 @@ function openEd(kind,idx){
 function closeEd(){$("ed").classList.remove("open");ED=null}
 $("edBox").addEventListener("click",e=>{
   const t=e.target.closest("button");if(!t)return;
+  if(t.hasAttribute("data-addbl")){const arr=collectBlocks();arr.push({});renderBls(arr);const l=$("edBox").querySelectorAll(".bl");l[l.length-1].scrollIntoView({block:"center",behavior:"smooth"});return}
+  if(t.hasAttribute("data-bldel")){const arr=collectBlocks(),i=[...$("edBox").querySelectorAll(".bl")].indexOf(t.closest(".bl"));if(confirm("Bu blok silinsin mi?")){arr.splice(i,1);renderBls(arr)}return}
+  if(t.dataset.blmv){const arr=collectBlocks(),i=[...$("edBox").querySelectorAll(".bl")].indexOf(t.closest(".bl")),j=i+ +t.dataset.blmv;if(j<0||j>=arr.length)return;[arr[i],arr[j]]=[arr[j],arr[i]];renderBls(arr);return}
   if(t.hasAttribute("data-close")){closeEd();return}
   if(t.dataset.lt){ED.lang=t.dataset.lt;$("edBox").querySelectorAll(".lt").forEach(b=>b.classList.toggle("on",b===t));$("edBox").querySelectorAll(".lg").forEach(x=>x.classList.toggle("on",x.dataset.l===ED.lang));return}
   if(t.hasAttribute("data-clr")){const w=t.closest(".imgf");delete w.dataset.d;const p=w.querySelector(".ipath");p.value="";p.placeholder="sunucudaki dosya adı, örn. etkinlik2.png";w.querySelector(".prev").textContent="görsel yok";return}
@@ -179,6 +200,7 @@ function saveEd(){
     if(el.dataset.l){if(!o[k]||typeof o[k]!=="object")o[k]={};o[k][el.dataset.l]=el.value.trim();return}
     o[k]=el.value.trim();
   });
+  if($("edBox").querySelector(".bls"))o.blocks=collectBlocks().filter(b=>b.img||b.date||Object.values(b.title).some(Boolean)||Object.values(b.text).some(Boolean));
   const need={events:()=>tx(o.title),games:()=>o.title,team:()=>o.name}[ED.kind]();
   if(!need){alert("Başlık / ad boş olamaz.");return}
   if(ED.idx<0)S[ED.kind].push(o);else S[ED.kind][ED.idx]=o;
