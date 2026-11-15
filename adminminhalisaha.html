@@ -276,6 +276,19 @@ button{border:0;border-radius:12px;padding:10px 14px;font:inherit;font-weight:80
         <div id="passwordResetStatus" class="status">Sıfırlama bağlantısı yukarıya yazdığın e-posta adresine gönderilir.</div>
       </div>
       <div class="panel">
+        <h2>🔑 Şifreyi doğrudan ayarla</h2>
+        <p class="muted">UID ve yeni şifreyi yaz; şifre e-posta gerekmeden değiştirilir. İlk kullanımda proje sahibi Google hesabınla izin vermen istenir.</p>
+        <div class="grid">
+          <div class="field"><label>Kullanıcı Firebase UID</label><input id="setPwUid" type="text" placeholder="Firebase Authentication UID" autocomplete="off" spellcheck="false"></div>
+          <div class="field"><label>Yeni şifre (en az 6 karakter)</label><input id="setPwNew" type="text" placeholder="yeni şifre" autocomplete="off" spellcheck="false"></div>
+        </div>
+        <div class="row" style="margin-top:14px">
+          <button class="primary" id="setPwBtn" type="button" onclick="setUserPasswordDirect()">🔑 Şifreyi değiştir</button>
+          <button type="button" onclick="document.getElementById('setPwUid').value='';document.getElementById('setPwNew').value='';document.getElementById('setPwStatus').textContent='';">Temizle</button>
+        </div>
+        <div id="setPwStatus" class="status">Hazır.</div>
+      </div>
+      <div class="panel">
         <h2>ℹ️ Nasıl çalışır?</h2>
         <ul class="muted" style="padding-left:20px;line-height:1.8">
           <li>Yalnızca yönetici girişi yaptıktan sonra bu sekme görünür.</li>
@@ -597,6 +610,59 @@ window.sendUserPasswordReset=async function(){
   }finally{if(btn)btn.disabled=false;}
 };
 
+
+// Şifreyi doğrudan ayarla: proje sahibi Google hesabıyla alınan OAuth token ile
+// Identity Toolkit yönetici API'si çağrılır. Gizli anahtar sayfada TUTULMAZ.
+let gAdminToken=null,gAdminTokenAt=0;
+async function getGoogleAdminToken(){
+  if(gAdminToken&&Date.now()-gAdminTokenAt<45*60*1000)return gAdminToken;
+  let app2;
+  try{app2=appMod.getApp('gadmin');}catch(_){app2=appMod.initializeApp(FBC,'gadmin');}
+  const a2=authMod.getAuth(app2);
+  const prov=new authMod.GoogleAuthProvider();
+  prov.addScope('https://www.googleapis.com/auth/cloud-platform');
+  prov.setCustomParameters({prompt:'select_account'});
+  const res=await authMod.signInWithPopup(a2,prov);
+  const cred=authMod.GoogleAuthProvider.credentialFromResult(res);
+  if(!cred||!cred.accessToken)throw new Error('Google erişim tokenı alınamadı.');
+  gAdminToken=cred.accessToken;gAdminTokenAt=Date.now();
+  try{await authMod.signOut(a2);}catch(_){}
+  return gAdminToken;
+}
+window.setUserPasswordDirect=async function(){
+  const uid=$('setPwUid').value.trim(),pw=$('setPwNew').value;
+  const st=(m,e)=>status(m,'setPwStatus',e);
+  if(!currentAdmin){st('Önce yönetici olarak giriş yapmalısın.',true);return;}
+  if(!uid||uid.length<8){st('Geçerli Firebase UID gir.',true);return;}
+  if(!pw||pw.length<6){st('Yeni şifre en az 6 karakter olmalı.',true);return;}
+  const btn=$('setPwBtn');btn.disabled=true;
+  try{
+    st('Google yetkilendirmesi bekleniyor…');
+    const token=await getGoogleAdminToken();
+    st('Şifre değiştiriliyor…');
+    const r=await fetch('https://identitytoolkit.googleapis.com/v1/projects/'+FBC.projectId+'/accounts:update',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+      body:JSON.stringify({localId:uid,password:pw})
+    });
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok){
+      if(r.status===401)gAdminToken=null;
+      throw new Error((j.error&&j.error.message)||('HTTP '+r.status));
+    }
+    st('✓ Şifre değiştirildi. Hesap: '+(j.email||uid)+' — kullanıcı artık yeni şifreyle girebilir.');
+    $('setPwNew').value='';
+  }catch(e){
+    console.error('Şifre ayarlama hatası:',e);
+    const code=e.code||'';
+    const msg=code==='auth/popup-blocked'?'Açılır pencere engellendi. Tarayıcıda bu site için pop-up iznini aç.':
+      code==='auth/popup-closed-by-user'?'Google penceresi kapatıldı.':
+      code==='auth/unauthorized-domain'?'Bu alan adı Firebase > Authentication > Ayarlar > Yetkili alan adları listesinde yok (samettopcu.github.io ekle).':
+      code==='auth/operation-not-allowed'?'Firebase > Authentication > Sign-in method içinde Google sağlayıcısını etkinleştir.':
+      (e.message||code||'Bilinmeyen hata');
+    st('Şifre değiştirilemedi: '+msg,true);
+  }finally{btn.disabled=false;}
+};
 /* ===== Oyundaki hs20Face ile aynı avatar çizici ===== */
 const avatarFields=['avatarSkin','avatarHair','avatarHairColor','avatarJersey','avatarMouth','avatarBeard','avatarBg','avatarFace','avatarEyes','avatarBrow','avatarNose','avatarAcc','avatarKit'];
 const AV_DEFAULT={avatarSkin:'2',avatarHair:'0',avatarHairColor:'0',avatarJersey:'auto',avatarMouth:'0',avatarBeard:'0',avatarBg:'0',avatarFace:'0',avatarEyes:'0',avatarBrow:'0',avatarNose:'0',avatarAcc:'0',avatarKit:'0'};
