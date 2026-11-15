@@ -258,7 +258,7 @@ button{border:0;border-radius:12px;padding:10px 14px;font:inherit;font-weight:80
     <section id="tab-passwords" class="hidden">
       <div class="panel">
         <h2>🔐 Kullanıcı şifresi sıfırlama</h2>
-        <p class="muted">Kullanıcının Firebase UID bilgisini ve sıfırlama bağlantısının gönderileceği e-posta adresini gir. Firestore kullanıcı profilindeki UID-e-posta eşleşmesi kontrol edilir. Eşleşirse Firebase Authentication şifre sıfırlama e-postası isteği gönderilir.</p>
+        <p class="muted">Kullanıcının Firebase UID bilgisini ve sıfırlama bağlantısının gönderileceği e-posta adresini gir. Girdiğin e-posta adresine Firebase Authentication şifre sıfırlama bağlantısı gönderilir.</p>
         <div class="grid">
           <div class="field">
             <label>Kullanıcı Firebase UID</label>
@@ -273,14 +273,13 @@ button{border:0;border-radius:12px;padding:10px 14px;font:inherit;font-weight:80
           <button class="primary" type="button" onclick="sendUserPasswordReset()">📩 UID hesabı için sıfırlama bağlantısı gönder</button>
           <button type="button" onclick="document.getElementById('passwordResetUid').value='';document.getElementById('passwordResetEmail').value='';document.getElementById('passwordResetStatus').textContent='';">Temizle</button>
         </div>
-        <div id="passwordResetStatus" class="status">UID ile e-posta, Firestore kullanıcı profilindeki email alanı üzerinden karşılaştırılır. Eşleşme yoksa gönderim yapılmaz. Spark istemci SDK'sı Authentication UID'sini doğrudan sorgulayamaz.</div>
+        <div id="passwordResetStatus" class="status">Sıfırlama bağlantısı yukarıya yazdığın e-posta adresine gönderilir.</div>
       </div>
       <div class="panel">
         <h2>ℹ️ Nasıl çalışır?</h2>
         <ul class="muted" style="padding-left:20px;line-height:1.8">
           <li>Yalnızca yönetici girişi yaptıktan sonra bu sekme görünür.</li>
-          <li>Panel, UID'ye ait Firestore kullanıcı profilindeki email alanını kontrol eder.</li>
-          <li>E-posta eşleşmezse Firebase sıfırlama isteği gönderilmez.</li>
+          <li>Yazdığın e-posta adresine doğrudan sıfırlama bağlantısı gönderilir.</li>
           <li>İşlem Firebase Authentication'ın mevcut sendPasswordResetEmail özelliğini kullanır; Cloud Functions veya SMTP kurulumu gerektirmez.</li>
         </ul>
       </div>
@@ -576,32 +575,16 @@ window.sendUserPasswordReset=async function(){
   if(btn)btn.disabled=true;
   status('UID kullanıcısının Firestore profili kontrol ediliyor…','passwordResetStatus');
   try{
-    let userData=null;
-    // Kullanıcı profili öncelikle users/{uid} içinde aranır.
-    const userSnap=await fsMod.getDoc(fsMod.doc(db,'users',uid));
-    if(userSnap.exists())userData=userSnap.data()||{};
-    // Eski sürüm profillerinde e-posta hsUsers/{uid} içinde tutuluyorsa onu da kontrol et.
-    if(!userData){
-      try{
-        const hsSnap=await fsMod.getDoc(fsMod.doc(db,'hsUsers',uid));
-        if(hsSnap.exists())userData=hsSnap.data()||{};
-      }catch(_){}
-    }
-    const storedEmail=String(userData?.email||userData?.mail||userData?.emailAddress||'').trim().toLowerCase();
-    if(!userData){
-      status('Bu UID için Firestore kullanıcı profili bulunamadı. Auth hesabı yalnızca Spark istemci SDK’sıyla UID üzerinden sorgulanamaz.','passwordResetStatus',true);
-      return;
-    }
-    if(!storedEmail){
-      status('Bu UID profilinde kayıtlı e-posta alanı bulunamadı. Önce kullanıcı profiline email alanı eklenmeli.','passwordResetStatus',true);
-      return;
-    }
-    if(storedEmail!==email){
-      status('Girilen e-posta, bu UID profilinde kayıtlı e-posta ile eşleşmiyor. Gönderim yapılmadı.','passwordResetStatus',true);
-      return;
-    }
+    // UID yalnızca kayıt kontrolü için okunur; e-posta eşleşmesi ARANMAZ.
+    // Sıfırlama bağlantısı doğrudan yöneticinin yazdığı adrese gönderilir.
+    let note='';
+    try{
+      let snap=await fsMod.getDoc(fsMod.doc(db,'users',uid));
+      if(!snap.exists()){try{snap=await fsMod.getDoc(fsMod.doc(db,'hsUsers',uid));}catch(_){}}
+      if(!snap||!snap.exists())note=' (Uyarı: bu UID için Firestore profili bulunamadı.)';
+    }catch(_){}
     await authMod.sendPasswordResetEmail(auth,email);
-    status('✓ Firestore UID-e-posta eşleşmesi sağlandı. Firebase şifre sıfırlama isteğini kabul etti; e-posta kayıtlı Auth hesabına aitse bağlantı gönderilir.','passwordResetStatus');
+    status('✓ Sıfırlama isteği '+email+' adresi için gönderildi. Bu adres Authentication hesabının giriş e-postasıysa bağlantı gelir.'+note,'passwordResetStatus');
   }catch(e){
     console.error('Spark şifre sıfırlama hatası:',e);
     const messages={
