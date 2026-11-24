@@ -39,7 +39,7 @@
 </script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Halısaha Patronu · 5.0 BETA</title>
+<title>Halısaha Patronu · 6.0 BETA</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#eef3ea;--card:#fff;--tx:#12301f;--mut:#5c7466;--acc:#15a34a;--gold:#c77a06;--bd:#d6e2d2;--bad:#dc2626;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -3093,7 +3093,7 @@ function ablaMsg(){if(S.q)return;S.chd=S.chd||[];const ok=i=>!CH[i].w||CH[i].w()
 function menu(){const d=S.tm?new Date(S.tm).toLocaleString(CFG.l=='tr'?'tr-TR':CFG.l=='ja'?'ja-JP':CFG.l=='ru'?'ru-RU':CFG.l=='ar'?'ar-EG':'en-GB',{dateStyle:'short',timeStyle:'short'}):'',B=(f,k,x,s,c)=>`<button class="tbn${c||''}" onclick="${f}">${ico(k,34)}<span>${x}${s?`<small>${s}</small>`:''}</span></button>`;
 $('#tb').innerHTML=(hasSave?B('cont()','play','Devam et',S.st?'Hafta '+S.hafta+' · '+tl(S.para):'Hikaye devam ediyor',' g'):'')+B('yeni(this)','plus','Yeni oyun')+B('ach()','trophy','Başarımlar',(S.ach||[]).length+'/'+ACH.length)+B('ayar()','gear','Ayarlar')+(lsOK?'':'<small style="color:#fca5a5">⚠️ Tarayıcı kaydı engelliyor. Kayıt kodunu sakla.</small>');ttl(1)}
 function ttl(on){$('#ttl').classList.toggle('on',!!on)}
-function mkTtl(){document.body.insertAdjacentHTML('beforeend',`<div id="ttl" style="background-image:url(${PNG.tbgPhoto})"><div class="tt"><img class="logo" src="${PNG.logoT}" alt="Halısaha Tycoon"><p>Dedenin sahası, senin hikâyen</p><span class="vb">${NV}</span></div><div id="tb"></div></div>`)}
+function mkTtl(){document.body.insertAdjacentHTML('beforeend',`<div id="ttl" class="winter-title" style="background-image:url(${PNG.tbgPhoto})"><div class="winter-snow" aria-hidden="true"></div><div class="winter-garland" aria-hidden="true"><i>🔴</i><i>🟡</i><i>🔵</i><i>🔴</i><i>🟡</i><i>🔵</i><i>🔴</i><i>🟡</i><i>🔵</i></div><div class="winter-greeting" aria-hidden="true">🎄 MUTLU YILLAR 🎄</div><div class="tt"><img class="logo" src="${PNG.logoT}" alt="Halısaha Tycoon"><p>Dedenin sahası, senin hikâyen</p><span class="vb">${NV}</span></div><div id="tb"></div></div>`)}
 function cont(){cls();ttl(0);setTimeout(()=>{if(CFG.nv!=NV){CFG.nv=NV;cfgSave()}if(S.st&&drOk())daily()},700);go(S.st?(rdy?tab:0):3);rdy=1;$('#rg').value=S.fiyat}
 function yeni(b){if(b&&hasSave&&!yeni.k){yeni.k=1;b.textContent='Kayıt silinecek! Emin misin?';return}yeni.k=0;S=ilk();dv=S.para;rdy=1;invGen();S.q={k:'i',i:0};$('#rg').value=S.fiyat;cls();ttl(0);rFd();go(3);save();say(IN[0].m)}
 /* ---- haftalık döngü ---- */
@@ -4947,7 +4947,7 @@ function chkAch(){mig();if(S.zsn===undefined)S.zsn=(S.ach||[]).length;if(!rdy||!
 function aNext(){const a=aq.shift(),e=$('#ab');if(!a){abz=0;return}abz=1;e.innerHTML=`${ico(a[5]||('a_'+a[0]),44)}<div><small>Başarım açıldı · ${a[3]}★</small><b>${a[1]}</b><small>+${tl(a[4])}</small></div>`;e.classList.remove('on');void e.offsetWidth;e.classList.add('on');snd('c');snd('p');pgs(a);setTimeout(aNext,3300)}
 function ach(){const L=S.ach||[];S.zsn=L.length;setTimeout(()=>{rHub();save()},0);const tp=ACH.reduce((s,a)=>s+(L.includes(a[0])?a[3]:0),0);show(`<h2>🏆 Başarımlar</h2><p>${L.length}/${ACH.length} · ${tp}★</p><div style="max-height:58vh;overflow:auto">`+ACH.map(a=>{const o=L.includes(a[0]);return `<div class="it ach${o?' ok':''}">${ico(a[5]||('a_'+a[0]),44)}<div class="fx"><b>${a[1]}</b><small>${a[2]}${o?'':' · +'+tl(a[4])}</small></div><b>${a[3]}★</b></div>`}).join('')+'</div>')}
 /* ---- ödüller, çark, sandık, mini oyunlar ---- */
-const NV='5.0 BETA',cnt=k=>(S.cz&&S.cz[k])||0,inc=k=>{S.cz=S.cz||{};S.cz[k]=(S.cz[k]||0)+1};
+const NV='6.0 BETA',cnt=k=>(S.cz&&S.cz[k])||0,inc=k=>{S.cz=S.cz||{};S.cz[k]=(S.cz[k]||0)+1};
 const DR=[1000,2000,3000,5000,8000,12000,25000],td=()=>new Date().toLocaleDateString('sv-SE'),yd=()=>new Date(Date.now()-864e5).toLocaleDateString('sv-SE');
 const drOk=()=>!S.dr||S.dr.d!=td(),drS=()=>S.dr&&(S.dr.d==td()||S.dr.d==yd())?S.dr.s:0;
 const spL=()=>(S.zsd!=td()?1:0)+(S.zs||0),unseen=()=>S.zsn===undefined?0:Math.max(0,(S.ach||[]).length-S.zsn);
@@ -6697,7 +6697,7 @@ async function team17Render(){
   try{t=await team17LoadOrCreate();}catch(e){console.error(e);root.innerHTML='<div class="card">Oyuncu havuzu yüklenemedi. İnternet bağlantısını kontrol edip yeniden dene.</div>';return;}
   if(!t||!GLB.user||GLB.user.uid!==uid||!$('#team-root'))return;
   const pool=t.players||[],own=t.ownPlayers||[],byId=id=>team17ById(t,id),roster=(t.roster||[]).map(byId).filter(Boolean),lineupIds=t.lineup||[],assigned=new Set(lineupIds),rosterIds=new Set(t.roster||[]),filterPool=pool.filter(p=>team17Filter==='ALL'||p.pos===team17Filter),shown=filterPool.slice(0,team17VisibleLimit),avg=Math.round(lineupIds.map(id=>byId(id)?.ovr||0).reduce((a,b)=>a+b,0)/Math.max(1,lineupIds.length));
-  let h=`<div class="card team-hero"><h2>⚽ ${t.created?team17Esc(t.teamName):'Yeni takımını kur'}</h2><small>${t.created?'Takımın ve kadron hesabına kaydedilir.':'Takım tesisi aktif. Takım kurma bedeli: 5.000.000 ₺.'}</small><div><span class="team-stat">🌍 Ortak havuz · ${pool.length} oyuncu</span><span class="team-stat">👥 Kadro ${roster.length}/10</span><span class="team-stat">🎯 OVR 30–50</span><span class="team-stat">💾 5.0 BETA</span></div></div>`;
+  let h=`<div class="card team-hero"><h2>⚽ ${t.created?team17Esc(t.teamName):'Yeni takımını kur'}</h2><small>${t.created?'Takımın ve kadron hesabına kaydedilir.':'Takım tesisi aktif. Takım kurma bedeli: 5.000.000 ₺.'}</small><div><span class="team-stat">🌍 Ortak havuz · ${pool.length} oyuncu</span><span class="team-stat">👥 Kadro ${roster.length}/10</span><span class="team-stat">🎯 OVR 30–50</span><span class="team-stat">💾 6.0 BETA</span></div></div>`;
   h+=`<div class="card"><b>${t.created?'Takım adını düzenle':'Takım adı'}</b><input class="team-name-input" id="team17-name" maxlength="24" placeholder="Örn. Saray FK" value="${team17Esc(t.teamName)}"><button class="b1" style="width:100%" onclick="team17Commit()">${t.created?'Takım adını kaydet':'⚽ Takımı kur · 5.000.000 ₺'}</button>${!t.created?`<small style="display:block;color:var(--mut);margin-top:8px">Kurunca en uygun beş oyuncu sahaya yerleşir. Mevcut bakiye: ${tl(S.para)}</small>`:''}</div>`;
   if(t.created){
     h+=`<div class="card"><h3 style="margin-top:0">🏟️ Saha içi diziliş · 5 kişi</h3><div class="row"><span>${team17Esc(t.teamName)}</span><b>Takım ortalaması OVR ${avg}</b></div><div class="team-pitch"><div class="team-center"></div>${team17Slots.map((slot,i)=>{const p=byId(lineupIds[i]);return `<div class="team-player" style="left:${slot.x}%;top:${slot.y}%" title="${p?team17Esc(p.name+' · OVR '+p.ovr):slot.name}"><div class="team-shirt">${p?team17Esc(p.pos==='GK'?'KL':p.pos==='DEF'?'DF':p.pos==='MID'?'OS':'FV'):'?'}</div></div>`;}).join('')}</div><div class="team-lineup-list">${team17Slots.map((slot,i)=>{const p=byId(lineupIds[i]);return `<div class="team-lineup-card"><div class="team-ovr"><small>OVR</small><b>${p?p.ovr:'—'}</b></div><div><b>${p?team17Esc(p.name):'Oyuncu seçilmedi'}</b><small>${p?slot.name+' · '+p.age+' yaş · POT '+p.potential:'Kadrona uygun oyuncu ekle'}</small></div><button onclick="team17Pick(${i})">Değiştir</button></div>`;}).join('')}</div><small style="display:block;color:var(--mut);margin-top:10px">Sahada sadece pozisyon işaretleri bulunur; oyuncu adı ve OVR değerleri alttaki kartlarda ayrı gösterilir, üst üste binmez.</small></div>`;
@@ -6901,13 +6901,13 @@ async function team17Render(){
   const byId=id=>team17ById(t,id),slots=team17SlotsNow(t),lineup=(t.lineup||[]).slice(0,5),roster=(t.roster||[]).map(byId).filter(Boolean),starters=new Set(lineup),bench=roster.filter(p=>!starters.has(p.id)),avg=Math.round(lineup.map(id=>byId(id)?.ovr||0).reduce((a,b)=>a+b,0)/Math.max(1,lineup.length));
   let h='';
   if(t.created){
-    h+=`<div class="card team-topline"><b>⚽ ${team17Esc(t.teamName)}</b><span class="team-beta">5.0 BETA</span><button class="team-name-edit" aria-label="Takım adını düzenle" onclick="team17ShowRename()">✎</button></div>`;
+    h+=`<div class="card team-topline"><b>⚽ ${team17Esc(t.teamName)}</b><span class="team-beta">6.0 BETA</span><button class="team-name-edit" aria-label="Takım adını düzenle" onclick="team17ShowRename()">✎</button></div>`;
     h+=`<div class="card team-tactics"><div class="team-tactics-head"><b>Diziliş</b><b>OVR ${avg}</b></div><div class="team-formation-list">${Object.entries(team17FormationDefs).map(([key,f])=>`<button class="team-formation-btn ${t.formation===key?'active':''}" onclick="team17SetFormation('${key}')"><b>${f.label}</b><small>${f.desc}</small></button>`).join('')}</div>`;
     h+=`<div class="team-pitch" id="team17-pitch"><div class="team-center"></div>${slots.map((slot,i)=>{const p=byId(lineup[i]),pos=t.slotPositions[i]||{x:slot.x,y:slot.y};return `<button type="button" class="team-player-card" data-slot="${i}" onclick="team17PlayerTap(${i})" style="left:${pos.x}%;top:${pos.y}%" aria-label="${p?team17Esc(p.name+', OVR '+p.ovr+', '+slot.name):slot.name}"><span class="team-player-ovr">${p?p.ovr:'—'}<small>OVR</small></span><span class="team-player-copy"><b>${p?team17Esc(p.name):'Boş'}</b><small>${slot.name}</small></span><span class="team-player-edit">✎</span></button>`;}).join('')}</div><small class="team-pitch-tip">Oyuncu kartına dokun: değiştir · Kartı sürükle: sahadaki yerini ayarla</small></div>`;
     h+=`<div class="card team-bench"><div class="team-bench-head"><b>Yedekler · ${bench.length}</b><button class="b1" onclick="team17AddRosterPicker()" ${roster.length>=10?'disabled':''}>＋ Oyuncu ekle</button></div>${bench.length?`<div class="team-pool">${bench.map(p=>`<div class="team-roster-card"><div class="team-ovr"><small>OVR</small><b>${p.ovr}</b></div><div class="team-roster-info"><b>${team17Esc(p.name)}</b><small>${({GK:'Kaleci',DEF:'Defans',MID:'Orta saha',ATT:'Forvet'})[p.pos]} · ${p.age} yaş · POT ${p.potential}</small></div><button class="team-card-action" onclick="team17RemovePlayer('${team17Esc(p.id)}')">Çıkar</button></div>`).join('')}</div>`:'<small class="team-empty-bench">Yedek yok.</small>'}<small class="team-squad-limit">Kadro ${roster.length}/10</small></div>`;
 
   }else{
-    h+=`<div class="card team-create"><span class="team-beta">5.0 BETA</span><label for="team17-name">Takım adı</label><input class="team-name-input" id="team17-name" maxlength="24" placeholder="Örn. Saray FK"><button class="b1" style="width:100%" onclick="team17Commit()">Takımı kur · 5.000.000 ₺</button><small>Mevcut bakiye: ${tl(S.para)}</small></div>`;
+    h+=`<div class="card team-create"><span class="team-beta">6.0 BETA</span><label for="team17-name">Takım adı</label><input class="team-name-input" id="team17-name" maxlength="24" placeholder="Örn. Saray FK"><button class="b1" style="width:100%" onclick="team17Commit()">Takımı kur · 5.000.000 ₺</button><small>Mevcut bakiye: ${tl(S.para)}</small></div>`;
   }
   root.innerHTML=h;team17BindPitchCards();
 }
@@ -18809,7 +18809,7 @@ return `<h3 style="margin-top:0">🌍 Avrupa Kupaları · Sezon ${cur.season}</h
 (function(){
   'use strict';
   try {
-    document.title = 'Halısaha Patronu · 5.0 BETA';
+    document.title = 'Halısaha Patronu · 6.0 BETA';
 
     const title = '2.0 BETA · Yenilenen tesisler ve arayüz';
     const bullets = [
@@ -25122,4 +25122,79 @@ try{if(typeof NOTES!=='undefined'&&Array.isArray(NOTES))NOTES.unshift(['Maç mot
   addHomeTile();
   try{if(typeof hud==='function'){const oldHud=hud;hud=function(){oldHud.apply(this,arguments);};}}catch(e){}
 })();
+</script>
+
+
+<style id="hs60-winter-update">
+/* 6.0 BETA · Kış ve yılbaşı temalı giriş ekranı */
+body #ttl.winter-title{background-color:#071a2b;background-size:cover;background-position:center}
+body #ttl.winter-title::before{
+  background:linear-gradient(180deg,rgba(2,13,28,.34),rgba(3,18,31,.12) 38%,rgba(2,10,20,.72) 100%);
+}
+body #ttl .winter-snow{
+  position:absolute;inset:-12% 0 0;z-index:1;pointer-events:none;opacity:.88;
+  background-image:
+    radial-gradient(3px 3px at 22px 34px,#fff 98%,transparent),
+    radial-gradient(2px 2px at 100px 140px,rgba(255,255,255,.95) 98%,transparent),
+    radial-gradient(4px 4px at 190px 70px,rgba(224,244,255,.95) 98%,transparent),
+    radial-gradient(2px 2px at 280px 210px,#fff 98%,transparent),
+    radial-gradient(3px 3px at 340px 110px,rgba(255,255,255,.9) 98%,transparent);
+  background-size:180px 220px,240px 280px,310px 340px,210px 260px,360px 300px;
+  animation:hs60Snow 11s linear infinite;
+  mask-image:linear-gradient(to bottom,#000 0%,#000 78%,transparent 100%);
+}
+@keyframes hs60Snow{from{background-position:0 -220px,30px -280px,80px -340px,120px -260px,0 -300px}to{background-position:30px 900px,100px 1100px,20px 1000px,180px 950px,90px 1200px}}
+body #ttl .winter-garland{
+  position:absolute;z-index:5;top:0;left:-2%;width:104%;height:58px;
+  display:flex;justify-content:space-around;align-items:flex-start;padding-top:13px;
+  border-top:3px solid rgba(30,75,52,.95);pointer-events:none;
+  filter:drop-shadow(0 3px 5px #0009);
+}
+body #ttl .winter-garland::before{
+  content:"";position:absolute;left:0;right:0;top:0;height:44px;
+  border-bottom:4px solid #1b6945;border-radius:0 0 50% 50%;
+  box-shadow:0 5px 0 -2px #b91c1c;
+}
+body #ttl .winter-garland i{
+  z-index:1;font-style:normal;font-size:13px;line-height:1;
+  filter:drop-shadow(0 0 5px rgba(255,230,130,.85));
+  animation:hs60Light 1.8s ease-in-out infinite alternate;
+}
+body #ttl .winter-garland i:nth-child(2n){animation-delay:.5s}
+body #ttl .winter-garland i:nth-child(3n){animation-delay:1s}
+@keyframes hs60Light{from{opacity:.62;transform:translateY(0) scale(.9)}to{opacity:1;transform:translateY(2px) scale(1.12)}}
+body #ttl .winter-greeting{
+  position:absolute;z-index:4;right:4%;top:19%;padding:7px 13px;
+  border:1px solid rgba(255,230,170,.55);border-radius:999px;
+  background:linear-gradient(120deg,rgba(120,18,32,.86),rgba(18,83,55,.88));
+  color:#fff3c4;font-size:clamp(10px,2.5vw,14px);font-weight:1000;
+  letter-spacing:.12em;text-shadow:0 2px 5px #000;
+  box-shadow:0 5px 18px #0005,0 0 18px rgba(255,215,120,.16);
+  animation:hs60Badge 3s ease-in-out infinite alternate;
+}
+@keyframes hs60Badge{to{transform:translateY(-4px);box-shadow:0 8px 24px #0006,0 0 22px rgba(255,215,120,.35)}}
+body #ttl .tt,body #ttl .hero,body #ttl #tb{position:absolute}
+body #ttl .tt{z-index:3}
+body #ttl .hero{z-index:2;filter:drop-shadow(0 12px 18px rgba(0,0,0,.58))}
+body #ttl #tb{z-index:6}
+@media(max-width:640px){
+ body #ttl .winter-greeting{top:20%;right:3%;font-size:10px;padding:6px 9px}
+ body #ttl .winter-garland{height:48px}
+}
+@media(max-height:640px){body #ttl .winter-greeting{top:15%;right:3%}}
+@media(prefers-reduced-motion:reduce){body #ttl .winter-snow,body #ttl .winter-garland i,body #ttl .winter-greeting{animation:none!important}}
+</style>
+
+
+<script id="hs60-winter-release-note">
+(function(){try{
+  if(typeof NOTES!=='undefined'&&Array.isArray(NOTES)&&!NOTES.some(n=>String(Array.isArray(n)?n[0]:'').startsWith('6.0 BETA'))){
+    NOTES.unshift(['6.0 BETA · Yılbaşı ve kış güncellemesi',[
+      '❄️ Giriş ekranına katmanlı, hareketli kar yağışı eklendi.',
+      '🎄 Yılbaşı ışıkları, çam süslemeleri ve Mutlu Yıllar rozeti eklendi.',
+      '✨ Giriş ekranının gece atmosferi, ışıklandırması ve kış görünümü yenilendi.',
+      '⚙️ Oyun sürümü 6.0 BETA olarak güncellendi.'
+    ]]);
+  }
+}catch(e){} })();
 </script>
