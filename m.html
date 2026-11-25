@@ -6007,7 +6007,7 @@ function drawLights(H){const l=H.u.isik;if(!l)return;const c=H.c,spots=[[-8,0],[
 const FBV='10.12.5',FBC={apiKey:"AIzaSyAwsrty-u2_KW-hzdemM_dMejU6W-fDMDs",authDomain:"mincup.firebaseapp.com",projectId:"mincup",storageBucket:"mincup.firebasestorage.app",messagingSenderId:"519457645517",appId:"1:519457645517:web:fed01174e64905d98d5a84",measurementId:"G-D1J1HTHW8F"};
 const GLB={fb:null,user:null,prof:null,banUnsub:null,banHandling:0,rows:[],rank:0,ts:0,lt:0,last:null,busy:0,sy:0,err:'',info:'',dirty:1,loading:0,loaded:0,mode:(()=>{try{return localStorage.getItem('hs_gl')?'in':'up'}catch(e){return 'up'}})()},
 glEsc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function glErr(e){const c=(e&&e.code)||'',m=c+' '+((e&&e.message)||'');return e&&e.code==='hs/user-banned'?(e.message||'Bu hesap yönetici tarafından engellendi.') : c=='auth/email-already-in-use'?'Bu kullanıcı adı alınmış':/invalid-credential|wrong-password|user-not-found|invalid-email/.test(c)?'Kullanıcı adı veya şifre hatalı':c=='auth/operation-not-allowed'?'Giriş yöntemi kapalı: Firebase > Authentication > E-posta/Şifre özelliğini etkinleştir':c=='auth/too-many-requests'?'Çok fazla deneme. Biraz bekle.':c=='auth/weak-password'?'Şifre en az 6 karakter olmalı':c=='permission-denied'?'İzin reddedildi: Firestore kurallarını kontrol et':/network|unavailable|dynamically|fetch|Failed/i.test(m)?'Sunucuya ulaşılamadı. İnternet bağlantını kontrol et. (Bu özellik yalnızca internetli bir sitede/dosyada çalışır.)':'Bir hata oluştu'}
+function glErr(e){const c=(e&&e.code)||'',m=c+' '+((e&&e.message)||'');if(c==='hs/timeout')return e.message;if(c==='auth/operation-not-supported-in-this-environment')return 'Bu dosya content:// ile açıldığı için Firebase girişi desteklenmiyor. Dosyayı bir web adresinden (https) aç.';return e&&e.code==='hs/user-banned'?(e.message||'Bu hesap yönetici tarafından engellendi.') : c=='auth/email-already-in-use'?'Bu kullanıcı adı alınmış':/invalid-credential|wrong-password|user-not-found|invalid-email/.test(c)?'Kullanıcı adı veya şifre hatalı':c=='auth/operation-not-allowed'?'Giriş yöntemi kapalı: Firebase > Authentication > E-posta/Şifre özelliğini etkinleştir':c=='auth/too-many-requests'?'Çok fazla deneme. Biraz bekle.':c=='auth/weak-password'?'Şifre en az 6 karakter olmalı':c=='permission-denied'?'İzin reddedildi: Firestore kurallarını kontrol et':/network|unavailable|dynamically|fetch|Failed/i.test(m)?'Sunucuya ulaşılamadı. İnternet bağlantını kontrol et. (Bu özellik yalnızca internetli bir sitede/dosyada çalışır.)':'Bir hata oluştu'}
 async function glCheckBan(fb,uid,keep){
   const f=fb.fs,now=Date.now();
   try{
@@ -6026,7 +6026,7 @@ async function glCheckBan(fb,uid,keep){
   }
 }
 function glBanError(info){const e=new Error('Bu hesap yönetici tarafından engellendi.'+(info&&info.reason?' Neden: '+info.reason:''));e.code='hs/user-banned';return e}
-async function glFb(){if(GLB.fb)return GLB.fb;let a,au,fs,lastErr;for(const h of [m=>`https://www.gstatic.com/firebasejs/${FBV}/firebase-${m}.js`,m=>`https://cdn.jsdelivr.net/npm/firebase@${FBV}/${m}/+esm`,m=>`https://esm.sh/firebase@${FBV}/${m}`]){try{[a,au,fs]=await Promise.all(['app','auth','firestore'].map(m=>import(h(m))));lastErr=null;break;}catch(e){lastErr=e;console.warn('Firebase kütüphanesi yüklenemedi, yedek adres deneniyor:',e);}}if(lastErr)throw lastErr;const app=a.initializeApp(FBC),fb={au,fs,auth:au.getAuth(app),db:fs.getFirestore(app)};GLB.fb=fb;
+async function glFb(){if(GLB.fb)return GLB.fb;let a,au,fs,lastErr;for(const h of [m=>`https://www.gstatic.com/firebasejs/${FBV}/firebase-${m}.js`,m=>`https://cdn.jsdelivr.net/npm/firebase@${FBV}/${m}/+esm`,m=>`https://esm.sh/firebase@${FBV}/${m}`]){try{[a,au,fs]=await Promise.all(['app','auth','firestore'].map(m=>import(h(m))));lastErr=null;break;}catch(e){lastErr=e;console.warn('Firebase kütüphanesi yüklenemedi, yedek adres deneniyor:',e);}}if(lastErr)throw lastErr;const app=a.initializeApp(FBC);let _db;try{_db=fs.initializeFirestore(app,{experimentalForceLongPolling:true,useFetchStreams:false})}catch(e){console.warn('Long polling açılamadı, varsayılan Firestore kullanılıyor.',e);_db=fs.getFirestore(app)}const fb={au,fs,auth:au.getAuth(app),db:_db};GLB.fb=fb;
 au.onAuthStateChanged(fb.auth,async us=>{if(GLB.busy)return;GLB.user=us;GLB.prof=null;if(GLB.banUnsub){GLB.banUnsub();GLB.banUnsub=null}if(us){try{const bi=await glCheckBan(fb,us.uid,1);if(bi.banned){GLB.user=null;await au.signOut(fb.auth);GLB.dirty=1;rGl();show('<h2>🚫 Hesap engellendi</h2><p>Bu hesap yönetici tarafından oyuna erişimden engellendi.</p><p><b>Neden:</b> '+glEsc(bi.reason)+'</p><p><b>Süre:</b> '+(bi.expiresAt?new Date(Number(bi.expiresAt)).toLocaleString('tr-TR'):'Süresiz')+'</p><button class="b1" onclick="cls()">Tamam</button>');return}}catch(e){console.warn('Ban durumu kontrol edilemedi:',e);GLB.err='Hesap engel durumu doğrulanamadı; oturum korundu.'}
   GLB.prof=await glProf(fb,us);try{GLB.banUnsub=fs.onSnapshot(fs.doc(fb.db,'hsUserBans',us.uid),async snap=>{const b=snap.exists()?snap.data():null;if(b&&b.active===true&&(!b.expiresAt||Number(b.expiresAt)>Date.now())){if(GLB.banHandling)return;GLB.banHandling=1;GLB.user=null;GLB.prof=null;try{await au.signOut(fb.auth)}catch(e){}GLB.banHandling=0;GLB.dirty=1;rGl();show('<h2>🚫 Hesap engellendi</h2><p>Yönetici bu hesabın oyuna erişimini engelledi.</p><p><b>Neden:</b> '+glEsc(b.reason||'Yönetici kararı')+'</p><button class="b1" onclick="cls()">Tamam</button>')}})}catch(e){console.warn('Ban izleme başlatılamadı:',e)}glSync(1)}GLB.dirty=1;rGl()});return fb}
 async function glProf(fb,us,un){const f=fb.fs,nm=un||(us.email||'').split('@')[0];for(const c of ['users','teamAssignments']){try{const d=await f.getDoc(f.doc(fb.db,c,us.uid));if(d.exists()&&d.data().pitchName)return{username:d.data().username||nm,pitchName:d.data().pitchName}}catch(e){}}return{username:nm,pitchName:nm}}
@@ -6399,16 +6399,32 @@ let HM='in';const hmsg=t=>{const e=$('#hm');if(e)e.textContent=T(t)};
 function hesap(m){if(m)HM=m;const u=GLB.user&&GLB.prof;
 if(!u)return show(`<h2>👤 Hesap</h2><p>Oyun verin hesabına otomatik kaydedilir</p><div class="sgr"><button class="sg${HM=='up'?' on':''}" onclick="hesap('up')">Kayıt ol</button><button class="sg${HM=='in'?' on':''}" onclick="hesap('in')">Giriş yap</button></div>${HM=='up'?`<input class="gi" id="hn" maxlength="24" placeholder="${T('Halısaha adı')}">`:''}<input class="gi" id="hu" maxlength="20" autocapitalize="none" placeholder="${T('Kullanıcı adı')}"><input class="gi" id="hp" type="password" placeholder="${T('Şifre')}"><button class="b1" onclick="acGo()">${HM=='up'?'Kayıt ol':'Giriş yap'}</button><small id="hm" style="display:block;margin-top:8px;min-height:16px;color:#fca5a5"></small>`);
 show(`<h2>👤 Hesap</h2><div class="rw"><span>Kullanıcı adı</span><b data-nt>@${glEsc(GLB.prof.username)}</b></div><div class="rw"><span>Bulut kaydı</span><b>${CL.err?'⚠️':CL.ok?'☁️ ✓':'☁️'}</b></div><h3>Hesabı düzenle</h3><input class="gi" id="hn" maxlength="24" value="${glEsc(GLB.prof.pitchName)}" placeholder="${T('Halısaha adı')}"><input class="gi" id="hl2" maxlength="20" value="${glEsc(GLB.prof.playerName||'')}" placeholder="${T('Oyuncu adı')}"><button class="b1" onclick="acSave()">Kaydet</button><h3>Şifreyi değiştir</h3><input class="gi" id="hpo" type="password" placeholder="${T('Mevcut şifre')}"><input class="gi" id="hpn" type="password" placeholder="${T('Yeni şifre')}"><button class="b2" style="width:100%" onclick="acPw()">Şifreyi değiştir</button><small id="hm" style="display:block;margin:8px 0;min-height:16px;color:var(--mut)"></small><div class="btns"><button class="b2" onclick="hesapKaydet()">💾 Hesabımı kaydet</button><button class="b2" onclick="cls();glOut()">Çıkış yap</button></div>`)}
+window.hsTO=function(p,ms,msg){let t;return Promise.race([p,new Promise((_,r)=>{t=setTimeout(()=>r(Object.assign(new Error(msg),{code:'hs/timeout'})),ms)})]).finally(()=>clearTimeout(t))};
+window.hsLoginChoiceShow=function(){const c=window.__hsLoginCloud,l=window.__hsLoginLocal;const row=(n,d)=>d?`<div class="rw"><span>${n}</span><b>${d.hafta}. hafta · ${tl(d.para)}${d.tm?'<br><small>'+new Date(Number(d.tm)).toLocaleString('tr-TR')+'</small>':''}</b></div>`:'';show(`<h2>☁️ Hangi ilerleme kullanılsın?</h2><p>Hesabında kayıtlı bir ilerleme var, bu cihazda da farklı bir kayıt var. Birini seçmen gerekiyor.</p>${row('Bulut (hesap)',c)}${row('Bu cihaz',l)}<button class="b1" style="width:100%" onclick="hsLoginUseCloud()">☁️ Buluttaki ilerlemeyi yükle</button><button class="b2" style="width:100%;margin-top:8px" onclick="hsLoginUseLocal()">📱 Bu cihazdakini kullan ve hesabıma yaz</button><small style="display:block;margin-top:8px;color:var(--mut)">Seçmediğin kaydın yedeği bu cihazda saklanır.</small>`)};
+window.hsLoginUseCloud=function(){const c=window.__hsLoginCloud;if(!c||!GLB.user)return;try{const uid=GLB.user.uid,cur=localStorage.getItem('hs2');if(cur){localStorage.setItem('hs2b',cur);localStorage.setItem('hs_login_local_backup_'+uid,cur)}const tk='hs_team17_'+uid,tv=localStorage.getItem(tk);if(tv){localStorage.setItem('hs_team17_backup_'+uid,tv);localStorage.removeItem(tk)}localStorage.setItem('hs2',JSON.stringify(c));hsSetOwner(uid);sessionStorage.setItem('hs_auto_continue_after_cloud_restore','1');window.__hsLoginChoicePending=0;rdy=0;location.reload()}catch(e){toast('⚠️ Bulut kaydı yüklenemedi; cihaz kaydı korunuyor.')}};
+window.hsLoginUseLocal=function(){if(!GLB.user)return;try{localStorage.setItem('hs_login_cloud_backup_'+GLB.user.uid,JSON.stringify(window.__hsLoginCloud||{}))}catch(e){}hsSetOwner(GLB.user.uid);window.__hsLoginChoicePending=0;cls();if(hasSave)cont();setTimeout(()=>{try{hesapKaydet()}catch(e){}},800)};
 async function acGo(){if(GLB.busy)return;const g=id=>($('#'+id)||{}).value||'',un=g('hu').trim().toLowerCase(),pw=g('hp'),pn=g('hn').trim(),up=HM=='up';
 if(!/^[a-z0-9_]{3,20}$/.test(un))return hmsg('Kullanıcı adı 3-20 karakter olmalı: a-z, 0-9 ve _');if(up&&(pn.length<3||pn.length>24))return hmsg('Halısaha adı 3-24 karakter olmalı');if(pw.length<6)return hmsg('Şifre en az 6 karakter olmalı');
-GLB.busy=1;hmsg('Yükleniyor...');try{const fb=await glFb(),f=fb.fs,em=un+'@halisaha.game';
-if(up){const c=await fb.au.createUserWithEmailAndPassword(fb.auth,em,pw);GLB.user=c.user;GLB.prof={username:un,pitchName:pn,playerName:''};try{await f.setDoc(f.doc(fb.db,'users',c.user.uid),{username:un,pitchName:pn,createdAt:f.serverTimestamp()})}catch(e){}}
-else{const c=await fb.au.signInWithEmailAndPassword(fb.auth,em,pw);const bi=await glCheckBan(fb,c.user.uid);if(bi.banned){await fb.au.signOut(fb.auth);throw glBanError(bi)}GLB.user=c.user;GLB.prof=await glProf(fb,c.user,un)}
+GLB.busy=1;hmsg('Yükleniyor...');try{if(!/^https?:$/.test(location.protocol))console.warn('Sayfa '+location.protocol+' ile açıldı; Firebase girişi çalışmayabilir.');const fb=await hsTO(glFb(),20000,'Firebase yüklenemedi (zaman aşımı). İnternetini kontrol et; dosya content:// ile açıldıysa bir https adresinden aç.'),f=fb.fs,em=un+'@halisaha.game';
+if(up){const c=await hsTO(fb.au.createUserWithEmailAndPassword(fb.auth,em,pw),20000,'Sunucu yanıt vermedi (zaman aşımı). Tekrar dene.');GLB.user=c.user;GLB.prof={username:un,pitchName:pn,playerName:''};try{await f.setDoc(f.doc(fb.db,'users',c.user.uid),{username:un,pitchName:pn,createdAt:f.serverTimestamp()})}catch(e){}}
+else{const c=await hsTO(fb.au.signInWithEmailAndPassword(fb.auth,em,pw),20000,'Sunucu yanıt vermedi (zaman aşımı). Tekrar dene.');const bi=await hsTO(glCheckBan(fb,c.user.uid),15000,'Hesap kontrolü zaman aşımına uğradı. Tekrar dene.');if(bi.banned){await fb.au.signOut(fb.auth);throw glBanError(bi)}GLB.user=c.user;GLB.prof=await hsTO(glProf(fb,c.user,un),15000,'Profil okunamadı (zaman aşımı). Tekrar dene.')}
 try{localStorage.setItem('hs_gl','1')}catch(e){}GLB.busy=0;CL.chk=0;GLB.dirty=1;cls();toast('✅ '+GLB.prof.pitchName);glSync(1);
-/* Hesap girişi: cihaz kaydı varsa onu aç; cihazda kayıt yoksa yalnızca bu durumda hesaptaki yedeği geri yükle. */
-let restoredCloud=false;
-if(!hasSave){try{const snap=await f.getDoc(f.doc(fb.db,'users',GLB.user.uid));const raw=snap.exists()?snap.data().hsSave:null;const cloud=parseValidCloudSave(raw);if(cloud){try{localStorage.setItem('hs2',JSON.stringify(cloud));hsSetOwner(GLB.user.uid);sessionStorage.setItem('hs_auto_continue_after_cloud_restore','1');restoredCloud=true;}catch(e){hmsg('Cihaz kaydı açılamadı. Depolama alanını kontrol et.')}}}catch(e){console.warn('Bulut yedeği okunamadı; cihaz kaydı korunuyor.',e)}}
+/* Hesap girişi: cihazda ve bulutta farklı kayıt varsa kullanıcıya sor; sorulmadan hiçbiri ezilmez. */
+let restoredCloud=false,askedChoice=false;
+try{const snap=await hsTO(f.getDoc(f.doc(fb.db,'users',GLB.user.uid)),15000,'timeout');const raw=snap.exists()?snap.data().hsSave:null;const cloud=parseValidCloudSave(raw);
+if(cloud){
+ if(!hasSave){try{localStorage.setItem('hs2',JSON.stringify(cloud));hsSetOwner(GLB.user.uid);sessionStorage.setItem('hs_auto_continue_after_cloud_restore','1');restoredCloud=true;}catch(e){hmsg('Cihaz kaydı açılamadı. Depolama alanını kontrol et.')}}
+ else{let loc=null;try{loc=JSON.parse(localStorage.getItem('hs2')||'null')}catch(e){}
+  const differs=!loc||Number(loc.hafta)!==Number(cloud.hafta)||Math.round(Number(loc.para)||0)!==Math.round(Number(cloud.para)||0)||Number(cloud.tm||0)>Number(loc.tm||0)+1000;
+  if(differs){window.__hsLoginChoicePending=1;window.__hsLoginCloud=cloud;window.__hsLoginLocal=loc;askedChoice=true;}
+ }
+}
+}catch(e){console.warn('Bulut yedeği okunamadı; cihaz kaydı korunuyor.',e)}
 if(restoredCloud){location.reload();return;}
+if(askedChoice){try{menu()}catch(e){}try{rGl()}catch(e){}
+ try{hsLoginChoiceShow();return;}catch(e){console.warn('Seçim penceresi açılamadı, onay kutusuna geçildi.',e);
+  try{const c=window.__hsLoginCloud,l=window.__hsLoginLocal;const useCloud=confirm('Hesabında kayıtlı ilerleme: '+c.hafta+'. hafta. Bu cihazdaki: '+(l?l.hafta+'. hafta':'yok')+'.\n\nTamam = Buluttaki ilerlemeyi yükle\nİptal = Bu cihazdakini kullan ve hesabıma yaz');if(useCloud)hsLoginUseCloud();else hsLoginUseLocal();return;}
+  catch(e2){window.__hsLoginChoicePending=0;}}}
 menu();rGl();await cloudCheck();const startNew=!!CL.wantNew;CL.wantNew=0;if(startNew){if(!hasSave)yeni();else yeni()}else if(hasSave){cont()}else{toast('Hesap girişi tamamlandı. Bu hesapta kayıt yok; Yeni oyun ile başlayabilirsin.')}}catch(e){GLB.busy=0;hmsg(glErr(e))}}
 async function acSave(){const pn=($('#hn').value||'').trim(),pl=($('#hl2').value||'').trim();if(pn.length<3||pn.length>24)return hmsg('Halısaha adı 3-24 karakter olmalı');if(pl&&(pl.length<2||pl.length>20))return hmsg('Oyuncu adı 2-20 karakter olmalı');try{const fb=await glFb(),f=fb.fs;await f.setDoc(f.doc(fb.db,'users',GLB.user.uid),{username:GLB.prof.username,pitchName:pn,playerName:pl},{merge:true});GLB.prof.pitchName=pn;GLB.prof.playerName=pl;await glSync(1);GLB.dirty=1;rGl();menu();hmsg('✅');toast('✅')}catch(e){hmsg(glErr(e))}}
 async function acPw(){const o=$('#hpo').value,n=$('#hpn').value;if(n.length<6)return hmsg('Şifre en az 6 karakter olmalı');try{const fb=await glFb(),a=fb.au;await a.reauthenticateWithCredential(GLB.user,a.EmailAuthProvider.credential(GLB.user.email,o));await a.updatePassword(GLB.user,n);hmsg('✅');$('#hpo').value=$('#hpn').value=''}catch(e){hmsg(glErr(e))}}
@@ -7469,7 +7485,7 @@ lang0();document.body.insertAdjacentHTML('beforeend','<div id="ab"></div>');setT
       t.ownPlayers=uniq([...base,...trans]);
       t.players=makePool(rows).filter(p=>!sold.has(String(p.id))||p.ownerUid!==uid);for(const p of t.ownPlayers)if(!t.players.some(x=>x.id===p.id))t.players.push(p);
       const profile=userSnap.exists()?userSnap.data():{},cloud=profile.hsTeam&&typeof profile.hsTeam==='object'?profile.hsTeam:null;
-      if(cloud){t.created=!!cloud.created;t.teamName=String(cloud.teamName||t.teamName||'').slice(0,24);t.formation=team17FormationKey(cloud.formation||t.formation);const owned=new Set(t.ownPlayers.map(p=>p.id));const clRoster=Array.isArray(cloud.roster)?cloud.roster.filter(id=>owned.has(String(id))):[];if(cloud.created&&clRoster.length>=5)t.roster=[...new Set(clRoster)].slice(0,10);else t.roster=[...new Set([...(t.roster||[]),...clRoster])].filter(id=>owned.has(id)).slice(0,10);const rosterSet=new Set(t.roster),line=(Array.isArray(cloud.lineup)?cloud.lineup:[]).map(String).filter((id,i,a)=>rosterSet.has(id)&&a.indexOf(id)===i);if(cloud.created&&t.roster.length>=5){
+      if(cloud&&Number(cloud.updatedAt||0)>Number(t.updatedAt||0)){t.created=!!cloud.created;t.teamName=String(cloud.teamName||t.teamName||'').slice(0,24);t.formation=team17FormationKey(cloud.formation||t.formation);const owned=new Set(t.ownPlayers.map(p=>p.id));const clRoster=Array.isArray(cloud.roster)?cloud.roster.filter(id=>owned.has(String(id))):[];if(cloud.created&&clRoster.length>=5)t.roster=[...new Set(clRoster)].slice(0,10);else t.roster=[...new Set([...(t.roster||[]),...clRoster])].filter(id=>owned.has(id)).slice(0,10);const rosterSet=new Set(t.roster),line=(Array.isArray(cloud.lineup)?cloud.lineup:[]).map(String).filter((id,i,a)=>rosterSet.has(id)&&a.indexOf(id)===i);if(cloud.created&&t.roster.length>=5){
         const fit=team17FindCompatibleLineup(t,line.length?line:(t.lineup||[]));
         if(fit){t.formation=fit.formation;t.lineup=fit.lineup.map(String);t.roster=fit.roster.map(String);if(fit.formation!==team17FormationKey(cloud.formation||'1-2-1'))t.slotPositions=team17DefaultPositions(fit.formation);}
         else{
@@ -11173,6 +11189,292 @@ async function refreshQueueAndRoom(){if(!GLB.user)return;try{const F=await fb(),
     '🌍 Ülkelere güç seviyesi verildi; güçlü ülkeler yüksek OVR millî kadrolarla gelir ve kura havuzunda daha yüksek ağırlık alır.'
   ]]);}catch(e){}
 })();
+
+  /* 6.1 BETA · Büyük Avrupa Ligi modu: 36 takım, 8 maçlık lig aşaması, play-off, Son 16, çeyrek, yarı, final */
+  (function(){
+    'use strict';
+    const UL_KEY=()=>`hs_euro_league_v1_${String(GLB?.user?.uid||'guest')}`;
+    const UL_UID=()=>String(GLB?.user?.uid||'guest');
+    const ulEsc=v=>safe(String(v==null?'':v));
+    const ulClamp=(n,a,b)=>Math.max(a,Math.min(b,Number(n)||0));
+    const ulRand=(a,b)=>Math.floor(a+Math.random()*(b-a+1));
+    const ulShuffle=arr=>{const a=[...(arr||[])];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+    const UL_STAGE={league:'Lig aşaması',playoff:'Play-off',roundOf16:'Son 16',quarterFinal:'Çeyrek final',semiFinal:'Yarı final',final:'Final'};
+    // Güncel Şampiyonlar Ligi 36 takımı; kulüp adları telife takılmamak için değiştirildi. [kısa id, ad, bayrak, torba, güç, isim bankası]
+    const UL_CLUBS=[
+      ['c01','Paris Atlas FK','🇫🇷',1,90,'fr'],['c02','Bavyera Münih FC','🇩🇪',1,89,'de'],['c03','Madrid Krallık CF','🇪🇸',1,90,'es'],
+      ['c04','Mersey Kızılları FC','🇬🇧',1,88,'en'],['c05','Milano Lacivert FC','🇮🇹',1,88,'it'],['c06','Manşester Mavi SC','🇬🇧',1,89,'en'],
+      ['c07','Londra Topçuları FC','🇬🇧',1,88,'en'],['c08','Barselona Katalan FC','🇪🇸',1,89,'es'],['c09','Atletik Madrid Yıldız','🇪🇸',1,86,'es'],
+      ['c10','Vestfalya Sarıları BV','🇩🇪',2,85,'de'],['c11','Roma Kurtları','🇮🇹',2,83,'it'],['c12','Lizbon Aslanları SC','🇵🇹',2,84,'pt'],
+      ['c13','Birmingham Bordo FC','🇬🇧',2,83,'en'],['c14','Porto Mavi Ejder','🇵🇹',2,83,'pt'],['c15','Manşester Kızıl SC','🇬🇧',2,84,'en'],
+      ['c16','Brüj Siyah-Mavi KV','🇧🇪',2,80,'ee'],['c17','Sevilya Yeşil-Beyaz CF','🇪🇸',2,82,'es'],['c18','Eindhoven Ampul SV','🇳🇱',2,81,'nl'],
+      ['c19','Rotterdam Fener SC','🇳🇱',3,79,'nl'],['c20','Lil Kuzey SC','🇫🇷',3,78,'fr'],['c21','Napoli Körfez FC','🇮🇹',3,82,'it'],
+      ['c22','Leipzig Boğa SV','🇩🇪',3,81,'de'],['c23','Vila Sarı CF','🇪🇸',3,80,'es'],['c24','Donetsk Madenciler','🇺🇦',3,76,'ee'],
+      ['c25','Galata Aslan SK','🇹🇷',3,80,'tr'],['c26','Kadıköy Kanarya SK','🇹🇷',3,79,'tr'],['c27','Bodö Kutup FK','🇳🇴',3,76,'no'],
+      ['c28','Stavanger Korsan FK','🇳🇴',4,73,'no'],['c29','Prag Kırmızı SK','🇨🇿',4,74,'ee'],['c30','Švabya Stuttgart SV','🇩🇪',4,77,'de'],
+      ['c31','Atina Çift Kartal FC','🇬🇷',4,74,'ee'],['c32','Linz Çelik SK','🇦🇹',4,73,'ee'],['c33','Como Göl FC','🇮🇹',4,76,'it'],
+      ['c34','Lens Altın-Kırmızı RC','🇫🇷',4,76,'fr'],['c35','Bakü Şafak FK','🇦🇿',4,71,'ee'],['c36','Bratislava Taç SK','🇸🇰',4,71,'ee']
+    ].map(r=>({id:r[0],name:r[1],flag:r[2],pot:r[3],power:r[4],region:r[5]}));
+    // Oyuncu adları gerçek futbolculardan türetilmeden, ülke/bölge ağırlıklı kurgusal isim bankalarından üretilir.
+    const UL_NAMES={
+      fr:[['Killan','Antoin','Matis','Jule','Luka','Teo','Ugo','Enzor','Adrian','Basti','Rafael','Noel','Maxan','Gaspard','Remo','Titouan'],['Dubar','Morel','Bernal','Laurant','Lefevr','Rouxel','Fontan','Girau','Chevral','Garnet','Faurel','Mercet','Brisson','Vasseur','Delmar','Pichon']],
+      de:[['Leo','Lukas','Floren','Tobi','Niko','Maxim','Fynn','Jonas','Felix','Mats','Noel','Kai','Elias','Paul','Jannik','Moritz'],['Müllen','Schneid','Fischar','Weben','Schmitt','Wagen','Becken','Hoffen','Kellar','Braunt','Krüger','Wolfen','Lehmar','Zimmer','Hartwig','Brandt']],
+      es:[['Álvar','Iker','Sergi','Adrián','Javi','Pablo','Hugo','Diego','Marco','Alejo','Unai','Carlo','Pedri','Rubén','Gonzal','Fermín'],['García','Rodrigo','Lopen','Martín','Sánchen','Pérez','Gomar','Fernán','Díaz','Torren','Navarra','Romeral','Ibáñez','Castillo','Vargas','Ortega']],
+      en:[['Jack','Harry','Declan','Phil','Bukay','Marcus','Reece','Mason','Kyle','Trent','Jude','Ollie','Conor','Luke','Ben','Ryan'],['Walkerton','Stonehill','Riceford','Fodden','Sakaro','Rashfield','Jamesley','Mountain','Grealing','Foster','Palmerton','Watkinson','Maddison','Gordonne','Hendry','Tomlin']],
+      it:[['Lorenz','Alessio','Mateo','Gianni','Davide','Fede','Andrea','Marco','Ricky','Luca','Nicolo','Sandro','Bruno','Tommaso','Pietro','Emiliano'],['Rossetti','Bianchi','Romano','Moretti','Contini','Riccardi','Lombardo','Marini','Greco','Galli','Fontana','Barellar','Chiesar','Donnar','Zanetti','Cristanti']],
+      nl:[['Daan','Sem','Jasper','Bram','Lars','Milan','Luuk','Thijs','Sven','Jesse','Finn','Ruben','Xavi','Tijmen','Teun','Noud'],['van Dijker','de Jonge','Bakkers','Visser','Smeets','Bosman','Mulders','Meijers','de Vries','Jansen','Vermeer','Koster','Timber','Gakpor','Dumfrie','Veerman']],
+      pt:[['João','Rui','Nuno','Tiago','Gonçal','Diogo','Rafa','Bruno','André','Pedro','Afonso','Chico','Tomás','Vitinho','Otávio','Mateus'],['Silvar','Santiago','Costela','Pereiro','Ferreiro','Oliveiro','Carvalho','Gomes','Rodrigues','Martinho','Almeidar','Sousa','Fernandes','Cancelo','Dias','Neves']],
+      tr:[['Arda','Kerem','Mert','Ege','Emir','Kaan','Yusuf','Barış','Can','Oğuz','Burak','Berkay','Furkan','Taha','Enes','Batu'],['Yılmaz','Kaya','Demir','Çelik','Şahin','Aydın','Öztürk','Yıldız','Arslan','Koç','Kurt','Özdemir','Polat','Kaplan','Güneş','Topçu']],
+      no:[['Erik','Alexand','Isak','Elias','Viktor','Albin','Hugo','Oscar','Noah','Willem','Sander','Jørgen','Martin','Kristo','Andreas','Julian'],['Haalan','Ødegar','Berger','Aasen','Hansson','Pedersen','Johansen','Solberg','Nygaard','Lunde','Strand','Moen','Dahl','Eide','Kristoff','Bakke']],
+      ee:[['Dušan','Aleks','Sergej','Filip','Luka','Nikol','Vanja','Nemanj','Tomáš','Jakub','Marek','Petr','Ivan','Andrij','Rafael','Giorgos'],['Vlahar','Mitrov','Kostić','Jović','Novák','Svoboda','Horák','Kovalenko','Shevchuk','Papas','Nikolaou','Mammadov','Hajiyev','Bauer','Huber','Kovač']]
+    };
+    const ulClub=id=>UL_CLUBS.find(c=>c.id===id);
+    function ulLoad(){try{const x=JSON.parse(localStorage.getItem(UL_KEY())||'null');return x&&String(x.uid)===UL_UID()?x:null;}catch(e){console.warn('Avrupa Ligi kaydı okunamadı:',e);return null;}}
+    function ulSave(st){try{localStorage.setItem(UL_KEY(),JSON.stringify(st));}catch(e){console.warn('Avrupa Ligi kaydı saklanamadı:',e);}}
+    function ulPlayer(club,pos,ovr,used,prefix){
+      const bank=UL_NAMES[club.region]||UL_NAMES.en;let name='';
+      for(let i=0;i<60;i++){name=bank[0][ulRand(0,15)]+' '+bank[1][ulRand(0,15)];if(!used.has(name))break;}
+      used.add(name);
+      const f=d=>ulClamp(ovr+ulRand(-4,4)+d,30,110);
+      return {id:`${prefix}_${pos}_${used.size}_${ulRand(1000,9999)}`,name,pos,ovr,potential:ulClamp(ovr+ulRand(0,8),ovr,106),age:ulRand(18,36),nationality:club.name,flag:club.flag,
+        shoot:f(pos==='ATT'?4:-4),reflex:f(pos==='GK'?6:-8),speed:f(0),passing:f(pos==='MID'?4:-2),defending:f(pos==='DEF'?5:-6),finishing:f(pos==='ATT'?5:-6),dribbling:f(pos==='ATT'||pos==='MID'?2:-4),stamina:f(0),
+        rarity:ovr>=86?'Elit':ovr>=76?'Nadir':'Standart',avatarSeed:name,source:'euro-league-club',draftOrigin:'club'};
+    }
+    // Her kulüp: 6 kaleci, 6 defans, 6 orta saha, 6 forvet (24 oyuncu).
+    function ulRoster(club,tourId){
+      const used=new Set(),offsets=[4,2,-2,-5,-8,-11],out=[];
+      ['GK','DEF','MID','ATT'].forEach(pos=>offsets.forEach(off=>out.push(ulPlayer(club,pos,ulClamp(club.power+off+ulRand(-2,2),55,99),used,`ul_${tourId}_${club.id}`))));
+      return out;
+    }
+    function ulSquad(roster,formation){
+      const key=team17FormationKey(formation),def=team17FormationDefs[key]||team17FormationDefs['1-2-1'],slots=def.slots;
+      const by={GK:[],DEF:[],MID:[],ATT:[]};roster.forEach(p=>by[p.pos].push(p));Object.keys(by).forEach(k=>by[k].sort((a,b)=>b.ovr-a.ovr));
+      const cnt={},players=slots.map(s=>{const i=cnt[s.key]||0;cnt[s.key]=i+1;return {...by[s.key][i]};});
+      const bc={},bench=slots.map(s=>{const i=(cnt[s.key]||0)+(bc[s.key]||0);bc[s.key]=(bc[s.key]||0)+1;return {...(by[s.key][i]||by[s.key][by[s.key].length-1])};});
+      return {players:players.slice(0,5),bench:bench.slice(0,5),formation:key,averageOvr:Math.round(players.slice(0,5).reduce((s,p)=>s+p.ovr,0)/5)};
+    }
+    function ulGoals(a,b){
+      const lambda=ulClamp(1.25+(((Number(a)||60)-(Number(b)||60))/12)*.42,.25,3.25);let g=0;
+      for(let i=0;i<5;i++){if(Math.random()<ulClamp(.12+(lambda/5)+(.08*(4-i)),.04,.72))g++;}return Math.min(5,g);
+    }
+    let ulCounter=0;
+    function ulFixture(stage,homeId,awayId,round){return {id:`ul_${stage}_${Date.now().toString(36)}_${(ulCounter++).toString(36)}`,stage,homeId,awayId,round:round||1,played:false,homeScore:null,awayScore:null,winnerId:'',loserId:'',simulated:false};}
+    function ulSettle(uc,f,hs,as,pens){
+      f.homeScore=hs;f.awayScore=as;f.played=true;
+      if(f.stage!=='league'&&hs===as){
+        let homeWins;
+        if(pens&&Number.isInteger(Number(pens.winnerSide)))homeWins=Number(pens.winnerSide)===0;
+        else{const a=uc.teams[f.homeId].averageOvr,b=uc.teams[f.awayId].averageOvr;homeWins=Math.random()<ulClamp(.5+(a-b)/80,.3,.7);}
+        f.winnerId=homeWins?f.homeId:f.awayId;f.loserId=homeWins?f.awayId:f.homeId;f.shootout=pens||(homeWins?{homeScore:5,awayScore:4}:{homeScore:4,awayScore:5});
+      }else{f.winnerId=hs===as?'':hs>as?f.homeId:f.awayId;f.loserId=hs===as?'':hs>as?f.awayId:f.homeId;}
+    }
+    function ulSim(uc,f){if(!f||f.played)return;const a=uc.teams[f.homeId],b=uc.teams[f.awayId];if(!a||!b)return;ulSettle(uc,f,ulGoals(a.averageOvr,b.averageOvr),ulGoals(b.averageOvr,a.averageOvr));f.simulated=true;}
+    const ulIsMine=f=>f.homeId==='UL_USER'||f.awayId==='UL_USER';
+    function ulCreate(clubId,formation){
+      const mine=ulClub(clubId);if(!mine)return null;
+      const tourId=Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),teams={},idOf=c=>c.id===mine.id?'UL_USER':c.id;let pool=[];
+      UL_CLUBS.forEach(c=>{
+        const isUser=c.id===mine.id,roster=ulRoster(c,tourId),sq=ulSquad(roster,isUser?formation:'1-2-1'),id=idOf(c);
+        if(isUser)pool=roster;
+        teams[id]={id,uid:isUser?UL_UID():`${c.id}_bot`,club:c,power:c.power,teamName:`${c.flag} ${c.name}`,players:sq.players,bench:sq.bench,formation:sq.formation,averageOvr:sq.averageOvr,isUser};
+      });
+      // Lig aşaması: her takım 8 maç; her torbadan 2 rakip (1 iç saha + 1 deplasman).
+      const pots=[1,2,3,4].map(p=>ulShuffle(UL_CLUBS.filter(c=>c.pot===p).map(idOf))),edges=[];
+      for(let a=0;a<4;a++){
+        const L=pots[a];for(let i=0;i<9;i++)edges.push([L[i],L[(i+1)%9]]);
+        for(let b=a+1;b<4;b++){const A=pots[a],B=pots[b];for(let i=0;i<9;i++){edges.push([A[i],B[i]]);edges.push([B[(i+1)%9],A[i]]);}}
+      }
+      let best=null;
+      for(let attempt=0;attempt<40&&(!best||best.left>0);attempt++){
+        const used=Array.from({length:9},()=>new Set()),rows=[],rounds=ulShuffle([1,2,3,4,5,6,7,8]);let ui=0,left=0;
+        edges.filter(e=>e.includes('UL_USER')).forEach(e=>{const r=rounds[ui++];e.forEach(t=>used[r].add(t));rows.push([e[0],e[1],r]);});
+        ulShuffle(edges.filter(e=>!e.includes('UL_USER'))).forEach(e=>{
+          const free=[1,2,3,4,5,6,7,8].filter(r=>!used[r].has(e[0])&&!used[r].has(e[1]));
+          if(free.length){const r=free[ulRand(0,free.length-1)];used[r].add(e[0]);used[r].add(e[1]);rows.push([e[0],e[1],r]);}else{rows.push([e[0],e[1],9]);left++;}
+        });
+        if(!best||left<best.left)best={rows,left};
+      }
+      const fixtures=best.rows.map(r=>ulFixture('league',r[0],r[1],r[2]));
+      return {uid:UL_UID(),version:1,tourId,status:'active',stage:'league',club:mine,formation:team17FormationKey(formation),teams,fixtures,knockout:{playoff:[],roundOf16:[],quarterFinal:[],semiFinal:[],final:[]},history:[],selectionPool:pool,currentFixtureId:'',createdAt:Date.now()};
+    }
+    function ulTable(uc){
+      const rows=Object.values(uc.teams).map(t=>({id:t.id,team:t,played:0,w:0,d:0,l:0,gf:0,ga:0,gd:0,pts:0})),map=new Map(rows.map(r=>[r.id,r]));
+      uc.fixtures.forEach(f=>{
+        if(!f.played)return;const h=map.get(f.homeId),a=map.get(f.awayId);if(!h||!a)return;
+        const hs=Number(f.homeScore)||0,as=Number(f.awayScore)||0;h.played++;a.played++;h.gf+=hs;h.ga+=as;a.gf+=as;a.ga+=hs;
+        if(hs>as){h.w++;a.l++;h.pts+=3;}else if(as>hs){a.w++;h.l++;a.pts+=3;}else{h.d++;a.d++;h.pts++;a.pts++;}
+      });
+      rows.forEach(r=>r.gd=r.gf-r.ga);
+      rows.sort((a,b)=>b.pts-a.pts||b.gd-a.gd||b.gf-a.gf||b.team.averageOvr-a.team.averageOvr);
+      rows.forEach((r,i)=>r.rank=i+1);return rows;
+    }
+    function ulNext(uc){
+      if(uc.stage==='league')return uc.fixtures.filter(f=>ulIsMine(f)&&!f.played).sort((a,b)=>a.round-b.round)[0]||null;
+      return (uc.knockout[uc.stage]||[]).find(f=>ulIsMine(f)&&!f.played)||null;
+    }
+    function ulSimKnockoutBots(uc,stage){(uc.knockout[stage]||[]).forEach(f=>{if(!ulIsMine(f))ulSim(uc,f);});}
+    function ulEnd(uc,result,rank){uc.status=result==='champion'||result==='runnerUp'?'complete':'eliminated';uc.result=result;uc.finalRank=rank||0;uc.completedAt=Date.now();}
+    function ulFinishLeague(uc){
+      uc.fixtures.forEach(f=>{if(!f.played)ulSim(uc,f);});
+      const table=ulTable(uc),ids=table.map(r=>r.id),me=table.find(r=>r.id==='UL_USER');
+      uc.finalTable=table.map(r=>({id:r.id,rank:r.rank,pts:r.pts,gd:r.gd}));uc.myRank=me.rank;
+      // 9-16 kura ile 17-24 ile eşleşir; sıra çiftleri: 9-10 / 23-24, 11-12 / 21-22, 13-14 / 19-20, 15-16 / 17-18.
+      const seeded=[[9,10],[11,12],[13,14],[15,16]],unseeded=[[23,24],[21,22],[19,20],[17,18]],ties=[];
+      for(let g=0;g<4;g++){
+        const S=ulShuffle(seeded[g].map(r=>ids[r-1])),U=ulShuffle(unseeded[g].map(r=>ids[r-1]));
+        ties.push(ulFixture('playoff',S[0],U[0],1),ulFixture('playoff',S[1],U[1],1));
+      }
+      uc.knockout.playoff=ties;uc.stage='playoff';
+      if(me.rank<=8){ties.forEach(f=>ulSim(uc,f));ulBuildRound16(uc);}
+      else if(me.rank<=24){ulSimKnockoutBots(uc,'playoff');}
+      else ulEnd(uc,'leagueExit',me.rank);
+    }
+    function ulBuildRound16(uc){
+      const ids=uc.finalTable.map(r=>r.id),ties=uc.knockout.playoff,fixtures=[];
+      for(let k=0;k<4;k++){
+        const g=3-k,w=ulShuffle([ties[g*2].winnerId,ties[g*2+1].winnerId]);
+        fixtures.push(ulFixture('roundOf16',ids[k*2],w[0],1),ulFixture('roundOf16',ids[k*2+1],w[1],1));
+      }
+      uc.knockout.roundOf16=fixtures;uc.stage='roundOf16';ulSimKnockoutBots(uc,'roundOf16');
+    }
+    function ulAdvance(uc){
+      const stage=uc.stage,rows=uc.knockout[stage]||[],mine=rows.find(ulIsMine);
+      if(mine&&mine.loserId==='UL_USER'){ulEnd(uc,stage==='final'?'runnerUp':stage+'Exit',uc.myRank);return;}
+      if(stage==='final'){ulEnd(uc,'champion',uc.myRank);return;}
+      if(stage==='playoff'){ulBuildRound16(uc);return;}
+      const next={roundOf16:'quarterFinal',quarterFinal:'semiFinal',semiFinal:'final'}[stage],w=rows.map(f=>f.winnerId),fx=[];
+      for(let i=0;i<w.length;i+=2)fx.push(ulFixture(next,w[i],w[i+1],1));
+      uc.knockout[next]=fx;uc.stage=next;ulSimKnockoutBots(uc,next);
+    }
+    async function ulAfterMatch(m){
+      const uc=ulLoad();if(!uc||uc.status!=='active'||!m?.euroLeagueFixtureId||String(m.euroLeagueTourId||'')!==String(uc.tourId)||m.euroLeagueApplied)return;
+      const list=uc.stage==='league'?uc.fixtures:(uc.knockout[uc.stage]||[]),f=list.find(x=>String(x.id)===String(m.euroLeagueFixtureId));if(!f||f.played)return;
+      const side=(m.participants||[]).findIndex(p=>String(p?.uid||'')===UL_UID()),idx=side>=0?side:(m.userHome===false?1:0);
+      const hs=Number(m.homeScore)||0,as=Number(m.awayScore)||0,my=idx===0?hs:as,opp=idx===0?as:hs;
+      let pens=null;if(f.stage!=='league'&&hs===as){try{pens=hs30DraftShootout(m);}catch(e){}}
+      ulSettle(uc,f,hs,as,pens);f.simulated=false;m.euroLeagueApplied=true;
+      uc.history.push({stage:uc.stage,fixtureId:f.id,opponent:uc.teams[f.homeId==='UL_USER'?f.awayId:f.homeId]?.club?.name||'Rakip',score:`${my}-${opp}`,result:my>opp?'win':my<opp?'loss':'draw',at:Date.now()});
+      uc.currentFixtureId='';
+      if(uc.stage==='league'){
+        uc.fixtures.filter(x=>x.round===f.round&&!x.played).forEach(x=>ulSim(uc,x));
+        if(uc.fixtures.filter(x=>ulIsMine(x)).every(x=>x.played))ulFinishLeague(uc);
+      }else if(uc.knockout[uc.stage].every(x=>x.played))ulAdvance(uc);
+      ulSave(uc);setTimeout(()=>{try{ulRender();}catch(e){}},180);
+    }
+    const ulBaseComplete=hs19CompleteLocal;
+    hs19CompleteLocal=async function(m){
+      if(!m||m.mode!=='euro-league'||!m.euroLeagueFixtureId||m.euroLeagueApplied)return ulBaseComplete.apply(this,arguments);
+      const oldMode=m.mode;m.mode='bot';
+      try{await ulBaseComplete.apply(this,arguments);}finally{m.mode=oldMode;}
+      try{await ulAfterMatch(m);}catch(e){console.error('Avrupa Ligi sonucu işlenemedi:',e);toast('Maç bitti ancak Avrupa Ligi tablosu güncellenemedi. Paneli açıp tekrar kontrol et.');}
+    };
+    /* ---------- Arayüz ---------- */
+    const ulTeamCard=t=>`<span class="hs30-wc-team"><b>${ulEsc(t?.club?.flag||'⚽')}</b><span>${ulEsc(t?.club?.name||'Takım')}</span><small class="hs30-wc-strength">GÜÇ ${Number(t?.power)||0}</small><strong>TAKIM OVR ${Number(t?.averageOvr)||0}</strong></span>`;
+    function ulFixtureLine(uc,f){
+      const a=uc.teams[f.homeId],b=uc.teams[f.awayId],score=f.played?`${f.homeScore} – ${f.awayScore}`:'VS',pen=f.shootout&&f.homeScore===f.awayScore?`<small>Penaltı ${f.shootout.homeScore}–${f.shootout.awayScore}</small>`:'';
+      return `<div class="hs30-wc-fixture ${ulIsMine(f)&&!f.played?'mine':''}"><span>${ulEsc(a?.club?.flag)} ${ulEsc(a?.club?.name)}</span><b>${score}</b><span>${ulEsc(b?.club?.flag)} ${ulEsc(b?.club?.name)}</span>${pen}</div>`;
+    }
+    function ulTableHTML(uc){
+      const rows=ulTable(uc);
+      return `<div class="hs30-wc-table-wrap"><table class="hs30-wc-table"><thead><tr><th>#</th><th>KULÜP</th><th>O</th><th>G</th><th>B</th><th>M</th><th>AV</th><th>PTS</th></tr></thead><tbody>${rows.map(r=>`<tr class="${r.id==='UL_USER'?'mine ':''}${r.rank<=8?'hs-ucl-top8':r.rank<=24?'hs-ucl-po':'hs-ucl-out'}"><td>${r.rank}</td><td>${ulEsc(r.team.club.flag)} ${ulEsc(r.team.club.name)}</td><td>${r.played}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td>${r.gd>0?'+':''}${r.gd}</td><td><b>${r.pts}</b></td></tr>`).join('')}</tbody></table></div><small class="hs-ucl-legend"><i class="g"></i>1-8 Son 16 · <i class="y"></i>9-24 Play-off · <i class="r"></i>25-36 Elendi</small>`;
+    }
+    function ulSquadHTML(uc){
+      const t=uc.teams.UL_USER,pn={GK:'KL',DEF:'DF',MID:'OS',ATT:'FV'},row=(p,b)=>`<div class="hs30-wc-fixture"><span>${pn[p.pos]||p.pos} · ${ulEsc(p.name)}</span><b>${p.ovr}</b><span>${b?'Yedek':'İlk 5'}</span></div>`;
+      return `<section class="hs30-wc-panel-block"><header><b>👥 Kadron · ${ulEsc(t.formation)}</b><small>TAKIM OVR ${t.averageOvr}</small></header><div class="hs30-wc-fixtures">${t.players.map(p=>row(p,false)).join('')}${t.bench.map(p=>row(p,true)).join('')}</div></section>`;
+    }
+    function ulActiveHTML(uc){
+      const next=ulNext(uc),table=ulTable(uc),me=table.find(r=>r.id==='UL_USER'),mine=uc.fixtures.filter(ulIsMine),done=mine.filter(f=>f.played).length;
+      const label=UL_STAGE[uc.stage]||'Turnuva',progress=uc.stage==='league'?`${done}/8 maç`:`${(uc.knockout[uc.stage]||[]).filter(f=>f.played).length}/${(uc.knockout[uc.stage]||[]).length} eşleşme`;
+      const nextHTML=next?`<div class="hs30-wc-next"><small>SIRADAKİ MAÇ · ${ulEsc(label.toLocaleUpperCase('tr-TR'))}${uc.stage==='league'?` · ${done+1}. HAFTA`:''}</small><div>${ulTeamCard(uc.teams[next.homeId])}<b>VS</b>${ulTeamCard(uc.teams[next.awayId])}</div><button type="button" onclick="hsEuroLeaguePlayNext()">⚽ ${uc.stage==='league'?'Lig maçını oyna':'Eleme maçını oyna'}</button></div>`:`<div class="hs30-wc-next"><b>⏳ Tur sonuçları hesaplanıyor…</b></div>`;
+      const ko=['playoff','roundOf16','quarterFinal','semiFinal','final'].filter(s=>(uc.knockout[s]||[]).length);
+      return `<div class="hs30-wc-active"><div class="hs30-wc-topline"><span>${ulEsc(uc.club.flag)} ${ulEsc(uc.club.name)}</span><b>${ulEsc(label.toLocaleUpperCase('tr-TR'))}</b><em>${progress}</em></div><div class="hs30-wc-kpis"><div><b>36</b><small>KULÜP</small></div><div><b>${me?.rank||'—'}</b><small>LİG SIRASI</small></div><div><b>${me?.pts||0}</b><small>PUAN</small></div><div><b>${done}/8</b><small>LİG MAÇI</small></div></div>${nextHTML}${ulSquadHTML(uc)}${ko.map(s=>`<section class="hs30-wc-panel-block"><header><b>🏆 ${UL_STAGE[s]} eşleşmeleri</b><small>Tek maç · eşitlikte penaltı</small></header><div class="hs30-wc-fixtures">${uc.knockout[s].map(f=>ulFixtureLine(uc,f)).join('')}</div></section>`).join('')}<section class="hs30-wc-panel-block"><header><b>📊 Lig aşaması puan durumu</b><small>${me?`${me.rank}. sıradasın · ${me.pts} puan`:''}</small></header>${ulTableHTML(uc)}</section><section class="hs30-wc-panel-block"><header><b>📅 Maçlarım</b><small>8 hafta</small></header><div class="hs30-wc-fixtures">${mine.sort((a,b)=>a.round-b.round).map(f=>ulFixtureLine(uc,f)).join('')}</div></section></div>`;
+    }
+    function ulCompleteHTML(uc){
+      const R={champion:['🏆','AVRUPA ŞAMPİYONUSUN!','Finali kazandın ve büyük kupayı kaldırdın.'],runnerUp:['🥈','FİNALİST OLDUN','Finalde kupayı kıl payı kaçırdın.'],leagueExit:['⚽','LİG AŞAMASINDA ELENDİN',`Ligi ${uc.finalRank||uc.myRank}. sırada bitirdin; ilk 24'e giremedin.`],playoffExit:['⚽','PLAY-OFF\'TA ELENDİN',`Lig aşamasını ${uc.myRank}. bitirdin ama play-off'ta turu geçemedin.`],roundOf16Exit:['⚽','SON 16\'DA ELENDİN','Son 16 turunda yoluna veda ettin.'],quarterFinalExit:['⚽','ÇEYREK FİNALDE ELENDİN','Çeyrek finalde elendin.'],semiFinalExit:['⚽','YARI FİNALDE ELENDİN','Finale bir adım kala elendin.']}[uc.result]||['⚽','TURNUVA SONA ERDİ',''];
+      return `<div class="hs30-wc-complete"><div class="hs30-wc-world">${R[0]}</div><small>BÜYÜK AVRUPA LİGİ · SONUÇ</small><h2>${R[1]}</h2><p>${R[2]}</p><button type="button" class="secondary" onclick="hsEuroLeagueNew()">🔄 Yeni Avrupa Ligi</button></div>`;
+    }
+    function ulSetupHTML(){
+      const formations=Object.entries(team17FormationDefs).map(([k,d])=>`<option value="${ulEsc(k)}" ${k==='1-2-1'?'selected':''}>${ulEsc(d.label)} · ${ulEsc(d.desc)}</option>`).join('');
+      const groups=[1,2,3,4].map(p=>`<optgroup label="${p}. Torba">${UL_CLUBS.filter(c=>c.pot===p).map(c=>`<option value="${c.id}">${ulEsc(c.flag)} ${ulEsc(c.name)} · GÜÇ ${c.power}</option>`).join('')}</optgroup>`).join('');
+      return `<div class="hs30-wc-setup"><div class="hs30-wc-world">🌍</div><small>BÜYÜK AVRUPA LİGİ · 36 KULÜP</small><h2>Avrupa Ligi'ne katıl</h2><p>36 kulüp tek ligde yarışır; herkes 8 maç oynar. İlk 8 doğrudan Son 16'ya, 9–24 arası play-off'a kalır, 25. ve sonrası elenir. Sonra Son 16, çeyrek final, yarı final ve final gelir.</p><label>Kulübünü seç<select id="hs-ucl-club"><option value="">Kulüp seç</option>${groups}</select></label><label>Takım dizilişi<select id="hs-ucl-formation">${formations}</select></label><div class="hs30-wc-rules"><span>36 KULÜP</span><span>8 MAÇ</span><span>PLAY-OFF</span><span>SON 16 → FİNAL</span></div><button type="button" onclick="hsEuroLeagueCreate()">🏆 Turnuvayı kur</button></div>`;
+    }
+    function ulEnsureOverlay(){let n=document.getElementById('hs-ucl-overlay');if(!n){n=document.createElement('div');n.id='hs-ucl-overlay';n.setAttribute('role','dialog');n.setAttribute('aria-modal','true');document.body.appendChild(n);}return n;}
+    function ulRender(){
+      const uc=ulLoad(),n=ulEnsureOverlay(),body=!uc?ulSetupHTML():uc.status==='active'?ulActiveHTML(uc):ulCompleteHTML(uc);
+      n.innerHTML=`<div class="hs30-wc-backdrop" onclick="if(event.target===this)hsEuroLeagueClose()"><div class="hs30-wc-dialog"><button type="button" class="hs30-wc-close" onclick="hsEuroLeagueClose()" aria-label="Kapat">×</button><div class="hs30-wc-brand"><span>⭐</span><div><small>HALISAHA PATRONU · 6.1 BETA</small><b>BÜYÜK AVRUPA LİGİ</b></div></div>${body}</div></div>`;
+      document.body.classList.add('hs-ucl-open');
+    }
+    window.hsEuroLeagueOpen=function(){ulRender();};
+    window.hsEuroLeagueClose=function(){const n=document.getElementById('hs-ucl-overlay');if(n)n.remove();document.body.classList.remove('hs-ucl-open');};
+    window.hsEuroLeagueNew=function(){try{localStorage.removeItem(UL_KEY());}catch(e){}ulRender();};
+    window.hsEuroLeagueCreate=async function(){
+      const clubId=String(document.getElementById('hs-ucl-club')?.value||''),formation=String(document.getElementById('hs-ucl-formation')?.value||'1-2-1');
+      if(!clubId)return toast('Önce yöneteceğin kulübü seç.');
+      if(!GLB?.user)return toast('Avrupa Ligi için önce Global hesabına giriş yap.');
+      const currentTeam=(team17State&&String(team17State.uid||'')===String(GLB.user.uid||''))?team17State:await team17LoadOrCreate(false);
+      if(!currentTeam?.created)return toast('Önce takım tesisinden kendi takımını kur.');
+      if(hs19LocalMatch?.status==='playing'||hs19RemoteMatch?.status==='playing')return toast('Önce devam eden maçını tamamla.');
+      const uc=ulCreate(clubId,formation);if(!uc)return toast('Avrupa Ligi kurulamadı.');
+      ulSave(uc);ulRender();toast(`⭐ ${uc.club.name} ile Büyük Avrupa Ligi başladı!`);
+    };
+    window.hsEuroLeaguePlayNext=async function(){
+      const uc=ulLoad();if(!uc||uc.status!=='active')return;
+      const f=ulNext(uc);if(!f){ulRender();return toast('Bu turda oynanacak başka maç yok.');}
+      const live=hs19LocalMatch?.status==='playing'?hs19LocalMatch:null;
+      if(live){
+        if(live.mode==='euro-league'&&String(live.euroLeagueTourId||'')===String(uc.tourId)){
+          const all=[...uc.fixtures,...Object.values(uc.knockout).flat()],old=all.find(x=>String(x.id)===String(live.euroLeagueFixtureId));
+          if(old?.played){live.status='complete';live.minute=90;live.activeEvent=null;live.applied=true;}
+          else{page='matches';await team17Render();try{hs19RefreshMatchPanel(true);}catch(e){}return toast('Avrupa Ligi maçın zaten devam ediyor. Önce onu tamamla.');}
+        }else{page='matches';await team17Render();try{hs19RefreshMatchPanel(true);}catch(e){}return toast('Önce devam eden maçını tamamla.');}
+      }
+      if(hs19RemoteMatch?.status==='playing'){page='matches';await team17Render();try{hs19RefreshMatchPanel(true);}catch(e){}return toast('Devam eden çevrimiçi maç var. Önce onu bitir.');}
+      const opponent=uc.teams[f.homeId==='UL_USER'?f.awayId:f.homeId];if(!opponent)return toast('Rakip takım bulunamadı.');
+      uc.currentFixtureId=f.id;ulSave(uc);
+      const userHome=f.homeId==='UL_USER',snap=t=>({uid:String(t.uid),teamName:String(t.teamName),averageOvr:Number(t.averageOvr)||60,players:t.players.slice(0,5).map(p=>({...p})),bench:t.bench.slice(0,5).map(p=>({...p})),formation:t.formation||'1-2-1',lineupValid:true,tactics:{style:'balanced',tempo:'normal'},teamValue:0});
+      window.hsEuroLeagueClose();
+      try{
+        let me=snap(uc.teams.UL_USER),bot=snap(opponent);
+        if(me.players.length!==5||bot.players.length!==5)throw new Error('Kadroda 5 ilk 5 oyuncusu bulunamadı.');
+        bot.tactics=window.hsMatchBotTactics?window.hsMatchBotTactics(bot):{style:'balanced',tempo:'normal'};
+        try{if(typeof window.hsMatchPrepareSnapshot==='function'){me=window.hsMatchPrepareSnapshot(me)||me;bot=window.hsMatchPrepareSnapshot(bot)||bot;}}catch(e){console.warn('Snapshot hazırlığı atlandı:',e);}
+        const now=Date.now(),matchId='local_ul_'+now.toString(36)+'_'+Math.random().toString(36).slice(2,8);
+        hs19PanelKey='';
+        hs19LocalMatch={id:matchId,mode:'euro-league',leagueMatch:null,draftRound:0,status:'playing',participants:userHome?[me,bot]:[bot,me],userHome,userSideIndex:userHome?0:1,
+          euroLeagueFixtureId:String(f.id),euroLeagueStage:String(uc.stage),euroLeagueTourId:String(uc.tourId),homeScore:0,awayScore:0,result:null,startedAt:now,minute:0,activeEvent:null,
+          homeStamina:100,awayStamina:100,lastInteractiveAt:now,lastPulseAt:now,feed:[{minute:0,text:`⭐ ${uc.club.flag} ${uc.club.name} Büyük Avrupa Ligi maçına çıktı.`},{minute:0,text:'Hakem düdüğü çaldı. Maç başladı!'}],
+          nextEventAt:now+900+Math.floor(Math.random()*500),applied:false,playerGoals:{},playerAssists:{}};
+        window.__hs19LastLocalMatchId=matchId;hs19RemoteMatch=null;hs19RemoteRef=null;onlineMatch=null;page='matches';
+        if(typeof initMatch==='function')initMatch(hs19LocalMatch);
+        try{if(typeof team17Render==='function')await team17Render();}catch(e){console.warn('Maç paneli yenilenemedi:',e);}
+        hs19PanelKey='';try{hs19RefreshMatchPanel(true);}catch(e){}
+        if(!hs19LocalMatch||String(hs19LocalMatch.id)!==matchId||hs19LocalMatch.status!=='playing')throw new Error('Maç oturumu beklenmeyen şekilde kapandı.');
+        try{window.hs19ForceLiveMatchView?.();}catch(e){}
+        toast(`⭐ ${uc.club.name} – ${opponent.club.name}: maç başladı!`);
+      }catch(e){
+        console.error('Avrupa Ligi maçı başlatılamadı:',e);
+        const fresh=ulLoad();if(fresh){fresh.currentFixtureId='';ulSave(fresh);}
+        ulRender();toast(e.message||'Avrupa Ligi maçı başlatılamadı.');
+      }
+    };
+    function ulMenuCard(){
+      const uc=ulLoad(),status=!uc?'Turnuvaya katıl':uc.status==='active'?`${UL_STAGE[uc.stage]||'Turnuva'} · ${uc.club.flag} ${uc.club.name}`:`Tamamlandı · ${uc.club.flag} ${uc.club.name}`,action=!uc?'Avrupa Ligi moduna gir':uc.status==='active'?'Turnuvaya devam et':'Sonuçları görüntüle';
+      return `<section class="hs30-wc-launch hs-ucl-launch"><div class="hs30-wc-launch-head"><span>⭐</span><div><small>36 KULÜP · 8 MAÇ · PLAY-OFF · KNOCKOUT</small><h3>Büyük Avrupa Ligi</h3></div><b>90MINUTE CUP</b></div><p>Bir kulüp seç ve tek bir ligde 8 maç oyna. İlk 8 doğrudan Son 16'ya geçer, 9–24 arası play-off oynar. Sonra Son 16, çeyrek final, yarı final ve final seni bekliyor!</p><div class="hs30-wc-launch-status">${ulEsc(status)}</div><button type="button" onclick="hsEuroLeagueOpen()">⭐ ${action}</button></section>`;
+    }
+    const ulBaseMatchesHTML=matchesHTML;
+    matchesHTML=function(){let html=ulBaseMatchesHTML.apply(this,arguments);const anchor='<section class="hs30-friend-card">';if(html.includes(anchor)&&!html.includes('hs-ucl-launch'))html=html.replace(anchor,ulMenuCard()+anchor);return html;};
+    const ulCss=document.createElement('style');ulCss.id='hs-euro-league-style';ulCss.textContent=`
+      #hs-ucl-overlay{position:fixed;inset:0;z-index:12000;display:block;color:#effaf5}body.hs-ucl-open{overflow:hidden!important}
+      .hs-ucl-launch{border-color:rgba(160,140,255,.35)!important;background:radial-gradient(circle at 90% 0,rgba(130,110,255,.28),transparent 40%),linear-gradient(145deg,#231d52,#14193f 72%,#0d2540)!important}
+      .hs30-wc-table tr.hs-ucl-top8 td:first-child{border-left:3px solid #4ade80}.hs30-wc-table tr.hs-ucl-po td:first-child{border-left:3px solid #facc15}.hs30-wc-table tr.hs-ucl-out td:first-child{border-left:3px solid #f87171}
+      .hs-ucl-legend{display:block;margin-top:8px;font-size:10px;color:#9ab8c1}.hs-ucl-legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:3px}.hs-ucl-legend .g{background:#4ade80}.hs-ucl-legend .y{background:#facc15}.hs-ucl-legend .r{background:#f87171}
+    `;document.head.appendChild(ulCss);
+    try{if(typeof NOTES!=='undefined'&&Array.isArray(NOTES))NOTES.unshift(['6.1 BETA · Büyük Avrupa Ligi modu',[
+      '⭐ Güncel Şampiyonlar Ligi\'ndeki 36 kulüp (adları değiştirilmiş) tek ligde 8 maç oynar.',
+      '🏟️ İlk 8 Son 16\'ya yükselir, 9–24 arası play-off oynar, 25–36 elenir; sonra Son 16, çeyrek final, yarı final ve final.',
+      '👥 Her kulübün 24 kişilik kadrosu 6 kaleci, 6 defans, 6 orta saha ve 6 forvetten oluşur.'
+    ]]);}catch(e){}
+  })();
 
   /* 3.3.1 BETA · Seçim Draftı: sabit 1-1-2, dönüşümlü kart seçimi, online/bot VS. */
   (function(){
@@ -18415,6 +18717,7 @@ try{if(typeof NOTES!=='undefined'&&Array.isArray(NOTES))NOTES.unshift(['1.9.6 BE
     const F=await glFb(),f=F.fs,now=Date.now();
     const clean={version:'1.8.5 BETA',uid,teamName:t.teamName||'',created:!!t.created,roster:(t.roster||[]).slice(0,10),lineup:(t.lineup||[]).slice(0,5),formation:typeof team17FormationKey==='function'?team17FormationKey(t.formation):'balanced',slotPositions:typeof team17PositionCopy==='function'?team17PositionCopy(t.slotPositions,t.formation):{},updatedAt:now};
     await f.setDoc(f.doc(F.db,'users',uid),{hsTeam:clean,hsTeamVersion:'1.8.5 BETA',hsTeamUpdatedAt:f.serverTimestamp()},{merge:true});
+    t.updatedAt=now;try{if(typeof team17PersistLocal==='function')await team17PersistLocal(t,uid);}catch(e){}try{if(typeof team17CloudCache!=='undefined'&&team17CloudCache.uid===uid)team17CloudCache.at=0;}catch(e){}
     const allOwn=(t.ownPlayers||[]).filter(Boolean),sold0=new Set((t.soldPlayerIds||[]).map(String)),players=allOwn.filter(p=>!p.transferred&&!sold0.has(String(p.id))).slice(0,300),transOwned=allOwn.filter(p=>p.transferred&&!sold0.has(String(p.id))).map(p=>({...p,ownerUid:uid})).slice(0,300);
     if(players.length||transOwned.length)await f.setDoc(f.doc(F.db,'teamAssignments',uid),{uid,game:'halisaha',username:String(window.GLB?.prof?.username||'oyuncu').toLowerCase(),pitchName:String(window.GLB?.prof?.pitchName||t.teamName||'Halısaham'),regenPlayers:players,transferOwnedPlayers:transOwned,regenPlayersVersion:'1.8.1 BETA',regenPlayersUpdatedAt:f.serverTimestamp()},{merge:true});
     return true;
@@ -18427,7 +18730,7 @@ try{if(typeof NOTES!=='undefined'&&Array.isArray(NOTES))NOTES.unshift(['1.9.6 BE
       window.__hsExplicitCloudSave=true;
       try{await oldAccountSave.apply(this,arguments);}finally{window.__hsExplicitCloudSave=false;}
       if(window.GLB?.user&&typeof window.hsExplicitCloudTeamSave==='function'){
-        try{await window.hsExplicitCloudTeamSave();}catch(e){console.warn('Takım bulut kaydı başarısız:',e);toast('Ana oyun kaydedildi; takım verisi buluta gönderilemedi.');}
+        try{const _ok=await window.hsExplicitCloudTeamSave();if(_ok===false&&team17State&&team17State.created)toast('⚠️ Kadro buluta gönderilemedi; takım oturumu hazır değil, takım sekmesini yenileyip tekrar dene.');}catch(e){console.warn('Takım bulut kaydı başarısız:',e);toast('Ana oyun kaydedildi; takım verisi buluta gönderilemedi.');}
       }
     }catch(e){console.error('Hesap kaydı:',e);toast('Bulut kaydı tamamlanamadı. Cihaz kaydın korunuyor.');}
   };
@@ -18522,7 +18825,7 @@ try{if(typeof NOTES!=='undefined'&&Array.isArray(NOTES))NOTES.unshift(['1.9.6 BE
   const writeMeta=(uid,v)=>{try{localStorage.setItem(metaKey(uid),JSON.stringify(v));}catch(e){}};
   async function syncNow(force){
     const user=typeof GLB!=='undefined'?GLB.user:null;
-    if(!user||!S?.st||!rdy||CL.busy||document.hidden)return false;
+    if(!user||!S?.st||!rdy||CL.busy||document.hidden||window.__hsLoginChoicePending)return false;
     const uid=String(user.uid||'');if(!uid)return false;
     const meta=readMeta(uid),now=Date.now();
     if(!force&&!meta.last){writeMeta(uid,{last:now,gameTm:0,teamTm:0});return false;}
