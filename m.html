@@ -11245,6 +11245,7 @@ async function refreshQueueAndRoom(){if(!GLB.user)return;try{const F=await fb(),
     // Her kulüp: 6 kaleci, 6 defans, 6 orta saha, 6 forvet (24 oyuncu).
     // 2026-27 kadro isimleri (kaleci|defans|orta saha|forvet). OVR, isim Dünya Kupası listesinde varsa oradan alınır.
     const UL_REAL={"c01":"Safono,Chevaliar|Hakimin,Marquinho,Pachon,Nuno Menden:86|Vitinhar:85,João Neven:82,Fabián Ruize,Zaïre-Emerey|Ousmane Dembélel,Kvaratskheliar,Désiré Doucet:86,Ferran Torren","c02":"Manuel Neuar,Jonas Urbige|Upamecanon,Jonathan Tahe,Alphonso Davien:86,Josip Stanišik:82|Joshua Kimmic,Jamal Musialar,Aleksandar Pavlovik,Tom Bischo|Harry Kanel,Michael Olivier:89,Luis Díaze:86,Serge Gnabrey","c03":"Thibaut Courtoi,Andriy Lunim|Ibrahima Konatéy:84,Dean Huijson,Denzel Dumfrien,Marc Cucurellar|Jude Bellingha,Federico Valverdel:89,Bernardo Silvar:88,Aurélien Tchouaménin|Kylian Mbappel,Vinícius Júnio:90,Yan Diomandel,Arda Güneş:81","c04":"Alissen,Mamardashvilin|Virgil van Dijke,Jérémie Frimpon,Milos Kerken,Jérémy Jacque|Florian Wirtze,Alexis Mac Allistar:87,Dominik Szoboszlain,Ryan Gravenberc|Alexander Isake:88,Bradley Barrot:84,Cody Gakpon,Hugo Ekitikeau:85","c05":"Josep Martínen,Raffaele Di Gennaron|Alessandro Bastonin,Federico Dimarcon,Yann Bissec,Carlos Auguston|Nicolò Barellar,Hakan Çalhan:86,Piotr Zielińskin:83,Petar Sučik|Lautaro Martínen:89,Marcus Thurand:85,Ange-Yoan Bonney,Pio Espositon","c06":"Gianluigi Donnarummar,James Traffor|Rúben Diase:88,Joško Gvardio:87,Marc Guéhin,Rayan Aït-Nourin|Enzo Fernánden:87,Elliot Andersen,Ayyoub Bouaddin,Phil Fodene|Erling Haalan,Jérémy Dokul:84,Iliman Ndiayel,Rayan Cherkin","c07":"David Rayar,Kepar|William Salibar,Gabriel Magalhãen,Jurriën Timbar,Ezri Konsar|Declan Ricel,Martin Ødegaar,Bruno Guimarãen:86,Martín Zubimendin|Bukayo Sakar,Viktor Gyökeren:87,Eberechi Ezel,Kai Havert","c08":"Joan Garcíar,Dominik Livakovik:82|Pau Cubars,Jules Koundier:86,Alejandro Baldel,João Cancelon:85|Pedrin,Rodrin,Frenkie de Jonge,Gavin|Lamine Yamale,Raphinhar,Anthony Gordan,Gabriel Jesuse","c09":"Jan Oblake,Juan Musson:78|Robin Le Norman,Dávid Hanckon,Marcos Llorentel,José María Giménez:84|Pablo Barrio,Álex Baenar,Kokel,Johnny Cardoson:79|Julián Álvaren:87,Alexander Sørlot,Giuliano Simeonel,Thiago Almadar","c10":"Gregor Kobele,Alexander Meyar|Nico Schlotterbec,Waldemar Antan,Julian Ryersen,Ramy Bensebainin|Felix Nmechar,Jobe Bellingha,Marcel Sabitzar,Julian Brand|Serhou Guirassey,Karim Adeyemin,Maximilian Beiar,Fábio Silvar","c11":"Mile Svila,Pierluigi Gollinin|Gianluca Mancinin,Evan Ndickar,Angeliñon,Wesleey|Manu Konel,Bryan Cristantel,Lorenzo Bellini:89,Niccolò Pisillin|Paulo Dybalar,Matías Soulel,Donyell Malene,Artem Dovby","c12":"Rui Silvar,João Virgíniar|Gonçalo Inácion:83,Ousmane Diomandel,Maximiliano Araújo:80,Eduardo Quaresmar|Morten Hjulman,Pedro Gonçalven,Hidemasa Moritar,Daniel Bragançar|Francisco Trincãon,Luis Suáren:82,Geny Catamon,Geovany Quendar","c13":"Emiliano Martínen,Marco Bizote|Pau Torren,Matty Cashe:79,Ian Maatson,Tyrone Mingse|John McGin:82,Youri Tieleman:85,Boubacar Kamarar,Amadou Onanar:83|Ollie Watkin,Morgan Roger,Leon Baileey,Emiliano Buendíar","c14":"Diogo Costar:85,Cláudio Ramose|Jan Bednare:78,Jakub Kiwio:80,Francisco Mourar,Alberto Costar|Victor Frohold,Alan Varelar,Gabri Veigar,Rodrigo Morar|Samu Aghehowar,Pepêe,Borja Sainze,William Gomen","c15":"Senne Lammen,Altay Bayındı|Matthijs de Ligte,Lisandro Martínen:85,Leny Yoron,Diogo Dalote:82|Bruno Fernanden:87,Carlos Balebar,Kobbie Mainoon,Manuel Ugartel:84|Matheus Cunhar,Bryan Mbeumon,Benjamin Šeškon,Amad Diallon","c17":"Álvaro Vallen,Pau Lópen|Marc Bartrar,Diego Llorentel,Héctor Bellerí,Naten|Iscon,Pablo Fornal,Giovani Lo Celson:82,Sofyan Amraba|Antoney,Cucho Hernánden,Abde Ezzalzoulin,Cédric Bakambul","c18":"Matěj Kováře,Nick Olije|Mauro Júnio,Ryan Flamingon,Sergiño Deste:79,Yarek Gasiorowskin|Joey Veermen,Jerdy Schoute,Ismael Saibarin,Guus Tile|Ivan Perišik:82,Ricardo Pepin:78,Ruben van Bomme,Alassane Pléar","c21":"Alexis Morel:89,Vanja Milinković-Savik|Amir Rrahmanin,Alessandro Buongiornon,Giovanni Di Lorenzon,Sam Beukemar|Scott McTominaey:83,Kevin De Bruynel:90,Stanislav Lobotkar,Frank Anguissar|Rasmus Højlun,David Neren,Matteo Politanon,Romelu Lukakul:85","c25":"Uğurcan Akın:80,Günay Güven|Davinson Sánchen:82,Abdülkerim Bardakc,Wilfried Singon,Ismail Jakob|Lucas Nogueira:76,Gabriel Sarar,Mario Leminar,İlkay Gündoğen|Victor Osimhe:88,Barış Alper Yılma,Leroy Sanel,Yunus Akgünay:78","c26":"Edersen,Tarık Çetim|Milan Škrinia,Nélson Semedon,Jayden Oosterwoldel,Çağlar Söyün:77|Marco Asension,Edson Álvaren:82,İsmail Yükse,Frede|Kerem Aktürkoğlul,Anderson Taliscar,Youssef En-Nesyrin,Dorgeles Nenel"};
+    window.hsRealRows=UL_REAL;
     const ulKey=n=>String(n).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
     function ulApplyNames(club,list){
       const row=UL_REAL[club.id];if(!row)return list;
@@ -14963,7 +14964,7 @@ try{if(typeof NOTES!=='undefined'&&Array.isArray(NOTES))NOTES.unshift(['1.8 BETA
     saveLeague(l);
     toast(`${cfg.flag} ${cfg.leagueName} kuruldu! Takım güçleri ülke profiline göre oluşturuldu.`);renderFull();
   }
-  function syncUserClub(l){const t=team17State,me=userSquad(),c=(l.clubs||[]).find(x=>x.id==='user');if(!c||!t)return;c.name=String(t.teamName||c.name||'Senin Takımın');c.squad=me;c.strength=squadStrength(c);l.teamName=c.name;}
+  function syncUserClub(l){const t=team17State,me=userSquad(),c=(l.clubs||[]).find(x=>x.id==='user');if(!c||!t)return;if(l.managed){l.teamName=c.name;return;}c.name=String(t.teamName||c.name||'Senin Takımın');c.squad=me;c.strength=squadStrength(c);l.teamName=c.name;}
 
   /* ===== 1.8.31: Lig gelişimi ===== */
   function leagueGrowUser(result,minutes){
@@ -15225,7 +15226,62 @@ try{if(typeof NOTES!=='undefined'&&Array.isArray(NOTES))NOTES.unshift(['1.8 BETA
     const imageIndex=photoByType[type]??(Math.abs(Number(index)||0)%HSBOT_NEWS_IMAGES.length);
     return `<img class="hsn-photo" src="${HSBOT_NEWS_IMAGES[imageIndex]}" alt="${altByType[type]||'Futbol haberi'}" loading="lazy" decoding="async">`;
   }
-  function hsbotLeagueNewsHTML(l,rows){
+  /* Lig kariyeri: kulüp seçimi, kulüp bütçesi, lig içi ve ligler arası transfer */
+  const LC_REAL={TR:[['c25','Boğaz Aslanları'],['c26','Kadıköy Kanaryaları']],EN:[['c06','Mavi Manchester'],['c07','Londra Topçuları'],['c04','Mersey Kızılları'],['c15','Kızıl Manchester'],['c13','Birmingham Villa']],FR:[['c01','Paris Yıldızları']],DE:[['c02','Bavyera Münih'],['c10','Ruhr Sarıları']],ES:[['c03','Madrid Beyazları'],['c08','Katalan FC'],['c09','Madrid Çizgilileri'],['c17','Sevilla Yeşilleri']]};
+  const lcTL=v=>(Math.round(v/1e5)/10).toLocaleString('tr-TR')+' Mn ₺';
+  const lcBudget=s=>Math.round(Math.pow(Math.max(6,s-55),2)*150000/500000)*500000;
+  const lcEsc=v=>String(v).replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
+  function lcRoster(cid,power,clubId){
+    const row=(window.hsRealRows||{})[cid];if(!row)return null;const out=[];
+    row.split('|').forEach((g,pi)=>g.split(',').forEach((v,i)=>{const a=v.split(':'),o=clamp(Number(a[1])||power+[3,1,-1,-3,-5][Math.min(i,4)],45,99);out.push(playerCopy({id:'lc_'+cid+'_'+pi+'_'+i,name:a[0],pos:['GK','DEF','MID','ATT'][pi],ovr:o,potential:o+3,age:21+(i*3+pi*2)%13},clubId));}));
+    return out;
+  }
+  function lcApply(l){
+    if(l.lcReal)return;const code=window.__hsBotCurrentCountry||l.countryCode||'TR',cfg=LEAGUE_COUNTRIES[code]||LEAGUE_COUNTRIES.TR,bots=l.clubs.filter(c=>!c.isUser);
+    (LC_REAL[cfg.code]||[]).forEach((r,i)=>{const c=bots[i];if(!c)return;const sq=lcRoster(r[0],cfg.base+cfg.offsets[i],c.id);if(sq){c.name=r[1];c.squad=sq;c.strength=squadStrength(c);c.targetStrength=Math.round(c.strength);}});
+    l.clubs.forEach(c=>{if(!c.isUser)c.budget=lcBudget(squadStrength(c));});
+    l.lcReal=true;l.lcCode=cfg.code;saveLeague(l);
+  }
+  function lcNews(l,text){l.myNews=[{round:l.round,season:l.season,text}].concat(l.myNews||[]).slice(0,30);}
+  function lcShow(html){let m=document.getElementById('lc-modal');if(!m){m=document.createElement('div');m.id='lc-modal';m.style.cssText='position:fixed;inset:0;z-index:13500;overflow:auto;background:#0b1714;color:#f4faf7;padding:20px 14px 60px';document.body.appendChild(m);}
+    m.innerHTML='<button type="button" onclick="this.parentNode.remove()" style="width:100%;margin-bottom:12px">Kapat</button>'+html;}
+  const lcRow=(title,sub,label,call,off)=>`<div style="display:flex;gap:10px;align-items:center;background:#ffffff0f;border-radius:14px;padding:10px 12px;margin-bottom:7px"><div style="flex:1"><b>${lcEsc(title)}</b><br><small style="color:#9fc0b4">${sub}</small></div><button type="button" onclick="${call}" ${off?'disabled style="opacity:.35"':''}>${label}</button></div>`;
+  window.hsLcPick=function(){const l=league();if(!l)return;lcApply(l);
+    lcShow('<h2>Yöneteceğin kulübü seç</h2>'+l.clubs.filter(c=>!c.isUser).sort((a,b)=>squadStrength(b)-squadStrength(a)).map(c=>lcRow(c.name,`Güç ${Math.round(squadStrength(c))} · Bütçe ${lcTL(lcBudget(squadStrength(c)))}`,'Seç',`hsLcChoose('${c.id}')`)).join(''));};
+  window.hsLcChoose=function(id){const l=league();if(!l||l.managed||l.round>0)return toast('Takım yalnızca sezon başında bir kez seçilebilir.');
+    const me=l.clubs.find(c=>c.id==='user'),x=l.clubs.find(c=>c.id===id);if(!me||!x)return;
+    if(!confirm(x.name+' kulübünü yönetmek istiyor musun?'))return;
+    me.name=x.name;me.squad=x.squad.map(p=>playerCopy(p,'user'));me.strength=squadStrength(me);me.budget=lcBudget(me.strength);
+    const code=l.lcCode;x.name='Yükselen FK';x.squad=Array.from({length:10},(_,i)=>genBotPlayer(x.id,LEAGUE_COUNTRIES[code].base-6,i,LEAGUE_COUNTRIES[code]));x.strength=squadStrength(x);x.targetStrength=Math.round(x.strength);
+    l.managed=id;l.teamName=me.name;lcNews(l,`Yeni patron ${me.name} kulübünün başına geçti.`);saveLeague(l);lcMarket('in');};
+  let lcList=[];
+  window.lcMarket=function(tab){const l=league();if(!l||!l.managed)return;const me=l.clubs.find(c=>c.id==='user');
+    if(tab==='in')lcList=l.clubs.filter(c=>!c.isUser).flatMap(c=>c.squad.map(p=>({p,from:c.id,club:c.name,price:clubValue(p)})));
+    else if(tab==='out')lcList=Object.keys(LC_REAL).filter(k=>k!==l.lcCode).flatMap(k=>LC_REAL[k].flatMap(r=>(lcRoster(r[0],LEAGUE_COUNTRIES[k].base+8,'x')||[]).map(p=>({p,from:'',club:r[1]+' ('+LEAGUE_COUNTRIES[k].name+')',price:Math.round(clubValue(p)*1.15)})))).filter(x=>!me.squad.some(p=>p.id===x.p.id));
+    else lcList=me.squad.map(p=>({p,price:Math.round(clubValue(p)*.9)}));
+    lcList.sort((a,b)=>b.p.ovr-a.p.ovr);lcList=lcList.slice(0,50);
+    const sell=tab==='sell';
+    lcShow(`<h2>${lcEsc(me.name)}</h2><p>Transfer bütçesi: <b>${lcTL(me.budget)}</b> · Kadro ${me.squad.length}</p><div style="display:flex;gap:6px;margin-bottom:12px">${[['in','Lig içi'],['out','Diğer ligler'],['sell','Satış']].map(t=>`<button type="button" style="flex:1" onclick="lcMarket('${t[0]}')">${t[1]}</button>`).join('')}</div>`+lcList.map((x,i)=>lcRow(x.p.name,`${x.p.pos} · ${x.p.ovr} OVR · ${sell?'':lcEsc(x.club)+' · '}${lcTL(x.price)}`,sell?'Sat':'Al',`lcDeal(${i},'${tab}')`,!sell&&x.price>me.budget)).join(''));};
+  window.lcDeal=function(i,tab){const l=league(),x=lcList[i];if(!l||!x||busy)return;const me=l.clubs.find(c=>c.id==='user'),p=x.p;
+    if(tab==='sell'){if(me.squad.length<=11||(p.pos==='GK'&&me.squad.filter(z=>z.pos==='GK').length<2))return toast('Kadro çok azalır, bu satış yapılamaz.');
+      if(!confirm(p.name+' '+lcTL(x.price)+' karşılığında satılsın mı?'))return;
+      const buyers=l.clubs.filter(c=>!c.isUser&&c.budget>=x.price),b=buyers[Math.floor(Math.random()*buyers.length)];
+      me.squad=me.squad.filter(z=>z.id!==p.id);me.budget+=x.price;
+      if(b){b.budget-=x.price;b.squad.push(playerCopy(p,b.id));b.strength=squadStrength(b);}
+      lcNews(l,`TRANSFER: ${p.name}, ${me.name} kulübünden ${b?b.name:'yurt dışına'} gitti (${lcTL(x.price)}).`);
+    }else{if(me.budget<x.price)return toast('Bütçe yetersiz.');if(me.squad.length>=30)return toast('Kadro dolu.');
+      const from=l.clubs.find(c=>c.id===x.from);if(from&&from.squad.length<=8)return toast('Kulüp bu oyuncuyu bırakmıyor.');
+      if(!confirm(p.name+' '+lcTL(x.price)+' karşılığında alınsın mı?'))return;
+      if(from){from.squad=from.squad.filter(z=>z.id!==p.id);from.budget+=x.price;from.strength=squadStrength(from);}
+      me.budget-=x.price;me.squad.push(playerCopy(p,'user'));
+      lcNews(l,`TRANSFER: ${me.name}, ${p.name} transferini açıkladı. Eski kulübü ${x.club}, bedel ${lcTL(x.price)}.`);}
+    me.strength=squadStrength(me);saveLeague(l);lcMarket(tab);};
+  function lcPanel(){const l=league();if(!l)return'';if(l.round===0)lcApply(l);
+    const btn=l.managed?`<button type="button" onclick="lcMarket('in')">Transfer merkezi</button>`:l.round===0?'<button type="button" onclick="hsLcPick()">Bu ligden takım seç</button>':'';
+    return btn+(l.myNews||[]).slice(0,6).map(n=>`<div class="hsbot-banner">${lcEsc(n.text)}</div>`).join('');}
+
+  function hsbotLeagueNewsHTML(l,rows){return lcPanel()+hsbotLeagueNewsBase(l,rows);}
+  function hsbotLeagueNewsBase(l,rows){
     const clubs=new Map((l.clubs||[]).map(c=>[String(c.id),c]));
     const items=[],seen=new Set();
     const push=(type,headline,summary,meta,at,score)=>{const key=type+'|'+headline+'|'+meta;if(seen.has(key))return;seen.add(key);items.push({type,headline,summary,meta,at:Number(at)||0,score:score||''});};
