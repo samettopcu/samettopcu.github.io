@@ -11248,10 +11248,10 @@ async function refreshQueueAndRoom(){if(!GLB.user)return;try{const F=await fb(),
     window.hsRealRows=UL_REAL;
     const ulKey=n=>String(n).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
     function ulApplyNames(club,list){
-      const row=UL_REAL[club.id];if(!row)return list;
+      const row=window.hsMovedRow?window.hsMovedRow(club.id):UL_REAL[club.id];if(!row)return list;
       const wcOvr=new Map();try{Object.values(window.hsWcRosters||{}).forEach(r=>r.forEach(x=>wcOvr.set(ulKey(x[0]),Number(x[2]))));}catch(e){}
       row.split('|').forEach((names,pi)=>{
-        const same=list.filter(p=>p.pos===['GK','DEF','MID','ATT'][pi]),real=names.split(',');
+        const same=list.filter(p=>p.pos===['GK','DEF','MID','ATT'][pi]),real=names.split(',').filter(Boolean);
         same.forEach((p,i)=>{
           const part=String(real[i]||'').split(':'),name=part[0],ovr=name?(Number(part[1])||ulClamp(club.power+[3,1,-1,-3][i],55,99)):ulClamp(club.power-8-(i-real.length)*2,55,99),diff=ovr-p.ovr;
           if(name){p.name=name;p.avatarSeed=name;}
@@ -15231,23 +15231,34 @@ try{if(typeof NOTES!=='undefined'&&Array.isArray(NOTES))NOTES.unshift(['1.8 BETA
   const lcTL=v=>(Math.round(v/1e5)/10).toLocaleString('tr-TR')+' Mn ₺';
   const lcBudget=s=>Math.round(Math.pow(Math.max(6,s-55),2)*150000/500000)*500000;
   const lcEsc=v=>String(v).replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
+  /* Transfer defteri: giden oyuncu eski kulübünden her modda silinir */
+  const lcMoves=()=>{try{return JSON.parse(localStorage.getItem('hs_lc_moves')||'{}')||{}}catch(e){return{}}};
+  const lcCid=name=>((Object.values(LC_REAL).flat().find(r=>r[1]===name))||[''])[0];
+  function lcMove(p,clubName){const m=lcMoves();m[p.name]={to:lcCid(clubName),pos:p.pos,ovr:p.ovr};try{localStorage.setItem('hs_lc_moves',JSON.stringify(m))}catch(e){}}
+  window.hsMovedRow=function(cid){
+    const row=(window.hsRealRows||{})[cid];if(!row)return row;const m=lcMoves();
+    return row.split('|').map((g,pi)=>{const stay=g.split(',').filter(v=>{const x=m[v.split(':')[0]];return !x||x.to===cid});
+      const names=stay.map(v=>v.split(':')[0]),pos=['GK','DEF','MID','ATT'][pi];
+      const came=Object.keys(m).filter(k=>m[k].to===cid&&m[k].pos===pos&&!names.includes(k)).map(k=>k+':'+m[k].ovr);
+      return came.concat(stay).join(',');}).join('|');
+  };
   function lcRoster(cid,power,clubId){
-    const row=(window.hsRealRows||{})[cid];if(!row)return null;const out=[];
-    row.split('|').forEach((g,pi)=>g.split(',').forEach((v,i)=>{const a=v.split(':'),o=clamp(Number(a[1])||power+[3,1,-1,-3,-5][Math.min(i,4)],45,99);out.push(playerCopy({id:'lc_'+cid+'_'+pi+'_'+i,name:a[0],pos:['GK','DEF','MID','ATT'][pi],ovr:o,potential:o+3,age:21+(i*3+pi*2)%13},clubId));}));
+    const row=window.hsMovedRow(cid);if(!row)return null;const out=[];
+    row.split('|').forEach((g,pi)=>g.split(',').filter(Boolean).forEach((v,i)=>{const a=v.split(':'),o=clamp(Number(a[1])||power+[3,1,-1,-3,-5][Math.min(i,4)],45,99);out.push(playerCopy({id:'lc_'+cid+'_'+pi+'_'+i,name:a[0],pos:['GK','DEF','MID','ATT'][pi],ovr:o,potential:o+3,age:21+(i*3+pi*2)%13},clubId));}));
     return out;
   }
   function lcApply(l){
-    if(l.lcReal)return;const code=window.__hsBotCurrentCountry||l.countryCode||'TR',cfg=LEAGUE_COUNTRIES[code]||LEAGUE_COUNTRIES.TR,bots=l.clubs.filter(c=>!c.isUser);
+    if(l.lcReal)return;try{localStorage.removeItem('hs_lc_moves')}catch(e){}const code=window.__hsBotCurrentCountry||l.countryCode||'TR',cfg=LEAGUE_COUNTRIES[code]||LEAGUE_COUNTRIES.TR,bots=l.clubs.filter(c=>!c.isUser);
     (LC_REAL[cfg.code]||[]).forEach((r,i)=>{const c=bots[i];if(!c)return;const sq=lcRoster(r[0],cfg.base+cfg.offsets[i],c.id);if(sq){c.name=r[1];c.squad=sq;c.strength=squadStrength(c);c.targetStrength=Math.round(c.strength);}});
     l.clubs.forEach(c=>{if(!c.isUser)c.budget=lcBudget(squadStrength(c));});
     l.lcReal=true;l.lcCode=cfg.code;saveLeague(l);
   }
   function lcNews(l,text){l.myNews=[{round:l.round,season:l.season,text}].concat(l.myNews||[]).slice(0,30);}
   function lcShow(html){let m=document.getElementById('lc-modal');if(!m){m=document.createElement('div');m.id='lc-modal';m.style.cssText='position:fixed;inset:0;z-index:13500;overflow:auto;background:#0b1714;color:#f4faf7;padding:20px 14px 60px';document.body.appendChild(m);}
-    m.innerHTML='<button type="button" onclick="this.parentNode.remove()" style="width:100%;margin-bottom:12px">Kapat</button>'+html;}
+    m.innerHTML='<style>#lc-modal button,.lc-btn{min-height:44px;padding:8px 16px;border:0!important;border-radius:12px!important;background:#35d07f!important;color:#06170f!important;font-weight:800}.lc-btn{width:100%;margin:12px 0}</style><button type="button" onclick="this.parentNode.remove()" style="width:100%;margin-bottom:12px">Kapat</button>'+html;}
   const lcRow=(title,sub,label,call,off)=>`<div style="display:flex;gap:10px;align-items:center;background:#ffffff0f;border-radius:14px;padding:10px 12px;margin-bottom:7px"><div style="flex:1"><b>${lcEsc(title)}</b><br><small style="color:#9fc0b4">${sub}</small></div><button type="button" onclick="${call}" ${off?'disabled style="opacity:.35"':''}>${label}</button></div>`;
   window.hsLcPick=function(){const l=league();if(!l)return;lcApply(l);
-    lcShow('<h2>Yöneteceğin kulübü seç</h2>'+l.clubs.filter(c=>!c.isUser).sort((a,b)=>squadStrength(b)-squadStrength(a)).map(c=>lcRow(c.name,`Güç ${Math.round(squadStrength(c))} · Bütçe ${lcTL(lcBudget(squadStrength(c)))}`,'Seç',`hsLcChoose('${c.id}')`)).join(''));};
+    lcShow('<h2>Bu ligde hangi takımla oynayacaksın?</h2><button type="button" onclick="hsLcOwn()" style="width:100%;margin-bottom:12px">Kendi takımımla oyna</button><h3>veya bir kulüp seç</h3>'+l.clubs.filter(c=>!c.isUser).sort((a,b)=>squadStrength(b)-squadStrength(a)).map(c=>lcRow(c.name,`Güç ${Math.round(squadStrength(c))} · Bütçe ${lcTL(lcBudget(squadStrength(c)))}`,'Seç',`hsLcChoose('${c.id}')`)).join(''));};
   window.hsLcChoose=function(id){const l=league();if(!l||l.managed||l.round>0)return toast('Takım yalnızca sezon başında bir kez seçilebilir.');
     const me=l.clubs.find(c=>c.id==='user'),x=l.clubs.find(c=>c.id===id);if(!me||!x)return;
     if(!confirm(x.name+' kulübünü yönetmek istiyor musun?'))return;
@@ -15268,16 +15279,19 @@ try{if(typeof NOTES!=='undefined'&&Array.isArray(NOTES))NOTES.unshift(['1.8 BETA
       const buyers=l.clubs.filter(c=>!c.isUser&&c.budget>=x.price),b=buyers[Math.floor(Math.random()*buyers.length)];
       me.squad=me.squad.filter(z=>z.id!==p.id);me.budget+=x.price;
       if(b){b.budget-=x.price;b.squad.push(playerCopy(p,b.id));b.strength=squadStrength(b);}
+      lcMove(p,b?b.name:'');
       lcNews(l,`TRANSFER: ${p.name}, ${me.name} kulübünden ${b?b.name:'yurt dışına'} gitti (${lcTL(x.price)}).`);
     }else{if(me.budget<x.price)return toast('Bütçe yetersiz.');if(me.squad.length>=30)return toast('Kadro dolu.');
       const from=l.clubs.find(c=>c.id===x.from);if(from&&from.squad.length<=8)return toast('Kulüp bu oyuncuyu bırakmıyor.');
       if(!confirm(p.name+' '+lcTL(x.price)+' karşılığında alınsın mı?'))return;
       if(from){from.squad=from.squad.filter(z=>z.id!==p.id);from.budget+=x.price;from.strength=squadStrength(from);}
-      me.budget-=x.price;me.squad.push(playerCopy(p,'user'));
+      me.budget-=x.price;me.squad.push(playerCopy(p,'user'));lcMove(p,me.name);
       lcNews(l,`TRANSFER: ${me.name}, ${p.name} transferini açıkladı. Eski kulübü ${x.club}, bedel ${lcTL(x.price)}.`);}
     me.strength=squadStrength(me);saveLeague(l);lcMarket(tab);};
+  window.hsLcOwn=function(){const l=league();if(!l)return;l.askedTeam=true;saveLeague(l);document.getElementById('lc-modal')?.remove();};
   function lcPanel(){const l=league();if(!l)return'';if(l.round===0)lcApply(l);
-    const btn=l.managed?`<button type="button" onclick="lcMarket('in')">Transfer merkezi</button>`:l.round===0?'<button type="button" onclick="hsLcPick()">Bu ligden takım seç</button>':'';
+    if(l.round===0&&!l.managed&&!l.askedTeam)setTimeout(()=>{if(!document.getElementById('lc-modal'))window.hsLcPick();},250);
+    const btn=l.managed?`<style>.lc-btn{width:100%;min-height:48px;margin:12px 0;border:0!important;border-radius:14px!important;background:#35d07f!important;color:#06170f!important;font-weight:800}</style><button type="button" class="lc-btn" onclick="lcMarket('in')">Transfer merkezi</button>`:l.round===0?'<style>.lc-btn{width:100%;min-height:48px;margin:12px 0;border:0!important;border-radius:14px!important;background:#35d07f!important;color:#06170f!important;font-weight:800}</style><button type="button" class="lc-btn" onclick="hsLcPick()">Bu ligden takım seç</button>':'';
     return btn+(l.myNews||[]).slice(0,6).map(n=>`<div class="hsbot-banner">${lcEsc(n.text)}</div>`).join('');}
 
   function hsbotLeagueNewsHTML(l,rows){return lcPanel()+hsbotLeagueNewsBase(l,rows);}
