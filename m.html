@@ -11089,10 +11089,12 @@ async function refreshQueueAndRoom(){if(!GLB.user)return;try{const F=await fb(),
       // receive the same position/age/tactic treatment as ordinary matches.
       try{if(typeof window.hsMatchPrepareSnapshot==='function'){me=window.hsMatchPrepareSnapshot(me)||me;bot=window.hsMatchPrepareSnapshot(bot)||bot;}}catch(snapshotError){console.warn('Dünya Kupası snapshot hazırlığı atlandı:',snapshotError);}
       const now=Date.now(),matchId='local_wc_'+now.toString(36)+'_'+Math.random().toString(36).slice(2,8);
+      me.tourRating=Number(me.averageOvr)||60;bot.tourRating=Number(bot.averageOvr)||60;
+      window.hsTourBench(me,wc.selectionPool,wc.tourId);
       const participants=userHome?[me,bot]:[bot,me];
       hs19PanelKey='';
       hs19LocalMatch={
-        id:matchId,mode:'world-cup',leagueMatch:null,draftRound:0,status:'playing',participants,
+        tension:window.hsTourTension(wc.stage),id:matchId,mode:'world-cup',leagueMatch:null,draftRound:0,status:'playing',participants,
         userHome,userSideIndex:userHome?0:1,worldCupFixtureId:String(f.id),
         worldCupStage:String(wc.stage),worldCupTourId:String(wc.tourId),
         homeScore:0,awayScore:0,result:null,startedAt:now,minute:0,activeEvent:null,
@@ -11494,9 +11496,11 @@ async function refreshQueueAndRoom(){if(!GLB.user)return;try{const F=await fb(),
         if(me.players.length!==5||bot.players.length!==5)throw new Error('Kadroda 5 ilk 5 oyuncusu bulunamadı.');
         bot.tactics=window.hsMatchBotTactics?window.hsMatchBotTactics(bot):{style:'balanced',tempo:'normal'};
         try{if(typeof window.hsMatchPrepareSnapshot==='function'){me=window.hsMatchPrepareSnapshot(me)||me;bot=window.hsMatchPrepareSnapshot(bot)||bot;}}catch(e){console.warn('Snapshot hazırlığı atlandı:',e);}
+        me.tourRating=Number(uc.teams.UL_USER.averageOvr)||60;bot.tourRating=Number(opponent.averageOvr)||60;
+        window.hsTourBench(me,uc.selectionPool,uc.tourId);
         const now=Date.now(),matchId='local_ul_'+now.toString(36)+'_'+Math.random().toString(36).slice(2,8);
         hs19PanelKey='';
-        hs19LocalMatch={id:matchId,mode:'euro-league',leagueMatch:null,draftRound:0,status:'playing',participants:userHome?[me,bot]:[bot,me],userHome,userSideIndex:userHome?0:1,
+        hs19LocalMatch={tension:window.hsTourTension(uc.stage),id:matchId,mode:'euro-league',leagueMatch:null,draftRound:0,status:'playing',participants:userHome?[me,bot]:[bot,me],userHome,userSideIndex:userHome?0:1,
           euroLeagueFixtureId:String(f.id),euroLeagueStage:String(uc.stage),euroLeagueTourId:String(uc.tourId),homeScore:0,awayScore:0,result:null,startedAt:now,minute:0,activeEvent:null,
           homeStamina:100,awayStamina:100,lastInteractiveAt:now,lastPulseAt:now,feed:[{minute:0,text:`⭐ ${uc.club.flag} ${uc.club.name} Büyük Avrupa Ligi maçına çıktı.`},{minute:0,text:'Hakem düdüğü çaldı. Maç başladı!'}],
           nextEventAt:now+900+Math.floor(Math.random()*500),applied:false,playerGoals:{},playerAssists:{}};
@@ -11532,6 +11536,44 @@ async function refreshQueueAndRoom(){if(!GLB.user)return;try{const F=await fb(),
       '👥 Her kulübün 24 kişilik kadrosu 6 kaleci, 6 defans, 6 orta saha ve 6 forvetten oluşur.'
     ]]);}catch(e){}
   })();
+
+  (function(){
+  var BASE={league:35,group:35,playoff:60,roundOf16:62,quarterFinal:70,semiFinal:80,thirdPlace:50,final:90};
+  window.hsTourTension=function(stage){var t=Math.max(15,Math.min(100,Math.round((BASE[stage]||40)+Math.random()*20-10)));setTimeout(function(){try{toast('Maç gerginliği: '+t+'/100 · '+(t>=75?'Çok yüksek':t>=55?'Yüksek':t>=35?'Orta':'Düşük'))}catch(e){}},1200);return t;};
+  var key=function(id){return 'hs_tour_disc_'+id};
+  function load(id){try{return JSON.parse(localStorage.getItem(key(id))||'{}')||{}}catch(e){return{}}}
+  function save(id,d){try{localStorage.setItem(key(id),JSON.stringify(d))}catch(e){}}
+  /* Cezalı oyuncuyu maç başlarken aynı mevkideki cezasız oyuncuyla değiştirir */
+  window.hsTourBench=function(team,pool,tourId){
+    var d=load(tourId),banned=function(p){return p&&d[p.id]&&d[p.id].ban>0},used={},out=[];
+    (team.players||[]).concat(team.bench||[]).forEach(function(p){used[p.id]=1});
+    ['players','bench'].forEach(function(k){team[k]=(team[k]||[]).map(function(p){
+      if(!banned(p))return p;
+      var c=(pool||[]).filter(function(x){return x.pos===p.pos&&!used[x.id]&&!banned(x)}).sort(function(a,b){return b.ovr-a.ovr})[0];
+      if(!c)return p;used[c.id]=1;out.push(p.name+' → '+c.name);return Object.assign({},c);
+    });});
+    if(out.length)setTimeout(function(){try{toast('Cezalı oyuncu değişikliği: '+out.join(', '))}catch(e){}},3500);
+  };
+  var base=hs19CompleteLocal;
+  hs19CompleteLocal=async function(m){
+    var tour=m&&!m.hsDiscDone&&(m.mode==='euro-league'?m.euroLeagueTourId:m.mode==='world-cup'?m.worldCupTourId:'');
+    var r=await base.apply(this,arguments);
+    if(tour){
+      m.hsDiscDone=true;
+      var d=load(tour),side=Number(m.userSideIndex)||0,notes=[];
+      Object.keys(d).forEach(function(id){if(d[id].ban>0)d[id].ban--;});
+      (m.feed||[]).forEach(function(f){
+        if(!f||!f.card||f.card==='injury'||Number(f.side)!==side||!f.playerId)return;
+        var x=d[f.playerId]||(d[f.playerId]={y:0,ban:0});
+        if(f.card==='red'){x.ban=3;notes.push(f.name+': kırmızı kart, 3 maç ceza');}
+        else if(++x.y>=4){x.y=0;x.ban=2;notes.push(f.name+': 4. sarı kart, 2 maç ceza');}
+      });
+      save(tour,d);
+      if(notes.length)setTimeout(function(){try{toast(notes.join(' · '))}catch(e){}},1500);
+    }
+    return r;
+  };
+})();
 
   /* 3.3.1 BETA · Seçim Draftı: sabit 1-1-2, dönüşümlü kart seçimi, online/bot VS. */
   (function(){
@@ -18429,7 +18471,7 @@ if(typeof CFG!=='undefined'&&CFG.l&&CFG.l!=='tr'&&typeof lang0==='function')lang
   const lvl=(u,k)=>Math.max(0,Math.min(10,parseInt(u&&u[k],10)||0));
   const expansionLevel=v=>Math.max(0,Math.min(10,parseInt(v,10)||0));
   const capacityIndex=(trib,extra)=>Math.min(20,Math.max(0,Math.min(10,Number(trib)||0))+(Number(trib)>=10?expansionLevel(extra):0));
-  const capacityFor=sd=>CAPS[capacityIndex(lvl(sd&&sd.up,'trib'),sd&&sd.capacityLevel)]||10;
+  const capacityFor=sd=>Number(sd&&sd.fixedCapacity)||CAPS[capacityIndex(lvl(sd&&sd.up,'trib'),sd&&sd.capacityLevel)]||10;
   const clean=v=>String(v||'').replace(/[<>"'`\\]/g,'').replace(/\s+/g,' ').trim().slice(0,24);
   const fmt=n=>Number(n).toLocaleString('tr-TR');
   function stState(){if(typeof S==='undefined')return {};if(!S.stadium||typeof S.stadium!=='object')S.stadium={};if(!Array.isArray(S.stadium.accessories))S.stadium.accessories=[];S.stadium.capacityLevel=expansionLevel(S.stadium.capacityLevel);return S.stadium;}
@@ -18451,8 +18493,12 @@ if(typeof CFG!=='undefined'&&CFG.l&&CFG.l!=='tr'&&typeof lang0==='function')lang
     const d=(a)=>Math.max(0,Math.min(10,L-a));
     const stadium={name:clean(nm+' '+['Stadı','Arena','Park','Stadyumu'][h%4]),up:{trib:L,park:d(2),isik:d(1),cit:L,kafe:d(3),soy:d(2),kam:d(4),drn:d(3),skor:d(3),loca:d(5),cim:d(2)},mg:0,seat:Object.keys(SEATS)[h%7],sp:(h>>3)%3,cim:85,capacityLevel:0,generated:true};stadium.capacity=capacityFor(stadium);return stadium;
   }
+  /* Avrupa Ligi ve Dünya Kupası: stat kapasitesi takım reytingine göre */
+  function tourCapacity(r){const t=[[55,5000],[65,10000],[70,18000],[75,28000],[80,42000],[85,60000],[90,80000],[95,95000],[100,110000]];if(r<=t[0][0])return t[0][1];for(let i=1;i<t.length;i++){const a=t[i-1],b=t[i];if(r<=b[0])return Math.round((a[1]+(b[1]-a[1])*(r-a[0])/(b[0]-a[0]))/500)*500;}return t[t.length-1][1];}
   window.hsStadiumOf=function(team){
     try{
+      const r=Number(team&&team.tourRating)||0;
+      if(r){const sd=generated({teamName:team.teamName,averageOvr:r});sd.fixedCapacity=sd.capacity=tourCapacity(r);return sd;}
       if(team&&GLB&&GLB.user&&String(team.uid||'')===String(GLB.user.uid)){const mine=window.hsStadiumSnapshot();if(mine)return mine;}
       const s=team&&team.stadium;
       if(s&&typeof s==='object'&&s.up){const copy=Object.assign({},s,{name:clean(s.name)||clean(((team&&team.teamName)||'Takım')+' Stadı'),capacityLevel:expansionLevel(s.capacityLevel)});copy.capacity=capacityFor(copy);return copy;}
@@ -19512,7 +19558,9 @@ return `<h3 style="margin-top:0">🌍 Avrupa Kupaları · Sezon ${cur.season}</h
   };
   window.hsCardStats=function(p){
     const lo=p&&p.loanedOut;
-    let h='<small class="hs-card-stats" style="display:block;font-weight:800">⚽ '+n(p.goals)+' · 🅰️ '+n(p.assists)+' · ⭐ '+n(p.mvpAwards)+'</small>';
+    const apps=Math.max(n(p.appearances),n(p.careerStats&&p.careerStats.appearances));
+    let h='<small class="hs-apps" data-apps="'+apps+'"></small>';
+    h+='<small class="hs-card-stats" style="display:block;font-weight:800">⚽ '+n(p.goals)+' · 🅰️ '+n(p.assists)+' · ⭐ '+n(p.mvpAwards)+'</small>';
     if(lo)h+='<small class="hs-card-stats" style="display:block;color:#4c1d95;font-weight:800">✈️ Kiralıkta: ⚽ '+n(lo.goals)+' · 🅰️ '+n(lo.assists)+' · ⭐ '+n(lo.mvp)+'</small>';
     return h;
   };
@@ -20138,7 +20186,9 @@ window.hs20Incident=function(m,atk,def,minute,now,ai){
     if(rf.type==='soft')T=Math.max(1,Math.min(3,T));
     const mins=n=>Array.from({length:n},()=>4+Math.floor(rng()*85)).sort((x,y)=>x-y);
     const nr=(rng()<pRed*Math.min(1.4,tf)*f?1:0)+(rf.type==='strict'&&rng()<.08?1:0);
-    plan={y:mins(T),r:mins(nr)};window.__hsDiscPlan[ck]=plan;
+    let ny=T,nred=nr;const tn=Number(m.tension)||0;
+    if(tn){const sm=rf.type==='soft'?.6:rf.type==='strict'?1.25:1;ny=Math.round(T*(.6+tn/70)*sm+(tn>=75?sm:0));if(rng()<Math.max(0,tn-45)/130*sm)nred++;}
+    plan={y:mins(ny),r:mins(nred)};window.__hsDiscPlan[ck]=plan;
   }
   const mnow=Number(minute)||0;
   const pr=(plan.r.length&&mnow>=plan.r[0])?1:0,py=(!pr&&plan.y.length&&mnow>=plan.y[0])?1:0;
@@ -20155,7 +20205,7 @@ window.hs20Incident=function(m,atk,def,minute,now,ai){
   if(!type)return null;
   if(pr&&type==='red'&&!fromYellow)plan.r.shift();else if(py&&(type==='yellow'||fromYellow))plan.y.shift();
   const name=String(pl.name||'Oyuncu'),pid=String(pl.id||''),k=(def.players||[]).find(p=>p.pos==='GK')||{};
-  const foul=FOULS[Math.floor(R()*FOULS.length)];
+  const foul=(Number(m.tension)||0)>50&&R()<(m.tension-40)/100?['kavgaya karışma','rakiple itişme','tansiyonu yükselten sert faul','toplu tartışma'][Math.floor(R()*4)]:FOULS[Math.floor(R()*FOULS.length)];
   let text,note;
   if(type==='red'){
     pl.sentOff=true;
@@ -21709,6 +21759,87 @@ window.addEventListener('resize',hh);setInterval(hh,1500);hh();
 function run(){if(document.body)clean(document.body)}
 if(document.body){run();try{new MutationObserver(function(){run()}).observe(document.body,{childList:true,subtree:true,characterData:true})}catch(e){}}else document.addEventListener('DOMContentLoaded',function(){run();try{new MutationObserver(function(){run()}).observe(document.body,{childList:true,subtree:true,characterData:true})}catch(e){}})})();
 var g=window.go;if(typeof g==='function'){window.go=function(i){var r=g.apply(this,arguments);document.body.setAttribute('data-hs-tab',String(Number(i)));hh();return r}}
+})();
+</script>
+
+
+
+<style id="hs-mm-style">
+.hs-mm{--mm-bg:#10231f;--mm-line:#24413a;--mm-text:#f2f7f5;--mm-sub:#a4bdb5;--mm-go:#35d07f}
+.hs-mm .hs-mm-empty{display:none!important}
+.hs-mm>section,.hs-mm>article,.hs-mm>div[class*="card"],.hs-mm>div[class*="launch"]{background:var(--mm-bg)!important;border:1px solid var(--mm-line)!important;border-radius:16px!important;box-shadow:none!important;padding:18px 16px!important;margin:0 0 12px!important;color:var(--mm-text)!important}
+.hs-mm>.hs30-match-hero{background:transparent!important;border:0!important;border-bottom:2px solid var(--mm-go)!important;border-radius:0!important;padding:8px 2px 16px!important}
+.hs-mm>.hs30-match-hero:before,.hs-mm>.hs30-match-hero:after,.hs-mm>section:before,.hs-mm>section:after{display:none!important}
+.hs-mm h1,.hs-mm h2,.hs-mm h3{color:var(--mm-text)!important;letter-spacing:-.01em!important;text-shadow:none!important;margin-top:2px!important}
+.hs-mm p{color:var(--mm-sub)!important;line-height:1.5!important}
+.hs-mm small{letter-spacing:0!important;text-transform:none!important}
+.hs-mm button{min-height:46px!important;border-radius:10px!important;box-shadow:none!important;background:transparent!important;border:1px solid #3b5f55!important;color:var(--mm-text)!important;font-weight:700!important}
+.hs-mm button:first-of-type:not(:disabled){background:var(--mm-go)!important;border-color:var(--mm-go)!important;color:#062416!important}
+.hs-mm button:disabled{opacity:.4!important}
+.hs-mm button:focus-visible{outline:3px solid #fff!important;outline-offset:2px}
+</style>
+<script id="hs-mm-script">
+(function(){
+  var re=/[\p{Extended_Pictographic}\p{Regional_Indicator}\u{FE0F}\u{200D}\u{20E3}\u{1F3FB}-\u{1F3FF}]/gu,queued=false;
+  function clean(root){
+    var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),n,list=[];
+    while((n=w.nextNode()))list.push(n);
+    list.forEach(function(t){
+      var v=t.nodeValue,x=v.replace(re,'');if(x===v)return;
+      t.nodeValue=x.replace(/^\s+(?=\S)/,'');
+      var el=t.parentElement;if(el&&el!==root&&!el.textContent.trim()&&!el.querySelector('img,svg,input,select'))el.classList.add('hs-mm-empty');
+    });
+  }
+  function run(){queued=false;document.querySelectorAll('.hs30-match-hero').forEach(function(h){var r=h.parentElement;if(!r||r===document.body)return;r.classList.add('hs-mm');clean(r);});}
+  new MutationObserver(function(){if(!queued){queued=true;requestAnimationFrame(run);}}).observe(document.body,{childList:true,subtree:true,characterData:true});
+  run();
+})();
+</script>
+
+<style id="hs-pc-style">
+.hs-pc{min-height:0!important;padding:10px!important;gap:5px!important;border-radius:14px!important;box-shadow:none!important}
+.hs-pc:before,.hs-pc:after{display:none!important}
+.hs-pc>.hs-pc-more{display:none!important}
+.hs-pc .hs18-player-face{transform:scale(.82);margin:-8px auto!important}
+.hs-pc-info{display:block;text-align:center;font-size:12px;font-weight:700}
+.hs-pc-loan{display:block;text-align:center;font-size:11px;font-weight:800;background:#ede9fe;color:#4c1d95!important;text-shadow:none!important;border-radius:8px;padding:5px}
+.hs-pc-btn{width:100%;min-height:40px;border-radius:9px!important;border:1px solid currentColor!important;background:rgba(0,0,0,.18)!important;color:inherit!important;font-weight:800}
+#hs-pc-modal{position:fixed;inset:0;z-index:14000;background:#000a;display:flex;align-items:flex-end;justify-content:center}
+#hs-pc-modal>div{width:min(480px,100%);max-height:82vh;overflow:auto;background:#fff;color:#12261d;border-radius:18px 18px 0 0;padding:16px 16px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:9px}
+#hs-pc-modal>div>*:not(button){color:#12261d!important;text-shadow:none!important}
+</style>
+<script id="hs-pc-script">
+(function(){
+  var queued=false;
+  function open(tile){
+    var old=document.getElementById('hs-pc-modal');if(old)old.remove();
+    var m=document.createElement('div'),box=document.createElement('div');m.id='hs-pc-modal';m.setAttribute('role','dialog');
+    var name=tile.querySelector('.hs18-player-name'),h=document.createElement('h3');h.textContent=name?name.textContent:'Oyuncu';box.appendChild(h);
+    var total=document.createElement('b');total.textContent=tile.querySelector('.hs-pc-info').textContent;box.appendChild(total);
+    Array.prototype.forEach.call(tile.children,function(c){if(c.classList.contains('hs-pc-more')){var x=c.cloneNode(true);x.classList.remove('hs-pc-more');box.appendChild(x);}});
+    var close=document.createElement('button');close.type='button';close.textContent='Kapat';close.style.cssText='min-height:44px;border-radius:10px;background:#12261d;color:#fff;font-weight:800';box.appendChild(close);
+    m.appendChild(box);document.body.appendChild(m);
+    m.addEventListener('click',function(e){if(e.target===m||e.target.closest('button'))setTimeout(function(){m.remove()},0);});
+  }
+  function run(){
+    queued=false;
+    document.querySelectorAll('.hs18-modern-player-card:not(.hs-pc)').forEach(function(t){
+      if(!t.querySelector('.hs18-player-name'))return;
+      var wrap=t.closest('.hs17x-card-wrap'),loan=wrap&&wrap.classList.contains('hs18-is-loaned');
+      var a=t.querySelector('.hs-apps'),apps=a?Number(a.getAttribute('data-apps'))||0:0;
+      var ls=t.querySelector('.hs18-loan-status'),mm=ls&&ls.textContent.match(/(\d+)\s*\/\s*\d+/);
+      if(loan&&mm)apps=Math.max(apps,Number(mm[1]));
+      Array.prototype.forEach.call(t.children,function(c){if(!c.matches('.hs18-player-card-top,.hs18-player-face,.hs18-player-name'))c.classList.add('hs-pc-more');});
+      t.classList.add('hs-pc');
+      function add(tag,cls,text){var e=document.createElement(tag);e.className=cls;e.textContent=text;t.appendChild(e);return e;}
+      add('span','hs-pc-info','Toplam maç: '+apps);
+      if(loan)add('span','hs-pc-loan','Kiralık');
+      var b=add('button','hs-pc-btn','Detaylar');b.type='button';
+      b.addEventListener('click',function(e){e.stopPropagation();open(t);});
+    });
+  }
+  new MutationObserver(function(){if(!queued){queued=true;requestAnimationFrame(run);}}).observe(document.body,{childList:true,subtree:true});
+  run();
 })();
 </script>
 </body>
