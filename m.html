@@ -25093,6 +25093,7 @@ function outcomeOf(e){
 function setPiece(sc){
   var S=sim,side=sc.side,dir=dirOf(side),gx=side===0?100:0,k=String((sc.ev||{}).kind||'').toLowerCase(),r=Math.random();
   var style=k==='penalty'?'pen':k==='freekick'?'fk':k==='corner'?'corner':r<.12?'pen':r<.30?'fk':r<.52?'corner':r<.77?'cross':'open';
+  sc.setStyle=style;
   if(style==='open')return sc;
   var me=sc.shooter,mates=S.players.filter(function(p){return p.side===side&&!p.gk&&p!==me});
   var taker=(sc.helper&&sc.helper!==me)?sc.helper:mates[mates.length-1];
@@ -25487,8 +25488,52 @@ function settle(dt){
   movePlayers(dt);moveBall(dt);
 }
 
+/* Yayın geçişi: sahne değişirken ekran kararır, dizilişi görünmeden kurar (kayma yok) */
+function startCut(title,place){
+  var S=sim;if(!S.layer){place();return}
+  var el=document.createElement('div');
+  el.style.cssText='position:absolute;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;text-align:center;padding:12px;background:#06140f;color:#fff;font:900 17px/1.4 system-ui;opacity:0;pointer-events:none;white-space:pre-line;transition:opacity '+(RM?0:.18)+'s';
+  el.textContent=title;S.layer.appendChild(el);
+  requestAnimationFrame(function(){el.style.opacity='1'});
+  S.cut={t:0,el:el,place:place,done:false};
+}
+function placeAt(p,x,y){p.x=clamp(x,1.5,98.5);p.y=clamp(y,4,96);p.vx=0;p.vy=0}
+function cutToScene(sc){
+  var S=sim,side=sc.side,dir=dirOf(side),gx=side===0?100:0;
+  var corner=!sc.shooter,set=!corner&&sc.setStyle&&sc.setStyle!=='open';
+  if(!corner&&!set&&Math.abs(S.ball.x-gx)<=55)return;
+  var team=S.m&&S.m.participants&&S.m.participants[side]&&S.m.participants[side].teamName||'';
+  var title=corner?'KORNER':({pen:'PENALTI',fk:'FRİKİK',corner:'KORNER',cross:'KANAT ATAĞI'}[sc.setStyle]||'TEHLİKELİ ATAK');
+  startCut(title+(team?'\n'+team:''),function(){
+    var open=!corner&&!set;
+    S.players.forEach(function(p){
+      var t=sc.aim(p)||{x:p.gk?(p.side===0?3.5:96.5):p.bx,y:p.gk?50:p.by};
+      var back=open&&!p.gk?dir*9:0;
+      placeAt(p,t.x-back,t.y);
+    });
+    var who=sc.taker||(open?(sc.helper||sc.shooter):null);
+    if(sc.setStyle==='cross')who=S.ball.owner;
+    if(who&&S.ball.mode!=='dead'){giveBall(who);S.ball.x=who.x;S.ball.y=who.y}
+    S.ball.z=0;
+  });
+}
+function kickoffCut(){
+  var S=sim;
+  startCut('SANTRA',function(){
+    S.players.forEach(function(p){placeAt(p,p.bx,p.by)});
+    var k=nearest(S.poss,{x:50,y:50},true);S.ball.x=50;S.ball.y=50;S.ball.z=0;if(k)giveBall(k);
+    S.resetT=.5;
+  });
+}
+function runCut(dt){
+  var S=sim,c=S.cut;c.t+=dt;
+  if(!c.done&&c.t>=(RM?.05:.55)){c.done=true;try{c.place()}catch(e){console.warn('Geçiş:',e)}c.el.style.opacity='0'}
+  if(c.t>=(RM?.1:.8)){c.el.remove();S.cut=null}
+}
+
 function step(dt,m){
   var S=sim;S.time+=dt;S.m=m;
+  if(S.cut){if(m.status==='complete'||m.result){S.cut.el.remove();S.cut=null}else{runCut(dt);return}}
   if(S.resetT>0)S.resetT=Math.max(0,S.resetT-dt);
   S.mom=Math.max(0,S.mom-dt*2.5);
   var done=m.status==='complete'||!!m.result,froze=!!(m.halftime||m.substitutionPause);
@@ -25504,11 +25549,12 @@ function step(dt,m){
     S.script=null;
     var guard=0;
     while(!S.script&&S.queue.length&&guard++<4)startScript(S.queue.shift());
+    if(S.script&&S.script.aim&&S.script.taker!==undefined||S.script&&S.script.shooter){cutToScene(S.script);if(S.cut)return;}
   }
   if(S.script){
     var fin=false;
     try{fin=S.script.step(dt)}catch(e){fin=true;console.warn('Maç animasyonu:',e)}
-    if(fin){try{S.script.finish&&S.script.finish()}catch(e){}S.script=null}
+    if(fin){var scored=S.script.phase==='celebrate';try{S.script.finish&&S.script.finish()}catch(e){}S.script=null;if(scored){kickoffCut();return}}
   }
   if(!S.script)stepFlow(dt);else S.fast=Math.max(0,S.fast-dt);
   movePlayers(dt);moveBall(dt);
