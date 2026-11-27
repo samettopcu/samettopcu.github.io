@@ -24924,7 +24924,7 @@ function flash(side){
 /* ---------- top eylemleri ---------- */
 function pass(from,to,dur,cb){
   var b=sim.ball;
-  b.mode='pass';b.owner=null;b.fx=b.x;b.fy=b.y;b.toP=to;b.t=0;
+  b.curve=0;b.mode='pass';b.owner=null;b.fx=b.x;b.fy=b.y;b.toP=to;b.t=0;
   var d=Math.hypot(to.x-b.x,to.y-b.y);
   b.dur=dur||clamp(d/62,.28,.85);b.arc=clamp(d*.05,.6,3.4);
   b.done=function(){b.owner=to;b.mode='carry';b.toP=null;sim.poss=to.side;if(cb)cb()};
@@ -24932,7 +24932,7 @@ function pass(from,to,dur,cb){
 }
 function shootAt(tx,ty,dur,cb){
   var b=sim.ball;
-  b.mode='shot';b.owner=null;b.fx=b.x;b.fy=b.y;b.toP=null;b.tx=tx;b.ty=ty;b.t=0;b.dur=dur;b.arc=1.6;b.done=cb;
+  b.curve=0;b.mode='shot';b.owner=null;b.fx=b.x;b.fy=b.y;b.toP=null;b.tx=tx;b.ty=ty;b.t=0;b.dur=dur;b.arc=1.6;b.done=cb;
   trail(b.x,b.y,tx,ty);
 }
 function giveBall(p){var b=sim.ball;b.owner=p;b.mode='carry';b.toP=null;b.done=null;sim.poss=p.side}
@@ -24958,7 +24958,66 @@ function outcomeOf(e){
   return(o==='goal'||o==='save'||o==='miss')?o:null;
 }
 
-function attackScript(q){
+/* Duran top ve orta animasyonları (yalnız görsel; sonucu maç motoru belirler) */
+function setPiece(sc){
+  var S=sim,side=sc.side,dir=dirOf(side),gx=side===0?100:0,k=String((sc.ev||{}).kind||'').toLowerCase(),r=Math.random();
+  var style=k==='penalty'?'pen':k==='freekick'?'fk':k==='corner'?'corner':r<.12?'pen':r<.30?'fk':r<.52?'corner':r<.77?'cross':'open';
+  if(style==='open')return sc;
+  var me=sc.shooter,mates=S.players.filter(function(p){return p.side===side&&!p.gk&&p!==me});
+  var taker=(sc.helper&&sc.helper!==me)?sc.helper:mates[mates.length-1];
+  if(!taker&&(style==='corner'||style==='cross'))return sc;
+  var top=Math.random()<.5,dead=style!=='cross';
+  var spot=style==='pen'?{x:gx-dir*12,y:50}:style==='fk'?{x:gx-dir*27,y:top?36:64}:style==='corner'?{x:gx-dir*1.5,y:top?4:96}:{x:gx-dir*15,y:top?9:91};
+  var head={x:gx-dir*9,y:top?55:45},t=0,phase='set',baseStep=sc.step,baseAim=sc.aim,baseArrive=sc.arrive;
+  banner({pen:'PENALTI!',fk:'FRİKİK',corner:'KORNER',cross:'KANAT ATAĞI'}[style],'whistle');
+  if(dead){S.ball.owner=null;S.ball.toP=null;S.ball.done=null;S.ball.mode='dead';}else giveBall(taker);
+  sc.aim=function(p){
+    if(phase==='done')return baseAim(p);
+    var air=style==='corner'||style==='cross';
+    if(p.gk)return p.side===side?null:{x:gx-dir*2,y:50,sp:30};
+    if(air){
+      if(p===taker)return{x:spot.x,y:spot.y,sp:42};
+      if(p===me)return phase==='set'?{x:gx-dir*18,y:head.y,sp:40}:{x:head.x,y:head.y,sp:38};
+    }else{
+      if(p===me)return phase==='set'?{x:spot.x-dir*6,y:spot.y+3,sp:42}:{x:spot.x,y:spot.y,sp:30};
+    }
+    var list=S.players.filter(function(z){return z.side===p.side&&!z.gk&&z!==me&&(!air||z!==taker)}),i=list.indexOf(p);
+    if(style==='pen')return{x:gx-dir*(24+(p.side===side?0:4)),y:24+i*17+(p.side===side?0:8),sp:36};
+    if(style==='fk'&&p.side!==side)return{x:gx-dir*19,y:(spot.y+50)/2-6+i*4,sp:38};
+    return{x:gx-dir*(p.side===side?8+i*3:5+i*2.5),y:37+i*8+(p.side===side?4:0),sp:34};
+  };
+  sc.step=function(dt){
+    if(phase==='done')return baseStep(dt);
+    t+=dt;var b=S.ball;
+    if(dead&&(phase==='set'||phase==='run')){b.x=spot.x;b.y=spot.y;b.z=0;}
+    if(phase==='set'&&t>(style==='cross'?1:1.5)&&(sc.outcome||t>5)){
+      if(t>5&&!sc.outcome)return true;
+      t=0;
+      if(style==='pen'||style==='fk')phase='run';
+      else{phase='air';b.x=taker.x;b.y=taker.y;pass(taker,me,.8);b.arc=6;banner('ORTA!','whistle');}
+      return false;
+    }
+    var kick=phase==='run'&&(dist(me,spot)<2.5||t>.9),volley=phase==='air'&&b.mode==='carry'&&b.owner===me;
+    if(kick||volley){
+      phase='done';sc.phase='shoot';
+      if(kick){b.owner=me;b.mode='carry';}
+      var res=baseStep(0);
+      if(style==='fk'){b.arc=4.5;b.curve=top?9:-9;}
+      if(volley){b.arc=2.4;banner('KAFA VURUŞU!','whistle');}
+      return res;
+    }
+    return false;
+  };
+  sc.arrive=function(o){
+    baseArrive(o);S.ball.curve=0;
+    if(o==='goal')banner({pen:'PENALTI GOLÜ!',fk:'FRİKİK GOLÜ!',corner:'KORNERDEN KAFA GOLÜ!',cross:'ORTA, KAFA, GOL!'}[style],'goal');
+  };
+  return sc;
+}
+
+function attackScript(q){var sc=openPlayScript(q);return sc?setPiece(sc):sc}
+
+function openPlayScript(q){
   var S=sim,side=q.side,dir=dirOf(side),gx=side===0?100:0,ev=q.ev||{};
   var shooter=find(side,ev.attacker&&ev.attacker.id);
   if(!shooter){
@@ -25281,7 +25340,7 @@ function moveBall(dt){
     b.t+=dt;
     var e=Math.min(1,b.t/b.dur),te=b.mode==='shot'?e:((e<.5?2*e*e:1-Math.pow(-2*e+2,2)/2)*.35+e*.65);
     var tx2=b.toP?b.toP.x:b.tx,ty2=b.toP?b.toP.y:b.ty;
-    b.x=b.fx+(tx2-b.fx)*te;b.y=b.fy+(ty2-b.fy)*te;b.z=b.arc*Math.sin(Math.PI*e);
+    b.x=b.fx+(tx2-b.fx)*te;b.y=b.fy+(ty2-b.fy)*te+(b.mode==='shot'&&b.curve?b.curve*Math.sin(Math.PI*e):0);b.z=b.arc*Math.sin(Math.PI*e);
     if(e>=1){var cb=b.done;b.done=null;if(cb)cb()}
   }else if(b.mode==='loose'){
     b.x=clamp(b.x+b.vx*dt,1,99);b.y=clamp(b.y+b.vy*dt,2,98);
