@@ -11345,6 +11345,7 @@ async function refreshQueueAndRoom(){if(!GLB.user)return;try{const F=await fb(),
       if(stage==='final'){
         ulEnd(uc,mine?.winnerId==='UL_USER'?'champion':'runnerUp',uc.myRank);return;
       }
+      if(['playoff','roundOf16','quarterFinal'].includes(stage)&&mine&&mine.winnerId!=='UL_USER'){ulEnd(uc,stage+'Exit',uc.myRank);return;}
       if(stage==='playoff'){ulBuildRound16(uc);return;}
       const next={roundOf16:'quarterFinal',quarterFinal:'semiFinal'}[stage];
       if(stage==='semiFinal'){
@@ -11382,6 +11383,7 @@ async function refreshQueueAndRoom(){if(!GLB.user)return;try{const F=await fb(),
       const hs=Number(m.homeScore)||0,as=Number(m.awayScore)||0,my=idx===0?hs:as,opp=idx===0?as:hs;
       let pens=null;if(f.stage!=='league'&&hs===as){try{pens=hs30DraftShootout(m);}catch(e){}}
       ulSettle(uc,f,hs,as,pens);f.simulated=false;m.euroLeagueApplied=true;
+      if(f.stage!=='league'){const flip=idx===1,sh=hs===as?f.shootout:null;uc.lastKO={stage:f.stage,opponent:uc.teams[f.homeId==='UL_USER'?f.awayId:f.homeId]?.club?.name||'Rakip',my,opp,won:f.winnerId==='UL_USER',pens:sh?[flip?sh.awayScore:sh.homeScore,flip?sh.homeScore:sh.awayScore]:null,kicks:(sh?.kicks||[]).map(k=>({me:k.side===(flip?1:0),name:k.shooter,goal:k.outcome==='goal'}))};}
       const won=my>opp,draw=my===opp,matchBonus=won?(uc.stage==='league'?2500:5000):(draw&&uc.stage==='league'?750:0);
       if(matchBonus){S.para=(Number(S.para)||0)+matchBonus;try{save();if(typeof hud==='function')hud();}catch(e){}uc.cashRewards=(Number(uc.cashRewards)||0)+matchBonus;}
       uc.history.push({stage:uc.stage,fixtureId:f.id,opponent:uc.teams[f.homeId==='UL_USER'?f.awayId:f.homeId]?.club?.name||'Rakip',score:`${my}-${opp}`,result:won?'win':draw?'draw':'loss',cash:matchBonus,at:Date.now()});
@@ -11391,7 +11393,7 @@ async function refreshQueueAndRoom(){if(!GLB.user)return;try{const F=await fb(),
         if(uc.fixtures.filter(x=>ulIsMine(x)).every(x=>x.played))ulFinishLeague(uc);
       }else if((uc.knockout[uc.stage]||[]).every(x=>x.played))ulAdvance(uc);
       let bands=[];if(uc.status==='complete'){if(uc.result==='champion')bands=[[100,106]];else if(uc.result==='runnerUp')bands=[[95,99]];else if(uc.result==='third')bands=[[85,95]];}
-      if(bands.length&&!uc.placementCardsAwarded){uc.placementCardsAwarded=true;try{const cards=await ulAwardCards(uc,bands);if(cards.length)toast('🏆 Derece ödülü: '+cards.map(x=>x.name+' · '+x.ovr).join(', '));}catch(e){console.warn('Avrupa Ligi derece kartı verilemedi:',e);}}
+      if(bands.length&&!uc.placementCardsAwarded){uc.placementCardsAwarded=true;try{const cards=await ulAwardCards(uc,bands);uc.rewardCards=cards.map(x=>x.name+' · '+x.ovr+' OVR');if(cards.length)toast('🏆 Derece ödülü: '+cards.map(x=>x.name+' · '+x.ovr).join(', '));}catch(e){console.warn('Avrupa Ligi derece kartı verilemedi:',e);}}
       ulSave(uc);setTimeout(()=>{try{ulRender();}catch(e){}},180);
     }
     const ulBaseComplete=hs19CompleteLocal;
@@ -11426,11 +11428,11 @@ async function refreshQueueAndRoom(){if(!GLB.user)return;try{const F=await fb(),
       const label=UL_STAGE[uc.stage]||'Turnuva',progress=uc.stage==='league'?`${done}/8 maç`:`${(uc.knockout[uc.stage]||[]).filter(f=>f.played).length}/${(uc.knockout[uc.stage]||[]).length} eşleşme`;
       const nextHTML=next?`<div class="hs30-wc-next"><small>SIRADAKİ MAÇ · ${ulEsc(label.toLocaleUpperCase('tr-TR'))}${uc.stage==='league'?` · ${done+1}. HAFTA`:''}</small><div>${ulTeamCard(uc.teams[next.homeId])}<b>VS</b>${ulTeamCard(uc.teams[next.awayId])}</div><button type="button" onclick="hsEuroLeaguePlayNext()">⚽ ${uc.stage==='league'?'Lig maçını oyna':'Eleme maçını oyna'}</button></div>`:`<div class="hs30-wc-next"><b>⏳ Tur sonuçları hesaplanıyor…</b></div>`;
       const ko=['playoff','roundOf16','quarterFinal','semiFinal','thirdPlace','final'].filter(s=>(uc.knockout[s]||[]).length);
-      return `<div class="hs30-wc-active"><div class="hs30-wc-topline"><span>${ulEsc(uc.club.flag)} ${ulEsc(uc.club.name)}</span><b>${ulEsc(label.toLocaleUpperCase('tr-TR'))}</b><em>${progress}</em></div><div class="hs30-wc-kpis"><div><b>36</b><small>KULÜP</small></div><div><b>${me?.rank||'—'}</b><small>LİG SIRASI</small></div><div><b>${me?.pts||0}</b><small>PUAN</small></div><div><b>${done}/8</b><small>LİG MAÇI</small></div></div>${nextHTML}${ulSquadHTML(uc)}${ko.map(s=>`<section class="hs30-wc-panel-block"><header><b>🏆 ${UL_STAGE[s]} eşleşmeleri</b><small>Tek maç · eşitlikte penaltı</small></header><div class="hs30-wc-fixtures">${uc.knockout[s].map(f=>ulFixtureLine(uc,f)).join('')}</div></section>`).join('')}<section class="hs30-wc-panel-block"><header><b>📊 Lig aşaması puan durumu</b><small>${me?`${me.rank}. sıradasın · ${me.pts} puan`:''}</small></header>${ulTableHTML(uc)}</section><section class="hs30-wc-panel-block"><header><b>📅 Maçlarım</b><small>8 hafta</small></header><div class="hs30-wc-fixtures">${mine.sort((a,b)=>a.round-b.round).map(f=>ulFixtureLine(uc,f)).join('')}</div></section></div>`;
+      return `<div class="hs30-wc-active"><div class="hs30-wc-topline"><span>${ulEsc(uc.club.flag)} ${ulEsc(uc.club.name)}</span><b>${ulEsc(label.toLocaleUpperCase('tr-TR'))}</b><em>${progress}</em></div><div class="hs30-wc-kpis"><div><b>36</b><small>KULÜP</small></div><div><b>${me?.rank||'—'}</b><small>LİG SIRASI</small></div><div><b>${me?.pts||0}</b><small>PUAN</small></div><div><b>${done}/8</b><small>LİG MAÇI</small></div></div>${nextHTML}${ulSquadHTML(uc)}${ko.map(s=>`<section class="hs30-wc-panel-block"><header><b>🏆 ${UL_STAGE[s]} eşleşmeleri</b><small>Tek maç · eşitlikte penaltı</small></header><div class="hs30-wc-fixtures">${uc.knockout[s].map(f=>ulFixtureLine(uc,f)).join('')}</div></section>`).join('')}<section class="hs30-wc-panel-block"><header><b>📊 Lig aşaması puan durumu</b><small>${me?`${me.rank}. sıradasın · ${me.pts} puan`:''}</small></header>${ulTableHTML(uc)}</section><section class="hs30-wc-panel-block"><header><b>📅 Maçlarım</b><small>8 hafta</small></header><div class="hs30-wc-fixtures">${mine.sort((a,b)=>a.round-b.round).map(f=>ulFixtureLine(uc,f)).join('')}</div></section><div class="hs30-wc-next"><button type="button" onclick="hsEuroLeagueQuit()">🚪 Turnuvadan çık, baştan başla</button></div></div>`;
     }
     function ulCompleteHTML(uc){
       const R={champion:['🏆','AVRUPA ŞAMPİYONUSUN!','Finali kazandın. 100–106 OVR arası özel kupa oyuncusu kartı kazandın.'],runnerUp:['🥈','FİNALİST OLDUN','95–99 OVR arası sarı özel finalist kartı kazandın.'],third:['🥉','ÜÇÜNCÜ OLDUN','85–95 OVR arası yeşil özel üçüncülük kartı kazandın.'],fourth:['⚽','DÖRDÜNCÜ OLDUN','Turnuvayı dördüncü sırada tamamladın.'],leagueExit:['⚽','LİG AŞAMASINDA ELENDİN',`Ligi ${uc.finalRank||uc.myRank}. sırada bitirdin; ilk 24'e giremedin.`],playoffExit:['⚽','PLAY-OFF\'TA ELENDİN',`Lig aşamasını ${uc.myRank}. bitirdin ama play-off'ta turu geçemedin.`],roundOf16Exit:['⚽','SON 16\'DA ELENDİN','Son 16 turunda yoluna veda ettin.'],quarterFinalExit:['⚽','ÇEYREK FİNALDE ELENDİN','Çeyrek finalde elendin.']}[uc.result]||['⚽','TURNUVA SONA ERDİ',''];
-      return `<div class="hs30-wc-complete"><div class="hs30-wc-world">${R[0]}</div><small>BÜYÜK AVRUPA LİGİ · SONUÇ</small><h2>${R[1]}</h2><p>${R[2]}</p><div class="hs30-wc-rules"><span>💰 Kazanılan maç bonusları eklendi</span><span>🎴 Derece kartı koleksiyona eklendi</span></div><button type="button" class="secondary" onclick="hsEuroLeagueNew()">🔄 Yeni Avrupa Ligi</button></div>`;
+      return `<div class="hs30-wc-complete"><div class="hs30-wc-world">${R[0]}</div><small>BÜYÜK AVRUPA LİGİ · SONUÇ</small><h2>${R[1]}</h2><p>${R[2]}</p><div class="hs30-wc-rules"><span>💰 Hesabına eklenen maç bonusu: ${(Number(uc.cashRewards)||0).toLocaleString('tr-TR')} ₺</span>${(uc.rewardCards||[]).map(x=>`<span>🎴 ${ulEsc(x)}</span>`).join('')}</div><button type="button" onclick="hsEuroLeagueNew()">🔄 Takım seç</button></div>`;
     }
     function ulSetupHTML(){
       const formations=Object.entries(team17FormationDefs).map(([k,d])=>`<option value="${ulEsc(k)}" ${k==='1-2-1'?'selected':''}>${ulEsc(d.label)} · ${ulEsc(d.desc)}</option>`).join('');
@@ -11438,14 +11440,29 @@ async function refreshQueueAndRoom(){if(!GLB.user)return;try{const F=await fb(),
       return `<div class="hs30-wc-setup"><div class="hs30-wc-world">🌍</div><small>BÜYÜK AVRUPA LİGİ · 36 KULÜP</small><h2>Avrupa Ligi'ne katıl</h2><p>36 kulüp tek ligde yarışır; herkes 8 maç oynar. İlk 8 doğrudan Son 16'ya, 9–24 arası play-off'a kalır, 25. ve sonrası elenir. Sonra Son 16, çeyrek final, yarı final ve final gelir.</p><label>Kulübünü seç<select id="hs-ucl-club"><option value="">Kulüp seç</option>${groups}</select></label><label>Takım dizilişi<select id="hs-ucl-formation">${formations}</select></label><div class="hs30-wc-rules"><span>36 KULÜP</span><span>8 MAÇ</span><span>PLAY-OFF</span><span>SON 16 → FİNAL</span></div><button type="button" onclick="hsEuroLeagueCreate()">🏆 Turnuvayı kur</button></div>`;
     }
     function ulEnsureOverlay(){let n=document.getElementById('hs-ucl-overlay');if(!n){n=document.createElement('div');n.id='hs-ucl-overlay';n.setAttribute('role','dialog');n.setAttribute('aria-modal','true');document.body.appendChild(n);}return n;}
+    function ulHeal(uc){
+      if(!uc||uc.status!=='active')return uc;
+      for(const s of ['playoff','roundOf16','quarterFinal']){const f=(uc.knockout[s]||[]).find(ulIsMine);if(f&&f.played&&f.winnerId!=='UL_USER'){uc.stage=s;ulEnd(uc,s+'Exit',uc.myRank);uc.currentFixtureId='';const home=f.homeId==='UL_USER',sh=f.homeScore===f.awayScore?f.shootout:null;uc.lastKO={stage:s,opponent:uc.teams[home?f.awayId:f.homeId]?.club?.name||'Rakip',my:home?f.homeScore:f.awayScore,opp:home?f.awayScore:f.homeScore,won:false,pens:sh?[home?sh.homeScore:sh.awayScore,home?sh.awayScore:sh.homeScore]:null};ulSave(uc);break;}}
+      return uc;
+    }
+    function ulLastHTML(uc){
+      const r=uc?.lastKO;if(!r)return '';
+      return `<div class="hs30-wc-next"><small>${ulEsc(String(UL_STAGE[r.stage]||'').toLocaleUpperCase('tr-TR'))} SONUCU · ${ulEsc(r.opponent)}</small><h2>${r.my} – ${r.opp}</h2>${r.pens?`<h3>🥅 Penaltılar: ${r.pens[0]} – ${r.pens[1]}</h3>`:''}${r.pens&&r.kicks?.length?`<p>${r.kicks.map(k=>`${k.me?'🟢 Sen':'🔴 Rakip'} · ${ulEsc(k.name)} ${k.goal?'⚽ gol':'❌ kaçtı'}`).join('<br>')}</p>`:''}<b>${r.won?'✅ Maçı kazandın':r.stage==='semiFinal'?'❌ Yarı finali kaybettin, üçüncülük maçı oynayacaksın':'❌ Maçı kaybettin'}</b></div>`;
+    }
     function ulRender(){
-      const uc=ulLoad(),n=ulEnsureOverlay(),body=!uc?ulSetupHTML():uc.status==='active'?ulActiveHTML(uc):ulCompleteHTML(uc);
-      n.innerHTML=`<div class="hs30-wc-backdrop" onclick="if(event.target===this)hsEuroLeagueClose()"><div class="hs30-wc-dialog"><button type="button" class="hs30-wc-close" onclick="hsEuroLeagueClose()" aria-label="Kapat">×</button><div class="hs30-wc-brand"><span>⭐</span><div><small>HALISAHA PATRONU · 6.1 BETA</small><b>BÜYÜK AVRUPA LİGİ</b></div></div>${body}</div></div>`;
+      const uc=ulHeal(ulLoad()),n=ulEnsureOverlay(),body=!uc?ulSetupHTML():uc.status==='active'?ulActiveHTML(uc):ulCompleteHTML(uc);
+      n.innerHTML=`<div class="hs30-wc-backdrop" onclick="if(event.target===this)hsEuroLeagueClose()"><div class="hs30-wc-dialog"><button type="button" class="hs30-wc-close" onclick="hsEuroLeagueClose()" aria-label="Kapat">×</button><div class="hs30-wc-brand"><span>⭐</span><div><small>HALISAHA PATRONU · 6.1 BETA</small><b>BÜYÜK AVRUPA LİGİ</b></div></div>${ulLastHTML(uc)}${body}</div></div>`;
       document.body.classList.add('hs-ucl-open');
     }
     window.hsEuroLeagueOpen=function(){ulRender();};
     window.hsEuroLeagueClose=function(){const n=document.getElementById('hs-ucl-overlay');if(n)n.remove();document.body.classList.remove('hs-ucl-open');};
     window.hsEuroLeagueNew=function(){try{localStorage.removeItem(UL_KEY());}catch(e){}ulRender();};
+    window.hsEuroLeagueQuit=function(){
+      const uc=ulLoad();if(!uc)return;
+      if(hs19LocalMatch?.status==='playing'&&hs19LocalMatch.mode==='euro-league')return toast('Önce devam eden maçını tamamla.');
+      if(!confirm('Turnuva silinecek ve baştan takım seçeceksin. Kazandığın para ve kartlar sende kalır. Emin misin?'))return;
+      window.hsEuroLeagueNew();
+    };
     window.hsEuroLeagueCreate=async function(){
       const clubId=String(document.getElementById('hs-ucl-club')?.value||''),formation=String(document.getElementById('hs-ucl-formation')?.value||'1-2-1');
       if(!clubId)return toast('Önce yöneteceğin kulübü seç.');
