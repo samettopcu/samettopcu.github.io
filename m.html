@@ -11244,7 +11244,7 @@ async function refreshQueueAndRoom(){if(!GLB.user)return;try{const F=await fb(),
     }
     // Her kulüp: 6 kaleci, 6 defans, 6 orta saha, 6 forvet (24 oyuncu).
     // 2026-27 kadro isimleri (kaleci|defans|orta saha|forvet). OVR, isim Dünya Kupası listesinde varsa oradan alınır.
-    const UL_REAL={"c01":"Safonov,Chevalier|Hakimi,Marquinhos,Pacho,Nuno Mendes|Vitinha,João Neves,Fabián Ruiz,Zaïre-Emery|Ousmane Dembélé,Kvaratskhelia,Désiré Doué,Ferran Torres","c02":"Manuel Neuer,Jonas Urbig|Upamecano,Jonathan Tah,Alphonso Davies,Josip Stanišić|Joshua Kimmich,Jamal Musiala,Aleksandar Pavlović,Tom Bischof|Harry Kane,Michael Olise,Luis Díaz,Serge Gnabry","c03":"Thibaut Courtois,Andriy Lunin|Ibrahima Konaté,Dean Huijsen,Denzel Dumfries,Marc Cucurella|Jude Bellingham,Federico Valverde,Bernardo Silva,Aurélien Tchouaméni|Kylian Mbappé,Vinícius Júnior,Yan Diomande,Arda Güler","c04":"Alisson,Mamardashvili|Virgil van Dijk,Jérémie Frimpong,Milos Kerkez,Jérémy Jacquet|Florian Wirtz,Alexis Mac Allister,Dominik Szoboszlai,Ryan Gravenberch|Alexander Isak,Bradley Barcola,Cody Gakpo,Hugo Ekitike","c05":"Josep Martínez,Raffaele Di Gennaro|Alessandro Bastoni,Federico Dimarco,Yann Bisseck,Carlos Augusto|Nicolò Barella,Hakan Çalhanoğlu,Piotr Zieliński,Petar Sučić|Lautaro Martínez,Marcus Thuram,Ange-Yoan Bonny,Pio Esposito","c06":"Gianluigi Donnarumma,James Trafford|Rúben Dias,Joško Gvardiol,Marc Guéhi,Rayan Aït-Nouri|Enzo Fernández,Elliot Anderson,Ayyoub Bouaddi,Phil Foden|Erling Haaland,Jérémy Doku,Iliman Ndiaye,Rayan Cherki","c07":"David Raya,Kepa|William Saliba,Gabriel Magalhães,Jurriën Timber,Ezri Konsa|Declan Rice,Martin Ødegaard,Bruno Guimarães,Martín Zubimendi|Bukayo Saka,Viktor Gyökeres,Eberechi Eze,Kai Havertz","c08":"Joan García,Dominik Livaković|Pau Cubarsí,Jules Koundé,Alejandro Balde,João Cancelo|Pedri,Rodri,Frenkie de Jong,Gavi|Lamine Yamal,Raphinha,Anthony Gordon,Gabriel Jesus","c09":"Jan Oblak,Juan Musso|Robin Le Normand,Dávid Hancko,Marcos Llorente,José Giménez|Pablo Barrios,Álex Baena,Koke,Johnny Cardoso|Julián Álvarez,Alexander Sørloth,Giuliano Simeone,Thiago Almada","c10":"Gregor Kobel,Alexander Meyer|Nico Schlotterbeck,Waldemar Anton,Julian Ryerson,Ramy Bensebaini|Felix Nmecha,Jobe Bellingham,Marcel Sabitzer,Julian Brandt|Serhou Guirassy,Karim Adeyemi,Maximilian Beier,Fábio Silva","c11":"Mile Svilar,Pierluigi Gollini|Gianluca Mancini,Evan Ndicka,Angeliño,Wesley|Manu Koné,Bryan Cristante,Lorenzo Pellegrini,Niccolò Pisilli|Paulo Dybala,Matías Soulé,Donyell Malen,Artem Dovbyk","c12":"Rui Silva,João Virgínia|Gonçalo Inácio,Ousmane Diomande,Maxi Araújo,Eduardo Quaresma|Morten Hjulmand,Pedro Gonçalves,Hidemasa Morita,Daniel Bragança|Francisco Trincão,Luis Suárez,Geny Catamo,Geovany Quenda","c13":"Emiliano Martínez,Marco Bizot|Pau Torres,Matty Cash,Ian Maatsen,Tyrone Mings|John McGinn,Youri Tielemans,Boubacar Kamara,Amadou Onana|Ollie Watkins,Morgan Rogers,Leon Bailey,Emiliano Buendía","c14":"Diogo Costa,Cláudio Ramos|Jan Bednarek,Jakub Kiwior,Francisco Moura,Alberto Costa|Victor Froholdt,Alan Varela,Gabri Veiga,Rodrigo Mora|Samu Aghehowa,Pepê,Borja Sainz,William Gomes","c15":"Senne Lammens,Altay Bayındır|Matthijs de Ligt,Lisandro Martínez,Leny Yoro,Diogo Dalot|Bruno Fernandes,Carlos Baleba,Kobbie Mainoo,Manuel Ugarte|Matheus Cunha,Bryan Mbeumo,Benjamin Šeško,Amad Diallo","c17":"Álvaro Valles,Pau López|Marc Bartra,Diego Llorente,Héctor Bellerín,Natan|Isco,Pablo Fornals,Giovani Lo Celso,Sofyan Amrabat|Antony,Cucho Hernández,Abde Ezzalzouli,Cédric Bakambu","c18":"Matěj Kovář,Nick Olij|Mauro Júnior,Ryan Flamingo,Sergiño Dest,Yarek Gasiorowski|Joey Veerman,Jerdy Schouten,Ismael Saibari,Guus Til|Ivan Perišić,Ricardo Pepi,Ruben van Bommel,Alassane Pléa","c21":"Alex Meret,Vanja Milinković-Savić|Amir Rrahmani,Alessandro Buongiorno,Giovanni Di Lorenzo,Sam Beukema|Scott McTominay,Kevin De Bruyne,Stanislav Lobotka,Frank Anguissa|Rasmus Højlund,David Neres,Matteo Politano,Romelu Lukaku","c25":"Uğurcan Çakır,Günay Güvenç|Davinson Sánchez,Abdülkerim Bardakcı,Wilfried Singo,Ismail Jakobs|Lucas Torreira,Gabriel Sara,Mario Lemina,İlkay Gündoğan|Victor Osimhen,Barış Alper Yılmaz,Leroy Sané,Yunus Akgün","c26":"Ederson,Tarık Çetin|Milan Škriniar,Nélson Semedo,Jayden Oosterwolde,Çağlar Söyüncü|Marco Asensio,Edson Álvarez,İsmail Yüksek,Fred|Kerem Aktürkoğlu,Anderson Talisca,Youssef En-Nesyri,Dorgeles Nene"};
+    const UL_REAL={"c01":"Safono,Chevaliar|Hakimin,Marquinho,Pachon,Nuno Menden:86|Vitinhar:85,João Neven:82,Fabián Ruize,Zaïre-Emerey|Ousmane Dembélel,Kvaratskheliar,Désiré Doucet:86,Ferran Torren","c02":"Manuel Neuar,Jonas Urbige|Upamecanon,Jonathan Tahe,Alphonso Davien:86,Josip Stanišik:82|Joshua Kimmic,Jamal Musialar,Aleksandar Pavlovik,Tom Bischo|Harry Kanel,Michael Olivier:89,Luis Díaze:86,Serge Gnabrey","c03":"Thibaut Courtoi,Andriy Lunim|Ibrahima Konatéy:84,Dean Huijson,Denzel Dumfrien,Marc Cucurellar|Jude Bellingha,Federico Valverdel:89,Bernardo Silvar:88,Aurélien Tchouaménin|Kylian Mbappel,Vinícius Júnio:90,Yan Diomandel,Arda Güneş:81","c04":"Alissen,Mamardashvilin|Virgil van Dijke,Jérémie Frimpon,Milos Kerken,Jérémy Jacque|Florian Wirtze,Alexis Mac Allistar:87,Dominik Szoboszlain,Ryan Gravenberc|Alexander Isake:88,Bradley Barrot:84,Cody Gakpon,Hugo Ekitikeau:85","c05":"Josep Martínen,Raffaele Di Gennaron|Alessandro Bastonin,Federico Dimarcon,Yann Bissec,Carlos Auguston|Nicolò Barellar,Hakan Çalhan:86,Piotr Zielińskin:83,Petar Sučik|Lautaro Martínen:89,Marcus Thurand:85,Ange-Yoan Bonney,Pio Espositon","c06":"Gianluigi Donnarummar,James Traffor|Rúben Diase:88,Joško Gvardio:87,Marc Guéhin,Rayan Aït-Nourin|Enzo Fernánden:87,Elliot Andersen,Ayyoub Bouaddin,Phil Fodene|Erling Haalan,Jérémy Dokul:84,Iliman Ndiayel,Rayan Cherkin","c07":"David Rayar,Kepar|William Salibar,Gabriel Magalhãen,Jurriën Timbar,Ezri Konsar|Declan Ricel,Martin Ødegaar,Bruno Guimarãen:86,Martín Zubimendin|Bukayo Sakar,Viktor Gyökeren:87,Eberechi Ezel,Kai Havert","c08":"Joan Garcíar,Dominik Livakovik:82|Pau Cubars,Jules Koundier:86,Alejandro Baldel,João Cancelon:85|Pedrin,Rodrin,Frenkie de Jonge,Gavin|Lamine Yamale,Raphinhar,Anthony Gordan,Gabriel Jesuse","c09":"Jan Oblake,Juan Musson:78|Robin Le Norman,Dávid Hanckon,Marcos Llorentel,José María Giménez:84|Pablo Barrio,Álex Baenar,Kokel,Johnny Cardoson:79|Julián Álvaren:87,Alexander Sørlot,Giuliano Simeonel,Thiago Almadar","c10":"Gregor Kobele,Alexander Meyar|Nico Schlotterbec,Waldemar Antan,Julian Ryersen,Ramy Bensebainin|Felix Nmechar,Jobe Bellingha,Marcel Sabitzar,Julian Brand|Serhou Guirassey,Karim Adeyemin,Maximilian Beiar,Fábio Silvar","c11":"Mile Svila,Pierluigi Gollinin|Gianluca Mancinin,Evan Ndickar,Angeliñon,Wesleey|Manu Konel,Bryan Cristantel,Lorenzo Bellini:89,Niccolò Pisillin|Paulo Dybalar,Matías Soulel,Donyell Malene,Artem Dovby","c12":"Rui Silvar,João Virgíniar|Gonçalo Inácion:83,Ousmane Diomandel,Maximiliano Araújo:80,Eduardo Quaresmar|Morten Hjulman,Pedro Gonçalven,Hidemasa Moritar,Daniel Bragançar|Francisco Trincãon,Luis Suáren:82,Geny Catamon,Geovany Quendar","c13":"Emiliano Martínen,Marco Bizote|Pau Torren,Matty Cashe:79,Ian Maatson,Tyrone Mingse|John McGin:82,Youri Tieleman:85,Boubacar Kamarar,Amadou Onanar:83|Ollie Watkin,Morgan Roger,Leon Baileey,Emiliano Buendíar","c14":"Diogo Costar:85,Cláudio Ramose|Jan Bednare:78,Jakub Kiwio:80,Francisco Mourar,Alberto Costar|Victor Frohold,Alan Varelar,Gabri Veigar,Rodrigo Morar|Samu Aghehowar,Pepêe,Borja Sainze,William Gomen","c15":"Senne Lammen,Altay Bayındı|Matthijs de Ligte,Lisandro Martínen:85,Leny Yoron,Diogo Dalote:82|Bruno Fernanden:87,Carlos Balebar,Kobbie Mainoon,Manuel Ugartel:84|Matheus Cunhar,Bryan Mbeumon,Benjamin Šeškon,Amad Diallon","c17":"Álvaro Vallen,Pau Lópen|Marc Bartrar,Diego Llorentel,Héctor Bellerí,Naten|Iscon,Pablo Fornal,Giovani Lo Celson:82,Sofyan Amraba|Antoney,Cucho Hernánden,Abde Ezzalzoulin,Cédric Bakambul","c18":"Matěj Kováře,Nick Olije|Mauro Júnio,Ryan Flamingon,Sergiño Deste:79,Yarek Gasiorowskin|Joey Veermen,Jerdy Schoute,Ismael Saibarin,Guus Tile|Ivan Perišik:82,Ricardo Pepin:78,Ruben van Bomme,Alassane Pléar","c21":"Alexis Morel:89,Vanja Milinković-Savik|Amir Rrahmanin,Alessandro Buongiornon,Giovanni Di Lorenzon,Sam Beukemar|Scott McTominaey:83,Kevin De Bruynel:90,Stanislav Lobotkar,Frank Anguissar|Rasmus Højlun,David Neren,Matteo Politanon,Romelu Lukakul:85","c25":"Uğurcan Akın:80,Günay Güven|Davinson Sánchen:82,Abdülkerim Bardakc,Wilfried Singon,Ismail Jakob|Lucas Nogueira:76,Gabriel Sarar,Mario Leminar,İlkay Gündoğen|Victor Osimhe:88,Barış Alper Yılma,Leroy Sanel,Yunus Akgünay:78","c26":"Edersen,Tarık Çetim|Milan Škrinia,Nélson Semedon,Jayden Oosterwoldel,Çağlar Söyün:77|Marco Asension,Edson Álvaren:82,İsmail Yükse,Frede|Kerem Aktürkoğlul,Anderson Taliscar,Youssef En-Nesyrin,Dorgeles Nenel"};
     const ulKey=n=>String(n).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
     function ulApplyNames(club,list){
       const row=UL_REAL[club.id];if(!row)return list;
@@ -11252,7 +11252,7 @@ async function refreshQueueAndRoom(){if(!GLB.user)return;try{const F=await fb(),
       row.split('|').forEach((names,pi)=>{
         const same=list.filter(p=>p.pos===['GK','DEF','MID','ATT'][pi]),real=names.split(',');
         same.forEach((p,i)=>{
-          const name=real[i],ovr=name?(wcOvr.get(ulKey(name))||ulClamp(club.power+[3,1,-1,-3][i],55,99)):ulClamp(club.power-8-(i-real.length)*2,55,99),diff=ovr-p.ovr;
+          const part=String(real[i]||'').split(':'),name=part[0],ovr=name?(Number(part[1])||ulClamp(club.power+[3,1,-1,-3][i],55,99)):ulClamp(club.power-8-(i-real.length)*2,55,99),diff=ovr-p.ovr;
           if(name){p.name=name;p.avatarSeed=name;}
           ['ovr','potential','shoot','reflex','speed','passing','defending','finishing','dribbling','stamina'].forEach(k=>p[k]=ulClamp(p[k]+diff,30,110));
         });
@@ -19575,7 +19575,7 @@ return `<h3 style="margin-top:0">🌍 Avrupa Kupaları · Sezon ${cur.season}</h
   window.hsCardStats=function(p){
     const lo=p&&p.loanedOut;
     const apps=Math.max(n(p.appearances),n(p.careerStats&&p.careerStats.appearances));
-    let h='<small class="hs-apps" data-apps="'+apps+'"></small>';
+    let h='<small class="hs-apps" data-apps="'+apps+'" data-g="'+n(p.goals)+'" data-a="'+n(p.assists)+'" data-m="'+n(p.mvpAwards)+'"></small>';
     h+='<small class="hs-card-stats" style="display:block;font-weight:800">⚽ '+n(p.goals)+' · 🅰️ '+n(p.assists)+' · ⭐ '+n(p.mvpAwards)+'</small>';
     if(lo)h+='<small class="hs-card-stats" style="display:block;color:#4c1d95;font-weight:800">✈️ Kiralıkta: ⚽ '+n(lo.goals)+' · 🅰️ '+n(lo.assists)+' · ⭐ '+n(lo.mvp)+'</small>';
     return h;
@@ -21781,17 +21781,21 @@ var g=window.go;if(typeof g==='function'){window.go=function(i){var r=g.apply(th
 
 
 <style id="hs-mm-style">
-.hs-mm{--mm-bg:#10231f;--mm-line:#24413a;--mm-text:#f2f7f5;--mm-sub:#a4bdb5;--mm-go:#35d07f}
+.hs-mm{--a:#35d07f}
 .hs-mm .hs-mm-empty{display:none!important}
-.hs-mm>section,.hs-mm>article,.hs-mm>div[class*="card"],.hs-mm>div[class*="launch"]{background:var(--mm-bg)!important;border:1px solid var(--mm-line)!important;border-radius:16px!important;box-shadow:none!important;padding:18px 16px!important;margin:0 0 12px!important;color:var(--mm-text)!important}
-.hs-mm>.hs30-match-hero{background:transparent!important;border:0!important;border-bottom:2px solid var(--mm-go)!important;border-radius:0!important;padding:8px 2px 16px!important}
-.hs-mm>.hs30-match-hero:before,.hs-mm>.hs30-match-hero:after,.hs-mm>section:before,.hs-mm>section:after{display:none!important}
-.hs-mm h1,.hs-mm h2,.hs-mm h3{color:var(--mm-text)!important;letter-spacing:-.01em!important;text-shadow:none!important;margin-top:2px!important}
-.hs-mm p{color:var(--mm-sub)!important;line-height:1.5!important}
-.hs-mm small{letter-spacing:0!important;text-transform:none!important}
-.hs-mm button{min-height:46px!important;border-radius:10px!important;box-shadow:none!important;background:transparent!important;border:1px solid #3b5f55!important;color:var(--mm-text)!important;font-weight:700!important}
-.hs-mm button:first-of-type:not(:disabled){background:var(--mm-go)!important;border-color:var(--mm-go)!important;color:#062416!important}
-.hs-mm button:disabled{opacity:.4!important}
+.hs-mm>section,.hs-mm>article,.hs-mm>div[class*="card"],.hs-mm>div[class*="launch"]{position:relative;overflow:hidden;background:radial-gradient(120% 90% at 100% 0,color-mix(in srgb,var(--a) 30%,transparent),transparent 62%),linear-gradient(165deg,#13251f,#0b1714)!important;border:1px solid color-mix(in srgb,var(--a) 35%,transparent)!important;border-radius:22px!important;padding:20px 18px!important;margin:0 0 14px!important;box-shadow:0 12px 26px -14px #000!important;color:#f4faf7!important}
+.hs-mm>section:nth-of-type(5n+2){--a:#ffbf47}.hs-mm>section:nth-of-type(5n+3){--a:#8f7bff}.hs-mm>section:nth-of-type(5n+4){--a:#39c4ff}.hs-mm>section:nth-of-type(5n){--a:#ff6b7a}
+.hs-mm>.hs-ucl-launch{--a:#8f7bff}.hs-mm>.hs30-wc-launch:not(.hs-ucl-launch){--a:#ffbf47}
+.hs-mm>section:after{content:''!important;display:block!important;position:absolute;right:-55px;top:-55px;width:150px;height:150px;border:2px solid var(--a);border-radius:50%;opacity:.18;pointer-events:none}
+.hs-mm>.hs30-match-hero{background:linear-gradient(90deg,transparent calc(50% - 1px),#ffffff30 50%,transparent calc(50% + 1px)),radial-gradient(circle at 50% 50%,transparent 52px,#ffffff30 53px,#ffffff30 55px,transparent 56px),repeating-linear-gradient(90deg,#17683f 0 44px,#1b7547 44px 88px)!important;text-align:center;padding:30px 16px!important;border:3px solid #ffffff40!important}
+.hs-mm>.hs30-match-hero *{text-shadow:0 2px 8px #000b;color:#fff!important}
+.hs-mm h1,.hs-mm h2,.hs-mm h3{color:#fff!important;font-weight:900!important;letter-spacing:-.02em!important;margin-top:2px!important}
+.hs-mm p{color:#b7cdc5!important;line-height:1.5!important}
+.hs-mm small{letter-spacing:.01em!important;text-transform:none!important}
+.hs-mm button{min-height:48px!important;border-radius:14px!important;background:#ffffff10!important;border:1px solid #ffffff22!important;color:#fff!important;font-weight:800!important;box-shadow:none!important;transition:transform .12s}
+.hs-mm button:first-of-type:not(:disabled){background:var(--a)!important;border-color:var(--a)!important;color:#07130f!important;box-shadow:0 8px 20px -8px var(--a)!important}
+.hs-mm button:active{transform:scale(.97)}
+.hs-mm button:disabled{opacity:.35!important}
 .hs-mm button:focus-visible{outline:3px solid #fff!important;outline-offset:2px}
 </style>
 <script id="hs-mm-script">
@@ -21820,21 +21824,49 @@ var g=window.go;if(typeof g==='function'){window.go=function(i){var r=g.apply(th
 .hs-pc-info{display:block;text-align:center;font-size:12px;font-weight:700}
 .hs-pc-loan{display:block;text-align:center;font-size:11px;font-weight:800;background:#ede9fe;color:#4c1d95!important;text-shadow:none!important;border-radius:8px;padding:5px}
 .hs-pc-btn{width:100%;min-height:40px;border-radius:9px!important;border:1px solid currentColor!important;background:rgba(0,0,0,.18)!important;color:inherit!important;font-weight:800}
-#hs-pc-modal{position:fixed;inset:0;z-index:14000;background:#000a;display:flex;align-items:flex-end;justify-content:center}
-#hs-pc-modal>div{width:min(480px,100%);max-height:82vh;overflow:auto;background:#fff;color:#12261d;border-radius:18px 18px 0 0;padding:16px 16px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:9px}
-#hs-pc-modal>div>*:not(button){color:#12261d!important;text-shadow:none!important}
+#hs-pc-modal{position:fixed;inset:0;z-index:14000;background:#020a08cc;display:flex;align-items:flex-end;justify-content:center;color:#f4faf7}
+.pd{width:min(480px,100%);max-height:88vh;overflow:auto;background:#0e1d19;border-radius:26px 26px 0 0;padding:0 0 calc(18px + env(safe-area-inset-bottom,0px))}
+.pd header{display:flex;align-items:center;gap:14px;padding:22px 18px;background:radial-gradient(120% 140% at 0 0,#2d8a62,transparent 65%),#132b24}
+.pd-face{width:84px;height:84px;flex:0 0 84px;border-radius:20px;overflow:hidden;display:grid;place-items:center;background:#ffffff14}
+.pd-face>*{transform:scale(.8)}
+.pd h3{margin:0;font-size:21px;color:#fff}.pd header small{color:#bfdbd0}
+.pd-ovr{margin-left:auto;background:#ffd66b;color:#2a1c00;border-radius:14px;padding:8px 12px;font-size:28px;font-weight:900}
+.pd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:14px}
+.pd-grid div{background:#ffffff0d;border-radius:14px;padding:11px 4px;text-align:center}
+.pd-grid b{display:block;font-size:22px;color:#fff}.pd-grid span{font-size:11px;color:#8fb3a5}
+.pd-sec{margin:0 14px 10px;padding:13px;border-radius:16px;background:#ffffff0d;font-size:13px;line-height:1.7}
+.pd-sec h4{margin:0 0 6px;font-size:14px;color:#c9b8ff}
+.pd-bar{height:8px;border-radius:9px;background:#ffffff1c;overflow:hidden}.pd-bar i{display:block;height:100%;background:#9b82ff}
+.pd button{display:block;width:calc(100% - 28px);margin:8px 14px 0;min-height:46px;border-radius:13px;border:1px solid #ffffff2b;background:#ffffff12;color:#fff;font-weight:800}
+.pd button.pd-close{background:#35d07f;color:#06170f}
 </style>
 <script id="hs-pc-script">
 (function(){
   var queued=false;
   function open(tile){
     var old=document.getElementById('hs-pc-modal');if(old)old.remove();
-    var m=document.createElement('div'),box=document.createElement('div');m.id='hs-pc-modal';m.setAttribute('role','dialog');
-    var name=tile.querySelector('.hs18-player-name'),h=document.createElement('h3');h.textContent=name?name.textContent:'Oyuncu';box.appendChild(h);
-    var total=document.createElement('b');total.textContent=tile.querySelector('.hs-pc-info').textContent;box.appendChild(total);
-    Array.prototype.forEach.call(tile.children,function(c){if(c.classList.contains('hs-pc-more')){var x=c.cloneNode(true);x.classList.remove('hs-pc-more');box.appendChild(x);}});
-    var close=document.createElement('button');close.type='button';close.textContent='Kapat';close.style.cssText='min-height:44px;border-radius:10px;background:#12261d;color:#fff;font-weight:800';box.appendChild(close);
-    m.appendChild(box);document.body.appendChild(m);
+    var q=function(c){return tile.querySelector(c)},txt=function(c){var e=q(c);return e?e.textContent.trim():''};
+    var strip=function(v){return String(v||'').replace(/[\p{Extended_Pictographic}\u{FE0F}]/gu,'').trim()};
+    function el(tag,cls,text,parent){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;if(parent)parent.appendChild(e);return e;}
+    var m=el('div'),box=el('div','pd',null,m);m.id='hs-pc-modal';m.setAttribute('role','dialog');
+    var head=el('header','',null,box),face=el('div','pd-face',null,head),f=q('.hs18-player-face');
+    if(f&&f.firstElementChild)face.appendChild(f.firstElementChild.cloneNode(true));
+    var all=Array.from(tile.querySelectorAll('small')).map(function(x){return x.textContent});
+    var info=el('div','',null,head);el('h3','',txt('.hs18-player-name'),info);
+    el('small','',all.find(function(x){return /yaş|age/i.test(x)})||'',info);
+    el('div','pd-ovr',txt('.hs18-player-card-top .ovr'),head);
+    var a=q('.hs-apps'),pm=(all.find(function(x){return /POT/.test(x)})||'').match(/\d+/g)||[];
+    var g=el('div','pd-grid',null,box);
+    [['Toplam maç',txt('.hs-pc-info').replace(/\D/g,'')],['Gol',a&&a.dataset.g],['Asist',a&&a.dataset.a],['Maçın adamı',a&&a.dataset.m],['Potansiyel',pm[0]],['Moral',pm[1]]].forEach(function(r){var d=el('div','',null,g);el('b','',r[1]||'0',d);el('span','',r[0],d);});
+    var loan=q('.hs18-loan-status');
+    if(loan){var sec=el('div','pd-sec',null,box);el('h4','','Kiralık durumu',sec);
+      var mm=loan.textContent.match(/(\d+)\s*\/\s*(\d+)/);
+      if(mm){var bar=el('div','pd-bar',null,sec);el('i','',null,bar).style.width=Math.min(100,100*mm[1]/mm[2])+'%';}
+      var w=document.createTreeWalker(loan,NodeFilter.SHOW_TEXT),n;while((n=w.nextNode())){var v=strip(n.nodeValue);if(v)el('div','',v,sec);}
+    }
+    var val=q('.hs18-market-value');if(val)el('div','pd-sec',strip(val.textContent),box);
+    tile.querySelectorAll('.hs-pc-more button, button.hs-pc-more').forEach(function(b){box.appendChild(b.cloneNode(true)).classList.remove('hs-pc-more');});
+    el('button','pd-close','Kapat',box);document.body.appendChild(m);
     m.addEventListener('click',function(e){if(e.target===m||e.target.closest('button'))setTimeout(function(){m.remove()},0);});
   }
   function run(){
